@@ -1,93 +1,73 @@
 #!/usr/bin/python3 
 # coding=latin-1
-
 import sys
 import sqlite3
 import os
-import eyed3
 
-def test_code(c):
-    push_into_artist(c, "Absolute Beginner")
-    push_into_artist(c, "Fettes Brot")
-    push_into_artist(c, "Beginner")
-    push_into_artist(c, "Beginner")
-    show_all_artists(c)
-    push_into_album(c, get_artist(c, "Beginner"), "Blast Action Hero", "2003")
-    push_into_album(c, get_artist(c, "Fettes Brot"), "3 ist ne Party", "2015")
-    push_into_album(c, get_artist(c, "Absolute Beginner"), "Bambule", "1998")
-    show_all_albums(c)
-    push_into_tracks(c, get_album(c, "3 ist ne Party", get_artist(c, "Fettes Brot")), "Jein", 1, 192, "C:/")
-    push_into_tracks(c, get_album(c, "Blast Action Hero", get_artist(c, "Beginner")), "Faeule", 1, 192, "C:/")
-    show_all_tracks(c)
-# gehe erst durch die komplette Ordner - Struktur, manipuliere gegebenfalls
-# einträge, das heißt ausschließlich den Pfad
-# kopiere dann alle Einträge der Datenbank an einen neuen Ort
-# Setzen eines Pfads
-# falls eine wav datei vorhanden ist, wandle diese in eine flac - datei
 def main():
-    print(">>> starting up the music converter <<<")
-    c=setup_db()
-    setup_eyed3()
-    fm=eyed3.load("01_Absolute_Beginner-Das_Boot.mp3")
-    push_into_artist(c, fm.tag.artist)
-    push_into_album(c, get_artist(c, fm.tag.artist), fm.tag.album, 1997)
-    push_into_tracks(c, get_album(c, fm.tag.album, get_artist(c, fm.tag.artist)), fm.tag.title, fm.tag.track_num[0], 192, "C:/")
-    show_all_albums(c)
-    show_all_artists(c)
-    show_all_tracks(c)
-    fm=eyed3.load("09_Absolute_Beginner-Chili-Chil_BÃ¤ng_BÃ¤ng.mp3")
-    push_into_artist(c, fm.tag.artist)
-    push_into_album(c, get_artist(c, fm.tag.artist), fm.tag.album, 1997)
-    push_into_tracks(c, get_album(c, fm.tag.album, get_artist(c, fm.tag.artist)), fm.tag.title, fm.tag.track_num[0], 192, "C:/")
-    show_all_albums(c)
-    show_all_artists(c)
-    show_all_tracks(c)
-
+    setup_db()
+    
 def setup_db():
-    print("    setting up tnamehe database")
-    conn = sqlite3.connect("dbmusic.db")
+    print("setting up the database as well as the tables")
+    conn = sqlite3.connect("budget_management.db")
     c=conn.cursor()
     
-    for i in range(0,3):
+    for i in range(0,4):
         try:
             if i == 0:
-                c.execute("CREATE TABLE artists (id integer primary key, name text unique)")
+                c.execute("CREATE TABLE members (id integer primary key, name text unique, group integer)")
             elif i == 1:
-                c.execute("CREATE TABLE track (id integer primary key, album integer, name text, number integer, rate integer, bakpath text)")
+                c.execute("CREATE TABLE matter_of_expense (id integer primary key, name text unique, originator integer, provider name, group integer, amount float)")
             elif i == 2:
-                c.execute("CREATE TABLE album (id integer primary key, artist integer, name text, date txt)")
-                
+                c.execute("CREATE TABLE invoices (id integer primary key, matter_of_expense integer, integer originator, date text)")
+            elif i == 3:
+                c.execute("CREATE TABLE groups_of_expenses (id integer primary key, name text)")
+            elif i == 4:
+                c.execute("CREATE TABLE groups_of_members (id integer primary key, name text)")    
         except :
             print("    this table exists already")
     return c
-            
 
-def push_into_artist(cursor, name):
-    print("    pushing artist")
+def push_into_members(_cursor, _name, _group):
+    ''' \brief pushes a new entry into 'members' table
+    '''
+    print("    pushing member")
     try:
-        cursor.execute("INSERT INTO artists(name) values (?)", (name,))
+        _cursor.execute("INSERT INTO members(name, origin, group) values (?,?)", (_name, _group,))
     except:
-        print("    dublicate artist encountered")      
+        print("    dublicate member encountered")                 
+
+def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount):
+    ''' \brief pushes a new entry into 'members' table
+    '''
+    print("    pushing 'matter_of_expense'")
+    try:
+        _cursor.execute("INSERT INTO matter_of_expense(name, originator, provider, group, amount) values (?,?,?,?,?)", (_name, _originator, _provider, _group, _amount,))
+    except:
+        print("    dublicate matter_of_expense encountered")      
         
-def push_into_album(cursor, artist, name, date):
-    print("    pushing album")
-    cursor.execute("INSERT INTO album(artist, name, date) values (?,?,?)", (artist, name, date,))
+def push_into_invoice(_cursor, _matter_of_expense, _originator, _date):
+    print("    pushing 'invoices'")
+    _cursor.execute("INSERT INTO invoices(matter_of_expense, originator, _date) values (?,?,?)", (_matter_of_expense, _originator, _date,))
     print("    dublicate album encountered")
 
-def push_into_tracks(cursor, album, name, number, rate, bakpath):
-    print("    pushing track")
-    cursor.execute("INSERT INTO track(album, name, number, rate, bakpath) values (?,?,?,?,?)", (album, name, number, rate, bakpath,))
+def push_into_groups_of_expenses(_cursor, _name):
+    print("    pushing 'groups of expenses'")
+    _cursor.execute("INSERT INTO groups_of_expenses(_name) values (?)", (_name,))
 
+def push_into_groups_of_members(_cursor, _name):
+    print("    pushing 'groups of members'")
+    _cursor.execute("INSERT INTO groups_of_members(_name) values (?)", (_name,))
 
-def show_all_artists(cursor):
+def show_all_members(cursor):
     for row in cursor.execute("select * from artists"):
         print(row)
 
-def show_all_albums(cursor):
+def show_all_matter_of_expense(cursor):
     for row in cursor.execute("select * from album"):
         print(row)
         
-def show_all_tracks(cursor):
+def show_all_invoices(cursor):
     for row in cursor.execute("select * from track"):
         print(row)
 
