@@ -6,10 +6,6 @@ import os
 
 def main():
     c=setup_db()
-    push_into_members(c, "Horst", 1)
-    push_into_members(c, "Keving", 1)
-    push_into_members(c, "Lolita", 1)
-    show_all_members(c)
     
 def setup_db():
     print("setting up the database as well as the tables")
