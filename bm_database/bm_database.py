@@ -51,6 +51,32 @@ def setup_db(_cursor):
             print("An error occurred:", e.args[0])
     return _cursor
 
+def destroy_db(_cursor):
+    '''
+    \brief destroy the database again
+    
+    \param _cursor    database cursor
+    '''
+    
+    print("dstroying the database which includes the tables")
+    
+    for i in [4,3,2,1,0]:
+        try:
+            if i == 0:
+                _cursor.execute("DROP TABLE members")
+            elif i == 1:
+                _cursor.execute("DROP TABLE matter_of_expense")
+            elif i == 2:
+                _cursor.execute("DROP TABLE invoices")
+            elif i == 3:
+                _cursor.execute("DROP TABLE groups_of_expenses")
+            elif i == 4:
+                _cursor.execute("DROP TABLE groups_of_members")    
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+    return _cursor
+    
+
 def push_into_members(_cursor, _name, _group):
     ''' 
     \brief pushes a new entry into 'members' table
@@ -66,6 +92,34 @@ def push_into_members(_cursor, _name, _group):
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
         return -1                 
+
+def pop_from_members(_cursor, _name):
+    ''' 
+    \brief pops a new entry into 'members' table
+    
+    \param _cursor   database cursor
+    \param _name     member's name
+    \param _group    member's group ID
+    '''
+    print("    pop from member")
+    try:
+        _cursor.execute("DELETE FROM members WHERE name=?", (_name,))
+        return 0
+    except sqlite3.Error as e:
+        print("An error occurred:", e.args[0])
+        return -1
+
+def pop_all_from_members(_cursor):
+    '''
+    \brief pop all entries from the 'member' table
+    
+    \param _cursor database cursor
+    '''
+    _cursor.execute("SELECT * FROM members")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_members(_cursor, row[1])
 
 def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount):
     ''' 
