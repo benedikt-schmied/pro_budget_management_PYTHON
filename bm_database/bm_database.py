@@ -130,25 +130,120 @@ def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, 
         _cursor.execute("INSERT INTO matter_of_expense(name, originator, provider, group_of_expenses, amount) values (?,?,?,?,?)", (_name, _originator, _provider, _group, _amount,))
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])  
-        
+
+
+def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount):
+    ''' 
+    \brief pushes a new entry into 'matter of expense' table
+    '''
+    print("    deleting 'matter_of_expense'")
+    try:
+        _cursor.execute("DELETE FROM matter_of_expense WHERE name=? AND originator=? AND provider=? AND group_of_expenses=? AND amount=?", (_name, _originator, _provider, _group, _amount,))
+    except sqlite3.Error as e:
+        print("An error occurred:", e.args[0])   
+    
+def pop_all_from_matter_of_expense(_cursor):
+    ''' 
+    \brief deletes all entries into 'matter of expense' table
+    '''
+    _cursor.execute("SELECT * FROM matter_of_expense")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_matter_of_expense(_cursor, row[1], row[2], row[3], row[4], row[5]) 
+
 def push_into_invoice(_cursor, _matter_of_expense, _originator, _date):
     '''
     \brief pushes a new entry into the 'invoice' table
     '''
     print("    pushing 'invoices'")
-    _cursor.execute("INSERT INTO invoices(matter_of_expense, originator, _date) values (?,?,?)", (_matter_of_expense, _originator, _date,))
-    print("    dublicate album encountered")
+    try:
+        _cursor.execute("INSERT INTO invoices(matter_of_expense, originator, date) values (?,?,?)", (_matter_of_expense, _originator, _date,))
+    except sqlite3.Error as e:
+        print("An error occurred:", e.args[0]) 
+
+def pop_from_invoice(_cursor, _matter_of_expense, _originator, _date):
+    '''
+    \brief deletes entry from the 'invoice' table
+    '''
+
+    print("    deleting 'matter_of_expense'")
+    try:
+        _cursor.execute("DELETE FROM invoices WHERE matter_of_expense=? AND originator=? AND date=?", (_matter_of_expense, _originator, _date,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+        
+def pop_all_from_invoices(_cursor):
+    ''' 
+    \brief deletes all entries into 'matter of expense' table
+    '''
+    _cursor.execute("SELECT * FROM invoices")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_invoice(_cursor, row[1], row[2], row[3]) 
+    
 
 def push_into_groups_of_expenses(_cursor, _name):
     '''
     \brief pushes a new entry into the 'group of expenses' table
     '''
     print("    pushing 'groups of expenses'")
-    _cursor.execute("INSERT INTO groups_of_expenses(_name) values (?)", (_name,))
+    try:
+        _cursor.execute("INSERT INTO groups_of_expenses(name) values (?)", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+    
+def pop_from_groups_of_expenses(_cursor, _name):
+    '''
+    \brief pushes a new entry into the 'group of expenses' table
+    '''
+    print("    pushing 'groups of expenses'")
+    try:
+        _cursor.execute("DELETE FROM groups_of_expenses WHERE name=?", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])    
+        
+def pop_all_from_groups_of_expenses(_cursor):
+    ''' 
+    \brief deletes all entries into 'groups of expense' table
+    '''
+    _cursor.execute("SELECT * FROM groups_of_expenses")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_groups_of_expenses(_cursor, row[1]) 
 
 def push_into_groups_of_members(_cursor, _name):
+    '''
+    \brief pushes into group of members
+    '''
     print("    pushing 'groups of members'")
-    _cursor.execute("INSERT INTO groups_of_members(_name) values (?)", (_name,))
+    try:
+        _cursor.execute("INSERT INTO groups_of_members(name) values (?)", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+
+def pop_from_groups_of_members(_cursor, _name):
+    '''
+    \brief pops from group of members
+    '''
+    print("    pushing 'groups of members'")
+    try:
+        _cursor.execute("DELETE FROM groups_of_members WHERE name=?", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+    
+def pop_all_from_groups_of_members(_cursor):
+    '''
+    \brief pops from group of members
+    '''
+    _cursor.execute("SELECT * FROM groups_of_members")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_groups_of_members(_cursor, row[1]) 
+    
 
 def show_all_members(_cursor):
     for row in _cursor.execute("select * from members"):
@@ -169,30 +264,6 @@ def show_all_groups_of_members(_cursor):
 def show_all_groups_of_expenses(_cursor):
     for row in _cursor.execute("select * from groups_of_expenses"):
         print(row)
-
-def get_artist(cursor, name):
-    print("    searching for artist")
-    try:
-        cursor.execute("select artists.id from artists where artists.name=? ", (name,))
-        r=cursor.fetchone()
-        type(r)
-        r[0]
-        return r[0]
-    except:
-        print("    did not find anything")
-        return
-
-def get_album(cursor, name, artist):
-    print("    searching for album")
-
-    cursor.execute("select album.id from album where album.name=? and album.artist=? ", (name,artist,))
-    r=cursor.fetchone()
-    type(r)
-    r[0]
-    return r[0]
-
-def setup_eyed3():
-    print("    setting up the eyed3 plugin")
     
 if __name__ == "__main__":
     # execute only if run as a script
