@@ -35,18 +35,22 @@ def setup_db(_cursor):
     '''
     print("setting up the database as well as the tables")
    
-    for i in range(0,5):
+    for i in range(0,7):
         try:
             if i == 0:
                 _cursor.execute("CREATE TABLE members (id integer primary key, name text unique, group_of_members integer)")
             elif i == 1:
-                _cursor.execute("CREATE TABLE matter_of_expense (id integer primary key, name text, originator integer, provider name, group_of_expenses integer, amount float)")
+                _cursor.execute("CREATE TABLE matter_of_expense (id integer primary key, name text, originator integer, provider name, group_of_expenses integer, amount float, account integer)")
             elif i == 2:
                 _cursor.execute("CREATE TABLE invoices (id integer primary key, matter_of_expense integer, integer originator, date text)")
             elif i == 3:
                 _cursor.execute("CREATE TABLE groups_of_expenses (id integer primary key, name text unique)")
             elif i == 4:
-                _cursor.execute("CREATE TABLE groups_of_members (id integer primary key, name text unique)")    
+                _cursor.execute("CREATE TABLE groups_of_members (id integer primary key, name text unique)")
+            elif i == 5:
+                _cursor.execute("CREATE TABLE earnings (id integer primary key, name text unique, account integer, amount integer)")    
+            elif i == 6:
+                _cursor.execute("CREATE TABLE accounts (id integer primary key, name text unique)")    
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
     return _cursor
@@ -60,7 +64,7 @@ def destroy_db(_cursor):
     
     print("dstroying the database which includes the tables")
     
-    for i in [4,3,2,1,0]:
+    for i in [6,5,4,3,2,1,0]:
         try:
             if i == 0:
                 _cursor.execute("DROP TABLE members")
@@ -71,7 +75,11 @@ def destroy_db(_cursor):
             elif i == 3:
                 _cursor.execute("DROP TABLE groups_of_expenses")
             elif i == 4:
-                _cursor.execute("DROP TABLE groups_of_members")    
+                _cursor.execute("DROP TABLE groups_of_members")
+            elif i == 5:
+                _cursor.execute("DROP TABLE earnings")    
+            elif i == 6:
+                _cursor.execute("DROP TABLE accounts")    
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
     return _cursor
@@ -121,24 +129,24 @@ def pop_all_from_members(_cursor):
         print("deleting ", row[1], row[2])
         pop_from_members(_cursor, row[1])
 
-def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount):
+def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _account):
     ''' 
     \brief pushes a new entry into 'matter of expense' table
     '''
     print("    pushing 'matter_of_expense'")
     try:
-        _cursor.execute("INSERT INTO matter_of_expense(name, originator, provider, group_of_expenses, amount) values (?,?,?,?,?)", (_name, _originator, _provider, _group, _amount,))
+        _cursor.execute("INSERT INTO matter_of_expense(name, originator, provider, group_of_expenses, amount, account) values (?,?,?,?,?,?)", (_name, _originator, _provider, _group, _amount,_account))
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])  
 
 
-def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount):
+def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _account):
     ''' 
     \brief pushes a new entry into 'matter of expense' table
     '''
     print("    deleting 'matter_of_expense'")
     try:
-        _cursor.execute("DELETE FROM matter_of_expense WHERE name=? AND originator=? AND provider=? AND group_of_expenses=? AND amount=?", (_name, _originator, _provider, _group, _amount,))
+        _cursor.execute("DELETE FROM matter_of_expense WHERE name=? AND originator=? AND provider=? AND group_of_expenses=? AND amount=? AND account=?", (_name, _originator, _provider, _group, _amount, _account,))
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])   
     
@@ -243,7 +251,66 @@ def pop_all_from_groups_of_members(_cursor):
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_groups_of_members(_cursor, row[1]) 
+
+def push_into_earnings(_cursor, _name):
+    '''
+    \brief pushes into earnings
+    '''
+    print("    pushing 'earnings'")
+    try:
+        _cursor.execute("INSERT INTO earnings(name) values (?)", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+
+def pop_from_earnings(_cursor, _name):
+    '''
+    \brief pops from earnings
+    '''
+    print("    pushing 'earnings'")
+    try:
+        _cursor.execute("DELETE FROM earnings WHERE name=?", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
     
+def pop_all_from_earnings(_cursor):
+    '''
+    \brief pops from group of members
+    '''
+    _cursor.execute("SELECT * FROM earnings")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_earnings(_cursor, row[1]) 
+
+def push_into_accounts(_cursor, _name):
+    '''
+    \brief pushes into accounts
+    '''
+    print("    pushing 'accounts'")
+    try:
+        _cursor.execute("INSERT INTO accounts(name) values (?)", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+
+def pop_from_accounts(_cursor, _name):
+    '''
+    \brief pops from accounts
+    '''
+    print("    pushing 'accounts'")
+    try:
+        _cursor.execute("DELETE FROM accounts WHERE name=?", (_name,))
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+    
+def pop_all_from_accounts(_cursor):
+    '''
+    \brief pops from group of members
+    '''
+    _cursor.execute("SELECT * FROM earnings")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_earnings(_cursor, row[1]) 
 
 def show_all_members(_cursor):
     for row in _cursor.execute("select * from members"):
@@ -263,6 +330,14 @@ def show_all_groups_of_members(_cursor):
 
 def show_all_groups_of_expenses(_cursor):
     for row in _cursor.execute("select * from groups_of_expenses"):
+        print(row)
+
+def show_all_earnings(_cursor):
+    for row in _cursor.execute("select * from earnings"):
+        print(row)
+
+def show_all_accounts(_cursor):
+    for row in _cursor.execute("select * from accounts"):
         print(row)
     
 if __name__ == "__main__":
