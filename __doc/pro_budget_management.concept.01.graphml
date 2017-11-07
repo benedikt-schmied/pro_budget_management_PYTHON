@@ -16,7 +16,6 @@
     <data key="d0"/>
     <node id="n0" yfiles.foldertype="folder">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="1">
@@ -45,7 +44,6 @@
       </data>
       <graph edgedefault="directed" id="n0:">
         <node id="n0::n0">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="ShinyPlateNode3">
               <y:Geometry height="62.0" width="95.0" x="29.5" y="149.0"/>
@@ -62,7 +60,6 @@
           </data>
         </node>
         <node id="n0::n1">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="ShinyPlateNode3">
               <y:Geometry height="86.0" width="129.0" x="186.5" y="59.0"/>
@@ -79,7 +76,6 @@
           </data>
         </node>
         <node id="n0::n2">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="ShinyPlateNode3">
               <y:Geometry height="51.0" width="88.0" x="376.0" y="64.5"/>
@@ -96,7 +92,6 @@
           </data>
         </node>
         <node id="n0::n3">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="ShinyPlateNode2">
               <y:Geometry height="72.0" width="129.0" x="235.5" y="204.0"/>
@@ -113,7 +108,6 @@
           </data>
         </node>
         <node id="n0::n4">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="ShinyPlateNode2">
               <y:Geometry height="86.0" width="139.0" x="440.5" y="167.0"/>
@@ -130,7 +124,6 @@
           </data>
         </node>
         <node id="n0::n5">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="ShinyPlateNode2">
               <y:Geometry height="62.0" width="103.0" x="416.5" y="329.0"/>
@@ -147,7 +140,6 @@
           </data>
         </node>
         <node id="n0::n6">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="ShinyPlateNode2">
               <y:Geometry height="51.0" width="107.0" x="186.5" y="334.5"/>
