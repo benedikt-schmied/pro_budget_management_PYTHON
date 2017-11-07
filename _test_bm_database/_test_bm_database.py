@@ -53,7 +53,16 @@ def _test__push_into_members():
             break
     
     bm_database.show_all_members(c)
-        
+    
+    if bm_database.select_from_members_where_name_match(c, "Horst") != 1:
+        return -1
+    
+    cnti = 2
+    for entry in names:
+        if bm_database.select_from_members_where_name_match(c, entry) != cnti:
+            return -1
+        cnti = cnti + 1
+
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_members(c)
 
@@ -64,6 +73,8 @@ def _test__push_into_members():
     
     # disconnect from the base  
     bm_database.disconnect(c)
+    
+    return 0
 
 def _test__push_into_matter_of_expenses():
     ''' 
@@ -88,6 +99,12 @@ def _test__push_into_matter_of_expenses():
             break
     
     bm_database.show_all_matter_of_expense(c)
+    
+    if bm_database.select_from_matter_of_expense_where_name_match(c, "Frisoer Benedikt") != 1:
+        return -1
+    else:
+        print("we've found an entry")
+    
         
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_matter_of_expense(c)
@@ -99,6 +116,8 @@ def _test__push_into_matter_of_expenses():
     
     # disconnect from the base  
     bm_database.disconnect(c)
+    
+    return 0
 
 def _test__push_into_invoice():
     ''' 
@@ -123,6 +142,11 @@ def _test__push_into_invoice():
             break
     
     bm_database.show_all_invoices(c)
+    
+    if bm_database.select_from_invoices_where_matter_of_expense_match(c, 1) != 1:
+        return -1
+    else:
+        print("we've found it")
         
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_invoices(c)
@@ -134,6 +158,8 @@ def _test__push_into_invoice():
     
     # disconnect from the base  
     bm_database.disconnect(c)
+    
+    return 0
 
 def _test__push_into_groups_of_expenses():
     ''' 
@@ -158,6 +184,9 @@ def _test__push_into_groups_of_expenses():
             break
     
     bm_database.show_all_groups_of_expenses(c)
+    
+    if bm_database.select_from_groups_of_expense_where_name_match(c, "Familie") != 1:
+        return -1
         
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_groups_of_expenses(c)
@@ -169,6 +198,7 @@ def _test__push_into_groups_of_expenses():
     
     # disconnect from the base  
     bm_database.disconnect(c)
+    return 0
 
 
 def _test__push_into_earnings():
@@ -195,6 +225,8 @@ def _test__push_into_earnings():
     
     bm_database.show_all_earnings(c)
         
+    if (bm_database.select_from_earnings_where_name_match(c, "Giro Horst") != 1):
+        return -1
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_earnings(c)
 
@@ -205,6 +237,45 @@ def _test__push_into_earnings():
     
     # disconnect from the base  
     bm_database.disconnect(c)
+    return 0
+
+def _test__push_into_accounts():
+    ''' 
+    \brief test function for 
+    push into matter of expenses
+    '''
+   
+    # connect to the database 
+    c=bm_database.connect()
+    
+    # setup the database
+    bm_database.setup_db(c)
+    
+    # use for - statement to loop upon the test cases
+    if bm_database.push_into_accounts(c, "Giro Horst") != 0:
+        return -1
+    
+    names = ['Tagesgeld Hoeness', 'Giro Haushalt', 'Tagesgeld Lolita']
+    for entry in names:
+        print(entry)
+        if bm_database.push_into_accounts(c, entry) != 0:
+            break
+    
+    bm_database.show_all_accounts(c)
+        
+    if (bm_database.select_from_accounts_where_name_match(c, "Giro Horst") != 1):
+        return -1
+    # destroy all entries in oder to run clean upcoming tests
+    bm_database.pop_all_from_accounts(c)
+
+    print("now showing all members")
+
+    # check, whether there are still entries within this database
+    bm_database.show_all_accounts(c)
+    
+    # disconnect from the base  
+    bm_database.disconnect(c)
+    return 0
 
 def main():
     '''
@@ -217,9 +288,12 @@ def main():
     d.append(c_test_case(_test__push_into_invoice))
     d.append(c_test_case(_test__push_into_groups_of_expenses))
     d.append(c_test_case(_test__push_into_earnings))
-
+    d.append(c_test_case(_test__push_into_accounts))
     for cnti in range(0, len(d)):
-        d[cnti].fun()
+        if (d[cnti].fun() != 0):
+            print("test ", cnti, " failed")
+            return
+    print("all tests successful")
         
 
 

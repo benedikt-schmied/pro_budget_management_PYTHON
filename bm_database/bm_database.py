@@ -129,6 +129,19 @@ def pop_all_from_members(_cursor):
         print("deleting ", row[1], row[2])
         pop_from_members(_cursor, row[1])
 
+def select_from_members_where_name_match(_cursor, _name):
+    '''
+    \brief selects a specific entry where the name matches
+    
+    \param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM members WHERE name=?", (_name,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
+
 def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _frequency, _account):
     ''' 
     \brief pushes a new entry into 'matter of expense' table
@@ -140,7 +153,6 @@ def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, 
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
         return -1  
-
 
 def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _frequency, _account):
     ''' 
@@ -163,6 +175,19 @@ def pop_all_from_matter_of_expense(_cursor):
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_matter_of_expense(_cursor, row[1], row[2], row[3], row[4], row[5], row[6], row[7]) 
+
+def select_from_matter_of_expense_where_name_match(_cursor, _name):
+    '''
+    \brief selects a specific entry where the name matches
+    
+    \param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM matter_of_expense WHERE name=?", (_name,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
 
 def push_into_invoice(_cursor, _matter_of_expense, _originator, _date):
     '''
@@ -198,7 +223,19 @@ def pop_all_from_invoices(_cursor):
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_invoice(_cursor, row[1], row[2], row[3]) 
+
+def select_from_invoices_where_matter_of_expense_match(_cursor, _matter_of_expense):
+    '''
+    \brief selects a specific entry where the name matches
     
+    \param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM invoices WHERE matter_of_expense=?", (_matter_of_expense,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
 
 def push_into_groups_of_expenses(_cursor, _name):
     '''
@@ -234,6 +271,19 @@ def pop_all_from_groups_of_expenses(_cursor):
         print("deleting ", row[1])
         pop_from_groups_of_expenses(_cursor, row[1]) 
 
+def select_from_groups_of_expense_where_name_match(_cursor, _name):
+    '''
+    \brief selects a specific entry where the name matches
+    
+    \param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM groups_of_expenses WHERE name=?", (_name,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
+
 def push_into_groups_of_members(_cursor, _name):
     '''
     \brief pushes into group of members
@@ -262,7 +312,20 @@ def pop_all_from_groups_of_members(_cursor):
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
-        pop_from_groups_of_members(_cursor, row[1]) 
+        pop_from_groups_of_members(_cursor, row[1])
+        
+def select_from_groups_of_members_where_name_match(_cursor, _name):
+    '''
+    \brief selects a specific entry where the name matches
+    
+    \param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM groups_of_members WHERE name=?", (_name,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
 
 def push_into_earnings(_cursor, _name, _account, _amount):
     '''
@@ -298,6 +361,19 @@ def pop_all_from_earnings(_cursor):
         print("deleting ", row[1], row[2])
         pop_from_earnings(_cursor, row[1]) 
 
+def select_from_earnings_where_name_match(_cursor, _name):
+    '''
+    \brief selects a specific entry where the name matches
+    
+    \param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM earnings WHERE name=?", (_name,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
+
 def push_into_accounts(_cursor, _name):
     '''
     \brief pushes into accounts
@@ -305,8 +381,10 @@ def push_into_accounts(_cursor, _name):
     print("    pushing 'accounts'")
     try:
         _cursor.execute("INSERT INTO accounts(name) values (?)", (_name,))
+        return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
+        return -1
 
 def pop_from_accounts(_cursor, _name):
     '''
@@ -315,8 +393,10 @@ def pop_from_accounts(_cursor, _name):
     print("    pushing 'accounts'")
     try:
         _cursor.execute("DELETE FROM accounts WHERE name=?", (_name,))
+        return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
+        return -1
     
 def pop_all_from_accounts(_cursor):
     '''
@@ -327,6 +407,19 @@ def pop_all_from_accounts(_cursor):
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_earnings(_cursor, row[1]) 
+
+def select_from_accounts_where_name_match(_cursor, _name):
+    '''
+    \brief selects a specific entry where the name matches
+    
+    \param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM accounts WHERE name=?", (_name,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
 
 def show_all_members(_cursor):
     '''
