@@ -53,6 +53,8 @@ def _test__push_into_members():
             break
     
     bm_database.show_all_members(c)
+
+    print(bm_database.get_entries_members(c))
     
     if bm_database.select_from_members_where_name_match(c, "Horst") != 1:
         return -1
@@ -63,13 +65,19 @@ def _test__push_into_members():
             return -1
         cnti = cnti + 1
 
+
+
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_members(c)
+
 
     print("now showing all members")
 
     # check, whether there are still entries within this database
     bm_database.show_all_members(c)
+    
+
+    
     
     # disconnect from the base  
     bm_database.disconnect(c)
@@ -294,8 +302,6 @@ def main():
             print("test ", cnti, " failed")
             return
     print("all tests successful")
-        
-
 
 if __name__ == "__main__":
     # execute only if run as a script

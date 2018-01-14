@@ -6,7 +6,7 @@ import os
 
 def main():
     ''' 
-    \brief main routine
+    @brief main routine
     \return void
     '''
     c= connect()
@@ -15,7 +15,7 @@ def main():
 
 def connect():
     ''' 
-    \brief connect to the database
+    @brief connect to the database
     '''
     conn = sqlite3.connect("budget_management.db")
     c = conn.cursor()
@@ -23,15 +23,15 @@ def connect():
 
 def disconnect(_cursor):
     ''' 
-    \brief disconnect from the database
+    @brief disconnect from the database
     '''
     _cursor.close()
 
 def setup_db(_cursor):
     ''' 
-    \brief setup the database
+    @brief setup the database
     
-    \param _cursor    database cursor
+    @param _cursor    database cursor
     '''
     print("setting up the database as well as the tables")
    
@@ -57,12 +57,12 @@ def setup_db(_cursor):
 
 def destroy_db(_cursor):
     '''
-    \brief destroy the database again
+    @brief destroy the database again
     
-    \param _cursor    database cursor
+    @param _cursor    database cursor
     '''
     
-    print("dstroying the database which includes the tables")
+    print("destroying the database which includes the tables")
     
     for i in [6,5,4,3,2,1,0]:
         try:
@@ -87,11 +87,11 @@ def destroy_db(_cursor):
 
 def push_into_members(_cursor, _name, _group):
     ''' 
-    \brief pushes a new entry into 'members' table
+    @brief pushes a new entry into 'members' table
     
-    \param _cursor   database cursor
-    \param _name     member's name
-    \param _group    member's group ID
+    @param _cursor   database cursor
+    @param _name     member's name
+    @param _group    member's group ID
     '''
     print("    pushing member")
     try:
@@ -103,11 +103,11 @@ def push_into_members(_cursor, _name, _group):
 
 def pop_from_members(_cursor, _name):
     ''' 
-    \brief pops a new entry into 'members' table
+    @brief pops a new entry into 'members' table
     
-    \param _cursor   database cursor
-    \param _name     member's name
-    \param _group    member's group ID
+    @param _cursor   database cursor
+    @param _name     member's name
+    @param _group    member's group ID
     '''
     print("    pop from member")
     try:
@@ -119,9 +119,9 @@ def pop_from_members(_cursor, _name):
 
 def pop_all_from_members(_cursor):
     '''
-    \brief pop all entries from the 'member' table
+    @brief pop all entries from the 'member' table
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''
     _cursor.execute("SELECT * FROM members")
     list_of_members = _cursor.fetchall()
@@ -129,11 +129,37 @@ def pop_all_from_members(_cursor):
         print("deleting ", row[1], row[2])
         pop_from_members(_cursor, row[1])
 
+def show_all_members(_cursor):
+    '''
+    @brief shows all members
+    
+    @param cursor    database cursor
+    '''
+    for row in _cursor.execute("select * from members"):
+        print(row)
+        
+def get_entries_members(_cursor):
+    '''
+    @brief returns all entries from members
+    '''
+    entries=[]
+    
+    print(">>>>>>>>>>>><<get all entries")
+    
+    _cursor.execute("select * from members")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("get entries and print ", row[1])
+        entries.append(row[1])
+        
+    return entries
+        
+
 def select_from_members_where_name_match(_cursor, _name):
     '''
-    \brief selects a specific entry where the name matches
+    @brief selects a specific entry where the name matches
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''   
     try:
         _cursor.execute("SELECT id FROM members WHERE name=?", (_name,))
@@ -144,7 +170,7 @@ def select_from_members_where_name_match(_cursor, _name):
 
 def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _frequency, _account):
     ''' 
-    \brief pushes a new entry into 'matter of expense' table
+    @brief pushes a new entry into 'matter of expense' table
     '''
     print("    pushing 'matter_of_expense'")
     try:
@@ -156,7 +182,7 @@ def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, 
 
 def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _frequency, _account):
     ''' 
-    \brief pushes a new entry into 'matter of expense' table
+    @brief pushes a new entry into 'matter of expense' table
     '''
     print("    deleting 'matter_of_expense'")
     try:
@@ -168,7 +194,7 @@ def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _
     
 def pop_all_from_matter_of_expense(_cursor):
     ''' 
-    \brief deletes all entries into 'matter of expense' table
+    @brief deletes all entries into 'matter of expense' table
     '''
     _cursor.execute("SELECT * FROM matter_of_expense")
     list_of_members = _cursor.fetchall()
@@ -178,9 +204,9 @@ def pop_all_from_matter_of_expense(_cursor):
 
 def select_from_matter_of_expense_where_name_match(_cursor, _name):
     '''
-    \brief selects a specific entry where the name matches
+    @brief selects a specific entry where the name matches
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''   
     try:
         _cursor.execute("SELECT id FROM matter_of_expense WHERE name=?", (_name,))
@@ -189,9 +215,43 @@ def select_from_matter_of_expense_where_name_match(_cursor, _name):
         print("An error occrred: ", e.args[0])
         return -1
 
+def show_all_matter_of_expense(_cursor):
+    '''
+    @brief shows all matter of expenses
+    
+    @param cursor    database cursor
+    '''
+    for row in _cursor.execute("select * from matter_of_expense"):
+        print(row)
+        
+def get_entries_matter_of_expense(_cursor):
+    '''
+    @brief returns all entries from members
+    @return string
+    '''
+    print(">>>>>>>>>>>><<get all entries")
+    
+    entries = []
+    
+    for row in _cursor.execute("select * from matter_of_expense"):
+        entries.append(row)
+        
+    return entries
+        
+
+
+def show_all_groups_of_expenses(_cursor):
+    '''
+    @brief shows all group of expenses
+    
+    @param cursor    database cursor
+    '''
+    for row in _cursor.execute("select * from groups_of_expenses"):
+        print(row)
+
 def push_into_invoice(_cursor, _matter_of_expense, _originator, _date):
     '''
-    \brief pushes a new entry into the 'invoice' table
+    @brief pushes a new entry into the 'invoice' table
     '''
     print("    pushing 'invoices'")
     try:
@@ -203,7 +263,7 @@ def push_into_invoice(_cursor, _matter_of_expense, _originator, _date):
 
 def pop_from_invoice(_cursor, _matter_of_expense, _originator, _date):
     '''
-    \brief deletes entry from the 'invoice' table
+    @brief deletes entry from the 'invoice' table
     '''
 
     print("    deleting 'invoices'")
@@ -216,7 +276,7 @@ def pop_from_invoice(_cursor, _matter_of_expense, _originator, _date):
         
 def pop_all_from_invoices(_cursor):
     ''' 
-    \brief deletes all entries into 'matter of expense' table
+    @brief deletes all entries into 'matter of expense' table
     '''
     _cursor.execute("SELECT * FROM invoices")
     list_of_members = _cursor.fetchall()
@@ -224,11 +284,20 @@ def pop_all_from_invoices(_cursor):
         print("deleting ", row[1], row[2])
         pop_from_invoice(_cursor, row[1], row[2], row[3]) 
 
+def show_all_invoices(_cursor):
+    '''
+    @brief shows all invoices
+    
+    @param cursor    database cursor            refresh()
+    '''
+    for row in _cursor.execute("select * from invoices"):
+        print(row)
+        
 def select_from_invoices_where_matter_of_expense_match(_cursor, _matter_of_expense):
     '''
-    \brief selects a specific entry where the name matches
+    @brief selects a specific entry where the name matches
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''   
     try:
         _cursor.execute("SELECT id FROM invoices WHERE matter_of_expense=?", (_matter_of_expense,))
@@ -239,7 +308,7 @@ def select_from_invoices_where_matter_of_expense_match(_cursor, _matter_of_expen
 
 def push_into_groups_of_expenses(_cursor, _name):
     '''
-    \brief pushes a new entry into the 'group of expenses' table
+    @brief pushes a new entry into the 'group of expenses' table
     '''
     print("    pushing 'groups of expenses'")
     try:
@@ -251,7 +320,7 @@ def push_into_groups_of_expenses(_cursor, _name):
     
 def pop_from_groups_of_expenses(_cursor, _name):
     '''
-    \brief pushes a new entry into the 'group of expenses' table
+    @brief pushes a new entry into the 'group of expenses' table
     '''
     print("    pushing 'groups of expenses'")
     try:
@@ -263,7 +332,7 @@ def pop_from_groups_of_expenses(_cursor, _name):
         
 def pop_all_from_groups_of_expenses(_cursor):
     ''' 
-    \brief deletes all entries into 'groups of expense' table
+    @brief deletes all entries into 'groups of expense' table
     '''
     _cursor.execute("SELECT * FROM groups_of_expenses")
     list_of_members = _cursor.fetchall()
@@ -273,9 +342,9 @@ def pop_all_from_groups_of_expenses(_cursor):
 
 def select_from_groups_of_expense_where_name_match(_cursor, _name):
     '''
-    \brief selects a specific entry where the name matches
+    @brief selects a specific entry where the name matches
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''   
     try:
         _cursor.execute("SELECT id FROM groups_of_expenses WHERE name=?", (_name,))
@@ -286,7 +355,7 @@ def select_from_groups_of_expense_where_name_match(_cursor, _name):
 
 def push_into_groups_of_members(_cursor, _name):
     '''
-    \brief pushes into group of members
+    @brief pushes into group of members
     '''
     print("    pushing 'groups of members'")
     try:
@@ -296,7 +365,7 @@ def push_into_groups_of_members(_cursor, _name):
 
 def pop_from_groups_of_members(_cursor, _name):
     '''
-    \brief pops from group of members
+    @brief pops from group of members
     '''
     print("    pushing 'groups of members'")
     try:
@@ -306,7 +375,7 @@ def pop_from_groups_of_members(_cursor, _name):
     
 def pop_all_from_groups_of_members(_cursor):
     '''
-    \brief pops from group of members
+    @brief pops from group of members
     '''
     _cursor.execute("SELECT * FROM groups_of_members")
     list_of_members = _cursor.fetchall()
@@ -316,9 +385,9 @@ def pop_all_from_groups_of_members(_cursor):
         
 def select_from_groups_of_members_where_name_match(_cursor, _name):
     '''
-    \brief selects a specific entry where the name matches
+    @brief selects a specific entry where the name matches
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''   
     try:
         _cursor.execute("SELECT id FROM groups_of_members WHERE name=?", (_name,))
@@ -327,9 +396,18 @@ def select_from_groups_of_members_where_name_match(_cursor, _name):
         print("An error occrred: ", e.args[0])
         return -1
 
+def show_all_groups_of_members(_cursor):
+    '''
+    @brief shows all group of members
+    
+    @param cursor    database cursor
+    '''
+    for row in _cursor.execute("select * from groups_of_members"):
+        print(row)
+
 def push_into_earnings(_cursor, _name, _account, _amount):
     '''
-    \brief pushes into earnings
+    @brief pushes into earnings
     '''
     print("    pushing 'earnings'")
     try:
@@ -341,7 +419,7 @@ def push_into_earnings(_cursor, _name, _account, _amount):
 
 def pop_from_earnings(_cursor, _name):
     '''
-    \brief pops from earnings
+    @brief pops from earnings
     '''
     print("    pushing 'earnings'")
     try:
@@ -353,7 +431,7 @@ def pop_from_earnings(_cursor, _name):
     
 def pop_all_from_earnings(_cursor):
     '''
-    \brief pops from group of members
+    @brief pops from group of members
     '''
     _cursor.execute("SELECT * FROM earnings")
     list_of_members = _cursor.fetchall()
@@ -363,9 +441,9 @@ def pop_all_from_earnings(_cursor):
 
 def select_from_earnings_where_name_match(_cursor, _name):
     '''
-    \brief selects a specific entry where the name matches
+    @brief selects a specific entry where the name matches
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''   
     try:
         _cursor.execute("SELECT id FROM earnings WHERE name=?", (_name,))
@@ -374,9 +452,18 @@ def select_from_earnings_where_name_match(_cursor, _name):
         print("An error occrred: ", e.args[0])
         return -1
 
+def show_all_earnings(_cursor):
+    '''
+    @brief shows all earnings
+    
+    @param cursor    database cursor
+    '''
+    for row in _cursor.execute("select * from earnings"):
+        print(row)
+
 def push_into_accounts(_cursor, _name):
     '''
-    \brief pushes into accounts
+    @brief pushes into accounts
     '''
     print("    pushing 'accounts'")
     try:
@@ -388,7 +475,7 @@ def push_into_accounts(_cursor, _name):
 
 def pop_from_accounts(_cursor, _name):
     '''
-    \brief pops from accounts
+    @brief pops from accounts
     '''
     print("    pushing 'accounts'")
     try:
@@ -400,7 +487,7 @@ def pop_from_accounts(_cursor, _name):
     
 def pop_all_from_accounts(_cursor):
     '''
-    \brief pops from group of members
+    @brief pops from group of members
     '''
     _cursor.execute("SELECT * FROM earnings")
     list_of_members = _cursor.fetchall()
@@ -410,9 +497,9 @@ def pop_all_from_accounts(_cursor):
 
 def select_from_accounts_where_name_match(_cursor, _name):
     '''
-    \brief selects a specific entry where the name matches
+    @brief selects a specific entry where the name matches
     
-    \param _cursor database cursor
+    @param _cursor database cursor
     '''   
     try:
         _cursor.execute("SELECT id FROM accounts WHERE name=?", (_name,))
@@ -421,69 +508,15 @@ def select_from_accounts_where_name_match(_cursor, _name):
         print("An error occrred: ", e.args[0])
         return -1
 
-def show_all_members(_cursor):
-    '''
-    \brief shows all members
-    
-    \param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from members"):
-        print(row)
-
-def show_all_matter_of_expense(_cursor):
-    '''
-    \brief shows all matter of expenses
-    
-    \param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from matter_of_expense"):
-        print(row)
-        
-def show_all_invoices(_cursor):
-    '''
-    \brief shows all invoices
-    
-    \param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from invoices"):
-        print(row)
-
-def show_all_groups_of_members(_cursor):
-    '''
-    \brief shows all group of members
-    
-    \param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from groups_of_members"):
-        print(row)
-
-def show_all_groups_of_expenses(_cursor):
-    '''
-    \brief shows all group of expenses
-    
-    \param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from groups_of_expenses"):
-        print(row)
-
-def show_all_earnings(_cursor):
-    '''
-    \brief shows all earnings
-    
-    \param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from earnings"):
-        print(row)
-
 def show_all_accounts(_cursor):
     '''
-    \brief shows all accounts
+    @brief shows all accounts
     
-    \param cursor    database cursor
+    @param cursor    database cursor
     '''
     for row in _cursor.execute("select * from accounts"):
         print(row)
-    
+            
 if __name__ == "__main__":
     # execute only if run as a script
     main()
