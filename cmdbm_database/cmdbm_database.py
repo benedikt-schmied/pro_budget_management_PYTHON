@@ -18,74 +18,135 @@ import os
 import argparse
 import bm_database
 
-def menu_print():
-    print("print menu")
+class c_menu_items():
     
-def menu_modify():
-    print("modify menu")
+    def __init__(self, _cmd = "n", _name = "none", _text = "no text", _fun = quit):
+        self.cmd = _cmd
+        self.name = _name
+        self.help_text = _text
+        self.fun = _fun    
+        
+    def set_function(self, _fun):
+        self.fun = _fun
+        
+    def get_function(self):
+        return self.fun
+    
+    def set_help_text(self, _text):
+        self.help_text = _text
+        
+    def get_help_text(self):
+        return self.help_text
+    
+    def set_name(self, _name):
+        self.name = _name
+        
+    def get_name(self):
+        return self.name
+    
+    def set_cmd(self, _cmd):
+        self.cmd = _cmd
+        
+    def get_cmd(self):
+        return self.cmd
+    
+class c_menu_top():
 
-def main():
-    
-    menu = []
-    
-    menu_p = {'p', 'print', 'print a table', menu_print()} # use dictionary or list insted, no, make an object!
-    menu_c = {'m', 'modify', 'modify an entry', menu_modify()}
-    
-    
-    '''
-    this is the main menu, you can either tell us to 
-    print a table
-    insert a new entry into a table
-    or modify an entry within a table
-    '''
-    
-    menu.append(menu_p)
-    menu.append(menu_c)
-    
-    print(menu)
-    print(menu[0])
-    print(type(menu[0]))
-    
-    while True:
+    def __init__(self):
+        print("starting the menu")
         
-        print("  ")
+        # we need a variable which holds the main menu    
+        self.menu_top = []
+        self.menu_top.append(c_menu_items('p', 'print', 'printing something', self.menu_print))
+        self.menu_top.append(c_menu_items('m', 'modify', 'modify an entry', self.menu_modify))
+        self.menu_top.append(c_menu_items('i', 'insert', 'insert an entry', self.menu_insert))  
+        self.menu_top.append(c_menu_items('h', 'help', 'help menu', self.menu_help))
+    
+    def get_idx_by_cmd(self, _cmd):
+        '''
+        @param _cmd     command
+        '''
+        for cnt in range(0, self.menu_top):
+            if _cmd == self.menu_top[cnt].cmd:
+                return cnt
+            return -1
         
-        c = input("-->")
-        
-        print(c)
-        if c == menu[0][0]:
-            
-            menu[0][3]()            
-        elif c =='m':
-            menu_modify()
-        elif c == 'i':
-            
-            d = bm_database.connect()
-            bm_database.setup_db(d)
+    def menu_print(self, _midx):
+        '''
+        @param _midx    menu index
+        '''
+        d = bm_database.connect()
 
-            bm_database.push_into_matter_of_expense(d, "Frisoer Benedikt", 1, 1, 1, 20, "monthly", 1)
-        elif c == 'q':
-            break  # Exit the while loop
+        entries = bm_database.get_entries_matter_of_expense(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print(cnti)
+        bm_database.show_all_matter_of_expense    
+        bm_database.disconnect(d) 
+
+    
+    def menu_modify(self, _midx):
+        '''
+        @param _midx:
+        '''    
+        
+    def menu_insert(self, _midx):
+        '''
+        @param _midx:
+        '''  
+        
+        d = bm_database.connect()
+        bm_database.setup_db(d)
+        name = input("-- name: ")
+        value = input("-- value: ")
+        
+        bm_database.push_into_matter_of_expense(d, name, value, 1, 1, 20, "monthly", 1)
+        bm_database.disconnect(d)
+    
+    def menu_help(self, _midx):
+        '''
+        @param 
+        ''' 
+        for item in self.menu_top:
+            print("cmd ", item.get_cmd(), "\t", item.get_help_text())
+    
+    def run(self):
+        '''
+        @param _midx:
+        '''  
+        
+        '''
+        this is the main menu, you can either tell us to 
+        print a table
+        insert a new entry into a table
+        or modify an entry within a table
+        '''    
+        
+        while True:
+            
+            c = input("-->")
+            
+            print(c)
+            
+            # no, we have to loop over the top menu items in 
+            # order to find what we've got to docmd
+            for cnt in range(0, len(self.menu_top)):
+                if c == self.menu_top[cnt].cmd:
+                    print(self.menu_top[cnt].get_help_text())
+                    self.menu_top[cnt].fun(cnt)
+           
+            if c =='q':
+                break
+                
 
 if __name__ == "__main__":
     # execute only if run as a script
     print("standalone")
-  
-    c = bm_database.connect()
-    bm_database.setup_db(c)
-    bm_database.push_into_matter_of_expense(c, "Friser Termin", 1, 1, 1, 20, 1, 1)
-    bm_database.push_into_matter_of_expense(c, "Friseur Termin", 1, 1, 1, 20, 1, 1)
-    bm_database.push_into_matter_of_expense(c, "Frisir Termin", 1, 1, 1, 20, 1, 1)
-    bm_database.push_into_matter_of_expense(c, "Fresir Termin", 1, 1, 1, 20, 1, 1)
-    
-    entries=[]
-    entries=bm_database.get_entries_matter_of_expense(c)
-    for cnti in entries:
-        print(cnti)
-    bm_database.disconnect(c) 
      
     parser = argparse.ArgumentParser(description='command line interface of database backend of bugdet management')
     parser.add_argument('user', default='admin', help='who is in charge of making changes or printing lists')
                         
     args = parser.parse_args()
-    main()
+    menu = c_menu_top()
+    menu.run()
