@@ -58,27 +58,39 @@ def _test__push_into_members():
     
     if bm_database.select_from_members_where_name_match(c, "Horst") != 1:
         return -1
+    else:
+        print("found an entry")
     
     cnti = 2
     for entry in names:
         if bm_database.select_from_members_where_name_match(c, entry) != cnti:
             return -1
         cnti = cnti + 1
-
-
-
+    
+    bm_database.disconnect(c)
+    
+    
+    c = bm_database.connect()
+    
+    print("showing all members after a disconnect")
+    bm_database.show_all_members(c)
+    
+    bm_database.disconnect(c)    
+    
+    c = bm_database.connect()
+    
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_members(c)
 
+    bm_database.disconnect(c)
+    
+    c = bm_database.connect()
 
-    print("now showing all members")
+    print("now showing all members after another disconnect")
 
     # check, whether there are still entries within this database
     bm_database.show_all_members(c)
-    
 
-    
-    
     # disconnect from the base  
     bm_database.disconnect(c)
     
@@ -299,6 +311,23 @@ def _test__push_into_accounts():
         
     if (bm_database.select_from_accounts_where_name_match(c, "Giro Horst") != 1):
         return -1
+    else:
+        print("found an entry")
+    
+    bm_database.disconnect(c)
+    
+    c = bm_database.connect()
+
+    print("now showing all members")
+
+    # check, whether there are still entries within this database
+    bm_database.show_all_accounts(c)
+    
+    # disconnect from the base  
+    bm_database.disconnect(c)
+    
+    c = bm_database.connect()
+    
     # destroy all entries in oder to run clean upcoming tests
     bm_database.pop_all_from_accounts(c)
 
@@ -309,6 +338,17 @@ def _test__push_into_accounts():
     
     # disconnect from the base  
     bm_database.disconnect(c)
+    
+    c = bm_database.connect()
+
+    print("now showing all members")
+
+    # check, whether there are still entries within this database
+    bm_database.show_all_accounts(c)
+    
+    # disconnect from the base  
+    bm_database.disconnect(c)
+    
     return 0
 
 def main():
@@ -318,11 +358,11 @@ def main():
     '''
     d=[]
     d.append(c_test_case(_test__push_into_members))
-    d.append(c_test_case(_test__push_into_matter_of_expenses))
-    d.append(c_test_case(_test__push_into_invoice))
-    d.append(c_test_case(_test__push_into_groups_of_expenses))
-    d.append(c_test_case(_test__push_into_earnings))
-    d.append(c_test_case(_test__push_into_accounts))
+#     d.append(c_test_case(_test__push_into_matter_of_expenses))
+#     d.append(c_test_case(_test__push_into_invoice))
+#     d.append(c_test_case(_test__push_into_groups_of_expenses))
+#     d.append(c_test_case(_test__push_into_earnings))
+#     d.append(c_test_case(_test__push_into_accounts))
     for cnti in range(0, len(d)):
         if (d[cnti].fun() != 0):
             print("test ", cnti, " failed")

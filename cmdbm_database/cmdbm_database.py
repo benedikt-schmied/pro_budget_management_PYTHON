@@ -82,10 +82,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         return
     
     def all_tables(self):
-        self.logger.warn('all tables')
+        self.logger.info('all tables')
         self.members()
         self.matter_of_expense()
         self.invoices()
+        self.groups_of_members()
         self.groups_of_expenses()
         self.earnings()
         self.accounts()
@@ -96,7 +97,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message to the logger
-        self.logger.warn('members')
+        self.logger.info('members')
         
         # now, connect to the database
         d = bm_database.connect()
@@ -104,14 +105,16 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # fetch the entries
         entries = bm_database.get_entries_members(d)
         
+        # show an introduction line
+        print("\t\t ~~~ members")
+        
         # run over all entries
         for cnti in entries:
-            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+            print("\t\t <-> \t index = {}, name = {}, group = {}".format(cnti[0], cnti[1], cnti[2]))
 
         # disconnect again
         bm_database.disconnect(d)
         return 
-        return
     
     def matter_of_expense(self):
         ''' print the matter of expense entries
@@ -119,14 +122,18 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message to the logger
-        self.logger.warn('matter of expense')
+        self.logger.info('matter of expense')
         
         d = bm_database.connect()
         entries = bm_database.get_entries_matter_of_expense(d)
         
+        # show an introduction line
+        print("\t\t ~~~ matter of expense")
+        
         # run over all entries
         for cnti in entries:
-            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+            print("\t\t <-> \t index = {}, name = {}, originator = {}, provider = {}, groups of expenses = {}, amount = {}, frequency = {}, account = {}".format(
+                cnti[0], cnti[1], cnti[2], cnti[3], cnti[4], cnti[5], cnti[6], cnti[7]))
 
         bm_database.disconnect(d)
         return
@@ -136,7 +143,10 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.warn('invoices')
+        self.logger.info('invoices')
+        
+        # show an introduction line
+        print("\t\t ~~~ invoices")
         
         # now, connect to the database
         d = bm_database.connect()
@@ -146,7 +156,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         
         # run over all entries
         for cnti in entries:
-            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+            print("\t\t <-> \t index = {}, name = \t{}".format(cnti[0], cnti[1]))
 
         # disconnect again
         bm_database.disconnect(d)
@@ -157,8 +167,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.warn('groups of members')
-                
+        self.logger.info('groups of members')
+        
+        # show an introduction line
+        print("\t\t ~~~ groups of members")
+        
         # now, connect to the database
         d = bm_database.connect()
         
@@ -167,7 +180,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         
         # run over all entries
         for cnti in entries:
-            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+            print("\t\t <-> \t index = {}, name = {}".format(cnti[0], cnti[1]))
 
         # disconnect again
         bm_database.disconnect(d)
@@ -179,8 +192,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.warn('groups of expenses')
-                
+        self.logger.info('groups of expenses')
+        
+        # show an introduction line
+        print("\t\t ~~~ groups of expenses")
+        
         # now, connect to the database
         d = bm_database.connect()
         
@@ -189,7 +205,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         
         # run over all entries
         for cnti in entries:
-            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+            print("\t\t <-> index = {}, name = {}".format(cnti[0], cnti[1]))
 
         # disconnect again
         bm_database.disconnect(d)
@@ -200,7 +216,10 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.warn('earnings')
+        self.logger.info('earnings')
+        
+        # show an introduction line
+        print("\t\t ~~~ earnings")
         
         # now, connect to the database
         d = bm_database.connect()
@@ -210,7 +229,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         
         # run over all entries
         for cnti in entries:
-            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+            print("\t\t <-> \t index = {}, name = {}, amount = {}".format(cnti[0], cnti[1], cnti[2]))
 
         # disconnect again
         bm_database.disconnect(d)
@@ -221,8 +240,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.warn('accounts')
-                
+        self.logger.info('accounts')
+        
+        # show an introduction line
+        print("\t\t ~~~ accounts")        
+        
         # now, connect to the database
         d = bm_database.connect()
         
@@ -231,7 +253,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         
         # run over all entries
         for cnti in entries:
-            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+            print("\t\t <-> \t index = {}, account = {}".format(cnti[0], cnti[1]))
 
         # disconnect again
         bm_database.disconnect(d)
@@ -245,7 +267,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         insert a new entry into a table
         or modify an entry within a table
         '''    
-        self.logger.warn('running')
+        self.logger.info('running')
         while True:
             
             # first print the menu
@@ -292,19 +314,21 @@ class c_menu_insert():
         '''
         
         # push a message to the logger
-        self.logger.warn('members')
+        self.logger.info('members')
+        
+        # show all members so far
+        menu_print = c_menu_print()
+        menu_print.members()
+        
+        # ask the user for specific inputs        
+        name = input("\t\t <--> name: ")
+        
+        # give the user some hints
+        menu_print.groups_of_members()
+        group = input("\t\t <--> group: ")
         
         # connect to the database
         d = bm_database.connect()
-
-        # ask the user for specific inputs
-        
-        
-        name = input("-- name: ")
-        
-        # give the user some hints on what is possible
-        
-        group = input("-- group: ")
         
         # now, push it to the table
         bm_database.push_into_members(d, name, group)
@@ -319,21 +343,32 @@ class c_menu_insert():
         '''
         
         # push a message to the logger
-        self.logger.warn('matter of expense')
+        self.logger.info('matter of expense')
+
+        # ask the user for specific iputs
+        name = input("\t\t <--> name: ")
+        
+        # print the members table in order to help the user
+        menu_print = c_menu_print()
+        menu_print.members()
+        
+        originator = input("\t\t <--> originator: ")
+        provider = input("\t\t <--> provider: ")
+        
+        # print the groups of expenses table
+        menu_print.groups_of_expenses()
+        group = input("\t\t <--> group: ")
+        amount = input("\t\t <--> amount: ")
+        
+        # tell the user to give the frequency in weeks
+        frequency = input("\t\t <--> frequency [weeks]: ")
+        
+        # print the accounts table
+        menu_print.accounts()
+        account = input("\t\t <--> account: ")
         
         # connect to the database
         d = bm_database.connect()
-
-        # ask the user for specific inputs
-        name = input("\t\t <--> name: ")
-        originator = input("\t\t <--> originator: ")
-        provider = input("\t\t <--> provider: ")
-        group = input("\t\t <--> group: ")
-        amount = input("\t\t <--> amount: ")
-        frequency = input("\t\t <--> frequency: ")
-        account = input("\t\t <--> account: ")
-        
-        # give the user some hints on what is possible
         
         # now, push it to the table
         bm_database.push_into_matter_of_expense(d, _name = name, _originator = originator, _provider = provider, _group = group, _amount = amount, _frequency = frequency, _account = account)
@@ -347,19 +382,15 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.warn('matter of invoices')
-        
-        # connect to the database
-        d = bm_database.connect()
-
-        # ask the user for specific inputs
-        
-        
+        self.logger.info('matter of invoices')
+    
+        # ask the user for specific inputs    
         matter_of_expense = input("\t\t <--> matter of expense: ")
         originator = input("\t\t <--> originator: ")
         date = input("\t\t <--> date: ")
         
-        # give the user some hints on what is possible
+        # connect to the database
+        d = bm_database.connect()
         
         # now, push it to the table
         bm_database.push_into_invoice(d, _matter_of_expense = matter_of_expense, _originator = originator, _date = date)
@@ -373,16 +404,13 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.warn('groups of members')
+        self.logger.info('groups of members')
+
+        # ask the user for specific inputs
+        name = input("\t\t <--> name: ")
         
         # connect to the database
         d = bm_database.connect()
-
-        # ask the user for specific inputs
-        
-        name = input("\t\t <--> name: ")
-        
-        # give the user some hints on what is possible
         
         # now, push it to the table
         bm_database.push_into_groups_of_members(d, _name = name)
@@ -397,16 +425,13 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.warn('groups of expenses')
+        self.logger.info('groups of expenses')
+
+        # ask the user for specific inputs
+        name = input("\t\t <--> name: ")
         
         # connect to the database
         d = bm_database.connect()
-
-        # ask the user for specific inputs
-        
-        name = input("\t\t <--> name: ")
-        
-        # give the user some hints on what is possible
         
         # now, push it to the table
         bm_database.push_into_groups_of_expenses(d, _name = name)
@@ -420,18 +445,15 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.warn('earnings')
-        
-        # connect to the database
-        d = bm_database.connect()
+        self.logger.info('earnings')
 
         # ask the user for specific inputs
-        
         name = input("\t\t <--> name: ")
         account = input("\t\t <--> account: ")
         amount = input("\t\t <--> amount: ")
         
-        # give the user some hints on what is possible
+        # connect to the database
+        d = bm_database.connect()
         
         # now, push it to the table
         bm_database.push_into_earnings(d, _name = name, _account = account, _amount = amount)
@@ -445,16 +467,13 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.warn('accounts')
+        self.logger.info('accounts')
+
+        # ask the user for specific inputs
+        name = input("\t\t <--> name: ")
         
         # connect to the database
         d = bm_database.connect()
-
-        # ask the user for specific inputs
-        
-        name = input("\t\t <--> name: ")
-        
-        # give the user some hints on what is possible
         
         # now, push it to the table
         bm_database.push_into_accounts(d, _name = name)
@@ -471,7 +490,7 @@ class c_menu_insert():
         insert a new entry into a table
         or modify an entry within a table
         '''    
-        self.logger.warn('running')
+        self.logger.info('running')
         while True:
             
             # first print the menu
@@ -491,7 +510,292 @@ class c_menu_insert():
            
             if c =='q':
                 break
+
+class c_menu_delete():
+    ''' print menu
+    '''
     
+    def __init__(self):
+        
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd')
+        
+        # we need a variable which holds the main menu    
+        self.menu_delete = []
+        self.menu_delete.append(c_menu_items('me', 'members', 'member table', self.members))
+        self.menu_delete.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_delete.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
+        self.menu_delete.append(c_menu_items('gm', 'groups of members', 'groups of members', self.groups_of_members))
+        self.menu_delete.append(c_menu_items('ge', 'groups of expenses', 'groups of expenses', self.groups_of_expenses))
+        self.menu_delete.append(c_menu_items('ea', 'earnings', 'earnings', self.earnings))
+        self.menu_delete.append(c_menu_items('ac', 'accounts', 'accounts', self.accounts))
+        return
+    
+    def members(self):
+        ''' insert into members entries
+        '''
+        
+        # push a message to the logger
+        self.logger.info('members')
+    
+        # show the existing members
+        menu_print = c_menu_print()
+        menu_print.members()        
+    
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+#         bm_database.pop_from_members(d, _name = name)
+        bm_database.pop_from_members_where_id(d, _id = row)
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def matter_of_expense(self):
+        ''' insert into matter of expense
+        
+        '''
+        
+        # push a message to the logger
+        self.logger.info('matter of expense')
+        
+        # print the current items
+        menu_print = c_menu_print()
+        menu_print.matter_of_expense()
+        
+        # ask the user for specific inputs
+        nr = input("\t\t id = ")
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+        bm_database.pop_from_matter_of_expense_where_id(d, _id = nr)
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def invoices(self):
+        ''' insert into the invoices table
+        '''
+        
+        # push a message into the logger
+        self.logger.info('matter of invoices')
+
+        # print the current items
+        menu_print = c_menu_print()
+        menu_print.invoices()
+        
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+        bm_database.pop_from_invoice_where_id(d, _id = row)
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def groups_of_members(self):
+        ''' insert into the group of members table
+        '''
+        
+        # push a message into the logger
+        self.logger.info('groups of members')
+
+        # print the current items
+        menu_print = c_menu_print()
+        menu_print.groups_of_members()
+
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+        bm_database.pop_from_groups_of_members_where_id(d, _id = row)
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return   
+    
+    
+    def groups_of_expenses(self):
+        ''' insert into the group of expenses tables
+        '''
+        
+        # push a message into the logger
+        self.logger.info('groups of expenses')
+
+        # print the current items
+        menu_print = c_menu_print()
+        menu_print.groups_of_expenses()
+
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+        bm_database.pop_from_groups_of_expenses_where_id(d, _id = row)
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return 
+    
+    def earnings(self):
+        ''' print the earnings entries
+        '''
+        
+        # push a message into the logger
+        self.logger.info('earnings')
+
+        # print the current items
+        menu_print = c_menu_print()
+        menu_print.earnings()
+
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+        bm_database.pop_from_earnings_where_id(d, _id = row)
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def accounts(self):
+        ''' print the accounts entries
+        '''
+        
+        # push a message into the logger
+        self.logger.info('accounts')
+
+        # print the current items
+        menu_print = c_menu_print()
+        menu_print.groups_of_expenses()
+
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+        bm_database.pop_from_accounts_where_id(d, _id = row)
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def run(self):
+        
+        '''
+        this is the main menu, you can either tell us to 
+        print a table
+        insert a new entry into a table
+        or modify an entry within a table
+        '''    
+        self.logger.info('running')
+        while True:
+            
+            # first print the menu
+            for cnt in range(0, len(self.menu_delete)):
+                print("{}\t{}".format(self.menu_delete[cnt].get_cmd(), self.menu_delete[cnt].get_help_text()))
+            
+            c = input("-->")
+            
+            print(c)
+
+            # no, we have to loop over the top menu items in 
+            # order to find what we've got to docmd
+            for cnt in range(0, len(self.menu_delete)):
+                if c == self.menu_delete[cnt].cmd:
+                    print(self.menu_delete[cnt].get_help_text())
+                    self.menu_delete[cnt].fun()
+           
+            if c =='q':
+                break
+            
+class c_menu_calc():
+    ''' print menu
+    '''
+    
+    def __init__(self):
+        
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd')
+        
+        # we need a variable which holds the main menu    
+        self.menu_calc = []
+        self.menu_calc.append(c_menu_items('te', 'total_expenses', 'give me the total expenses', self.total_expenses))
+        return
+    
+    def total_expenses(self):
+        ''' calc the total expenses
+        '''
+        
+        # push a message to the logger
+        self.logger.info('members')
+        
+        # connect to the database
+        d = bm_database.connect()
+        
+        # now, push it to the table
+        entries = []
+        entries = bm_database.get_entries_matter_of_expense(d)
+        amount = 0
+        for item in entries:
+            print("\t\t name = {}, amount = {}, frequency = {}".format(item[1], item[5], item[6]))
+            amount = amount + (item[5] / item[6])
+        
+        print("\t\t amount = {}".format(amount))
+        
+        # now, disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def run(self):
+        
+        '''
+        this is the main menu, you can either tell us to 
+        print a table
+        insert a new entry into a table
+        or modify an entry within a table
+        '''    
+        self.logger.info('running')
+        while True:
+            
+            # first print the menu
+            for cnt in range(0, len(self.menu_calc)):
+                print("{}\t{}".format(self.menu_calc[cnt].get_cmd(), self.menu_calc[cnt].get_help_text()))
+            
+            c = input("-->")
+            
+            print(c)
+
+            # no, we have to loop over the top menu items in 
+            # order to find what we've got to docmd
+            for cnt in range(0, len(self.menu_calc)):
+                if c == self.menu_calc[cnt].cmd:
+                    print(self.menu_calc[cnt].get_help_text())
+                    self.menu_calc[cnt].fun()
+           
+            if c =='q':
+                break
+
 class c_menu_top(mod_logging_mkI_PYTHON.c_logging):
 
     def __init__(self):
@@ -502,7 +806,9 @@ class c_menu_top(mod_logging_mkI_PYTHON.c_logging):
         self.menu_top = []
         self.menu_top.append(c_menu_items('p', 'print', 'printing something', self.menu_print))
         self.menu_top.append(c_menu_items('m', 'modify', 'modify an entry', self.menu_modify))
-        self.menu_top.append(c_menu_items('i', 'insert', 'insert an entry', self.menu_insert))  
+        self.menu_top.append(c_menu_items('i', 'insert', 'insert an entry', self.menu_insert))
+        self.menu_top.append(c_menu_items('d', 'delete', 'delete an entry', self.menu_delete))
+        self.menu_top.append(c_menu_items('c', 'calc', 'do some calculation', self.menu_calc))
         self.menu_top.append(c_menu_items('h', 'help', 'help menu', self.menu_help))
     
     def get_idx_by_cmd(self, _cmd):
@@ -533,6 +839,19 @@ class c_menu_top(mod_logging_mkI_PYTHON.c_logging):
         menu_insert = c_menu_insert()
         menu_insert.run()
 
+    def menu_delete(self, _midx):
+        '''
+        @param _midx:
+        '''
+        menu_delete = c_menu_delete()
+        menu_delete.run()
+
+    def menu_calc(self, _midx):
+        '''
+        @param _midx:
+        '''
+        menu_calc = c_menu_calc()
+        menu_calc.run()
     
     def menu_help(self, _midx):
         '''
@@ -552,6 +871,13 @@ class c_menu_top(mod_logging_mkI_PYTHON.c_logging):
         insert a new entry into a table
         or modify an entry within a table
         '''    
+        
+        # connect to the database 
+        c = bm_database.connect() 
+    
+        # setup the database
+        bm_database.setup_db(c)
+        bm_database.disconnect(c)
         
         while True:
             
