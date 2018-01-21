@@ -38,14 +38,14 @@ def setup_db(_cursor):
     '''
     print("setting up the database as well as the tables")
    
-    for i in range(0,7):
+    for i in range(0,8):
         try:
             if i == 0:
                 _cursor.execute("CREATE TABLE members (id integer primary key, name text unique, group_of_members integer)")
             elif i == 1:
-                _cursor.execute("CREATE TABLE matter_of_expense (id integer primary key, name text, originator integer, provider name, group_of_expenses integer, amount float, frequency integer, account integer)")
+                _cursor.execute("CREATE TABLE matter_of_expense (id integer primary key, name text, originator_class integer, originator integer, provider_class integer, provider name, group_of_expenses integer, amount float, frequency integer, account integer)")
             elif i == 2:
-                _cursor.execute("CREATE TABLE invoices (id integer primary key, matter_of_expense integer, originator integer, date text)")
+                _cursor.execute("CREATE TABLE invoices (id integer primary key, matter_of_expense integer, originator_class integer, originator integer, date text)")
             elif i == 3:
                 _cursor.execute("CREATE TABLE groups_of_expenses (id integer primary key, name text unique)")
             elif i == 4:
@@ -54,6 +54,8 @@ def setup_db(_cursor):
                 _cursor.execute("CREATE TABLE earnings (id integer primary key, name text unique, account integer, amount integer)")    
             elif i == 6:
                 _cursor.execute("CREATE TABLE accounts (id integer primary key, name text unique)")
+            elif i == 7:
+                _cursor.execute("CREATE TABLE class (id integer primary key, name text unigue)")
                         
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
@@ -72,7 +74,7 @@ def destroy_db(_cursor):
     
     print("destroying the database which includes the tables")
     
-    for i in [6,5,4,3,2,1,0]:
+    for i in [7,6,5,4,3,2,1,0]:
         try:
             if i == 0:
                 _cursor.execute("DROP TABLE members")
@@ -87,10 +89,19 @@ def destroy_db(_cursor):
             elif i == 5:
                 _cursor.execute("DROP TABLE earnings")    
             elif i == 6:
-                _cursor.execute("DROP TABLE accounts")    
+                _cursor.execute("DROP TABLE accounts")
+            elif i == 7:
+                _cursor.execute("DROP Table classes")
         except sqlite3.Error as e:
             print("An error occurred:", e.args[0])
+    global conn
+    conn.commit()
     return _cursor
+    
+def manual_db_command(_cursor, _text):
+    _cursor.execute(_text)
+    global conn
+    conn.commit
     
 
 def push_into_members(_cursor, _name, _group):
@@ -197,28 +208,28 @@ def select_from_members_where_name_match(_cursor, _name):
         print("An error occrred: ", e.args[0])
         return -1
 
-def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _frequency, _account):
+def push_into_matter_of_expense(_cursor, _name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account):
     ''' 
     @brief pushes a new entry into 'matter of expense' table
     '''
     print("    pushing 'matter_of_expense'")
     try:
         global conn
-        _cursor.execute("INSERT INTO matter_of_expense(name, originator, provider, group_of_expenses, amount, frequency, account) values (?,?,?,?,?,?,?)", (_name, _originator, _provider, _group, _amount, _frequency, _account))
+        _cursor.execute("INSERT INTO matter_of_expense(name, originator_class, originator, provider_class, provider, group_of_expenses, amount, frequency, account) values (?,?,?,?,?,?,?,?,?)", (_name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account))
         conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
         return -1  
 
-def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _amount, _frequency, _account):
+def pop_from_matter_of_expense(_cursor, _name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account):
     ''' 
     @brief pushes a new entry into 'matter of expense' table
     '''
     print("    deleting 'matter_of_expense'")
     try:
         global conn
-        _cursor.execute("DELETE FROM matter_of_expense WHERE name=? AND originator=? AND provider=? AND group_of_expenses=? AND amount=? AND frequency=?AND account=?", (_name, _originator, _provider, _group, _amount, _frequency, _account,))
+        _cursor.execute("DELETE FROM matter_of_expense WHERE name=? AND originator_class=? AND originator=? AND provider_class=? AND provider=? AND group_of_expenses=? AND amount=? AND frequency=?AND account=?", (_name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account,))
         conn.commit()
         return 0
     except sqlite3.Error as e:
@@ -248,7 +259,7 @@ def pop_all_from_matter_of_expense(_cursor):
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
-        pop_from_matter_of_expense(_cursor, row[1], row[2], row[3], row[4], row[5], row[6], row[7]) 
+        pop_from_matter_of_expense(_cursor, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]) 
     conn.commit()
 
 def select_from_matter_of_expense_where_name_match(_cursor, _name):
@@ -281,7 +292,7 @@ def get_entries_matter_of_expense(_cursor):
     entries = []
     
     for row in _cursor.execute("select * from matter_of_expense"):
-        entries.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]])
+        entries.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]])
         
     return entries
         
@@ -294,21 +305,21 @@ def show_all_groups_of_expenses(_cursor):
     for row in _cursor.execute("select * from groups_of_expenses"):
         print(row)
 
-def push_into_invoice(_cursor, _matter_of_expense, _originator, _date):
+def push_into_invoice(_cursor, _matter_of_expense, _originator_class, _originator, _date):
     '''
     @brief pushes a new entry into the 'invoice' table
     '''
     print("    pushing 'invoices'")
     try:
         global conn
-        _cursor.execute("INSERT INTO invoices(matter_of_expense, originator, date) values (?,?,?)", (_matter_of_expense, _originator, _date,))
+        _cursor.execute("INSERT INTO invoices(matter_of_expense, originator_class, originator, date) values (?,?,?,?)", (_matter_of_expense, _originator_class, _originator, _date,))
         conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
         return -1 
 
-def pop_from_invoice(_cursor, _matter_of_expense, _originator, _date):
+def pop_from_invoice(_cursor, _matter_of_expense, _originator_class, _originator, _date):
     '''
     @brief deletes entry from the 'invoice' table
     '''
@@ -316,7 +327,7 @@ def pop_from_invoice(_cursor, _matter_of_expense, _originator, _date):
     print("    deleting 'invoices'")
     try:
         global conn
-        _cursor.execute("DELETE FROM invoices WHERE matter_of_expense=? AND originator=? AND date=?", (_matter_of_expense, _originator, _date,))
+        _cursor.execute("DELETE FROM invoices WHERE matter_of_expense=? AND originator_class=? AND originator=? AND date=?", (_matter_of_expense, _originator_class, _originator, _date,))
         conn.commit()
         return 0
     except sqlite3.Error as e:
@@ -347,7 +358,7 @@ def pop_all_from_invoices(_cursor):
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
-        pop_from_invoice(_cursor, row[1], row[2], row[3])
+        pop_from_invoice(_cursor, row[1], row[2], row[3], row[4])
     
     conn.commit() 
 
@@ -612,7 +623,7 @@ def get_entries_earnings(_cursor):
     _cursor.execute("select * from earnings")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
-        entries.append([row[0], row[1], row[2]])
+        entries.append([row[0], row[1], row[2], row[3]])
         
     return entries
 
@@ -724,6 +735,94 @@ def show_all_accounts(_cursor):
     @param cursor    database cursor
     '''
     for row in _cursor.execute("select * from accounts"):
+        print(row)
+        
+def push_into_class(_cursor, _name):
+    '''
+    @brief pushes into class
+    '''
+    print("    pushing 'class'")
+    try:
+        global conn
+        _cursor.execute("INSERT INTO class(name) values (?)", (_name,))
+        conn.commit()
+        return 0
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+        return -1
+
+def pop_from_class(_cursor, _name):
+    '''
+    @brief pops from class
+    '''
+    print("    pushing 'class'")
+    try:
+        global conn
+        _cursor.execute("DELETE FROM class WHERE name=?", (_name,))
+        conn.commit()
+        return 0
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+        return -1
+ 
+def pop_from_class_where_id(_cursor, _id):
+    '''
+    @brief pops from class
+    '''
+    print("    pushing 'class'")
+    try:
+        global conn
+        _cursor.execute("DELETE FROM class WHERE id=?", (_id,))
+        conn.commit()
+        return 0
+    except sqlite3.Error as e:
+        print("An error occurred: ", e.args[0])
+        return -1
+   
+def pop_all_from_class(_cursor):
+    '''
+    @brief pops from group of members
+    '''
+    global conn
+    _cursor.execute("SELECT * FROM earnings")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        print("deleting ", row[1], row[2])
+        pop_from_earnings(_cursor, row[1])
+    conn.commit() 
+
+def get_entries_class(_cursor):
+    '''
+    @brief returns all entries from class
+    '''
+    entries=[]    
+    _cursor.execute("select * from class")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        entries.append([row[0], row[1]])
+        
+    return entries
+
+def select_from_class_where_name_match(_cursor, _name):
+    '''
+    @brief selects a specific entry where the name matches
+    
+    @param _cursor database cursor
+    '''   
+    try:
+        _cursor.execute("SELECT id FROM class WHERE name=?", (_name,))
+        return _cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print("An error occrred: ", e.args[0])
+        return -1
+
+def show_all_class(_cursor):
+    '''
+    @brief shows all class
+    
+    @param cursor    database cursor
+    '''
+    for row in _cursor.execute("select * from class"):
         print(row)
             
 if __name__ == "__main__":
