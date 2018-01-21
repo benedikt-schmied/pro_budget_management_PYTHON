@@ -17,6 +17,7 @@ import sqlite3
 import os
 import argparse
 import bm_database
+import mod_logging_mkI_PYTHON
 
 class c_menu_items():
     
@@ -50,6 +51,85 @@ class c_menu_items():
     def get_cmd(self):
         return self.cmd
     
+class c_menu_help():
+    ''' help menu
+    '''
+    
+    def __init__(self):
+        return
+    
+    def run(self):
+        return
+
+class c_menu_print():
+    ''' print menu
+    '''
+    
+    def __init__(self):
+        
+                # we need a variable which holds the main menu    
+        self.menu_top = []
+        self.menu_top.append(c_menu_items('at', 'all tables', 'print all tables', self.all_tables))
+        self.menu_top.append(c_menu_items('me', 'members', 'print the member table', self.members))
+        self.menu_top.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_top.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
+        self.menu_top.append(c_menu_items('gm', 'groups of members', 'invoices', self.members))
+        self.menu_top.append(c_menu_items('ge', 'groups of expenses', self.expenses))
+        self.menu_top.append(c_menu_items('ea', 'earnings', 'earnings', self.earnings))
+        self.menu_top.append(c_menu_items('ac', 'accounts', 'accounts', self.accounts))
+        
+        return
+    
+    def all_tables(self):
+        return
+    
+    def matter_of_expense(self):
+        return
+    
+    def members(self):
+        return
+    
+    def invoices(self):
+        return 
+    
+    def run(self):
+        
+        '''
+        this is the main menu, you can either tell us to 
+        print a table
+        insert a new entry into a table
+        or modify an entry within a table
+        '''    
+        
+        while True:
+            
+            c = input("-->")
+            
+            print(c)
+            
+            # no, we have to loop over the top menu items in 
+            # order to find what we've got to docmd
+            for cnt in range(0, len(self.menu_top)):
+                if c == self.menu_top[cnt].cmd:
+                    print(self.menu_top[cnt].get_help_text())
+                    self.menu_top[cnt].fun(cnt)
+           
+            if c =='q':
+                break
+    
+    
+    
+class c_men_insert():
+    ''' insert menu
+    '''
+    
+    def __init__(self):
+        return
+    
+    def run(self):
+        return
+    
+    
 class c_menu_top():
 
     def __init__(self):
@@ -75,6 +155,7 @@ class c_menu_top():
         '''
         @param _midx    menu index
         '''
+        
         d = bm_database.connect()
 
         entries = bm_database.get_entries_matter_of_expense(d)
