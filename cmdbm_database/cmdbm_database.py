@@ -82,7 +82,8 @@ class c_menu_top():
         # run over all entries
         for cnti in entries:
             print(cnti)
-        bm_database.show_all_matter_of_expense    
+            
+        bm_database.show_all_matter_of_expense(d)
         bm_database.disconnect(d) 
 
     

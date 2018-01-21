@@ -125,6 +125,32 @@ def _test__push_into_matter_of_expenses():
     # disconnect from the base  
     bm_database.disconnect(c)
     
+    # now, we connect again, and try to push these entries again
+    c = bm_database.connect()
+    
+    bm_database.show_all_matter_of_expense(c)
+    
+    names = ['Hoeness', 'Lolita', 'Kevin']
+    for entry in names:
+        print(entry)
+        if bm_database.push_into_matter_of_expense(c, "Frisoer " + entry, 1, 1, 1, 20, "monthly", 1) != 0:
+            break
+    
+    bm_database.show_all_matter_of_expense(c)
+    
+    bm_database.disconnect(c)
+    
+    print("reopen it again")
+    
+    c = bm_database.connect()
+    
+    bm_database.show_all_matter_of_expense(c)
+    
+    bm_database.disconnect(c)
+    
+    
+    
+    
     return 0
 
 def _test__push_into_invoice():

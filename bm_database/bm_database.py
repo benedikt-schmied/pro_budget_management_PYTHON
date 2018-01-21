@@ -4,6 +4,8 @@ import sys
 import sqlite3
 import os
 
+conn = 0
+
 def main():
     ''' 
     @brief main routine
@@ -17,6 +19,7 @@ def connect():
     ''' 
     @brief connect to the database
     '''
+    global conn
     conn = sqlite3.connect("budget_management.db")
     c = conn.cursor()
     return c
@@ -95,7 +98,11 @@ def push_into_members(_cursor, _name, _group):
     '''
     print("    pushing member")
     try:
+        global conn
+        
         _cursor.execute("INSERT INTO members(name, group_of_members) values (?,?)", (_name, _group,))
+        
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
@@ -111,11 +118,15 @@ def pop_from_members(_cursor, _name):
     '''
     print("    pop from member")
     try:
+        global conn
         _cursor.execute("DELETE FROM members WHERE name=?", (_name,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
         return -1
+    
+
 
 def pop_all_from_members(_cursor):
     '''
@@ -123,12 +134,16 @@ def pop_all_from_members(_cursor):
     
     @param _cursor database cursor
     '''
+    global conn
     _cursor.execute("SELECT * FROM members")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_members(_cursor, row[1])
 
+    conn.commit()
+    
+    
 def show_all_members(_cursor):
     '''
     @brief shows all members
@@ -174,7 +189,9 @@ def push_into_matter_of_expense(_cursor, _name, _originator, _provider, _group, 
     '''
     print("    pushing 'matter_of_expense'")
     try:
+        global conn
         _cursor.execute("INSERT INTO matter_of_expense(name, originator, provider, group_of_expenses, amount, frequency, account) values (?,?,?,?,?,?,?)", (_name, _originator, _provider, _group, _amount, _frequency, _account))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
@@ -186,7 +203,9 @@ def pop_from_matter_of_expense(_cursor, _name, _originator, _provider, _group, _
     '''
     print("    deleting 'matter_of_expense'")
     try:
+        global conn
         _cursor.execute("DELETE FROM matter_of_expense WHERE name=? AND originator=? AND provider=? AND group_of_expenses=? AND amount=? AND frequency=?AND account=?", (_name, _originator, _provider, _group, _amount, _frequency, _account,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
@@ -196,11 +215,13 @@ def pop_all_from_matter_of_expense(_cursor):
     ''' 
     @brief deletes all entries into 'matter of expense' table
     '''
+    global conn
     _cursor.execute("SELECT * FROM matter_of_expense")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_matter_of_expense(_cursor, row[1], row[2], row[3], row[4], row[5], row[6], row[7]) 
+    conn.commit()
 
 def select_from_matter_of_expense_where_name_match(_cursor, _name):
     '''
@@ -255,7 +276,9 @@ def push_into_invoice(_cursor, _matter_of_expense, _originator, _date):
     '''
     print("    pushing 'invoices'")
     try:
+        global conn
         _cursor.execute("INSERT INTO invoices(matter_of_expense, originator, date) values (?,?,?)", (_matter_of_expense, _originator, _date,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred:", e.args[0])
@@ -268,7 +291,9 @@ def pop_from_invoice(_cursor, _matter_of_expense, _originator, _date):
 
     print("    deleting 'invoices'")
     try:
+        global conn
         _cursor.execute("DELETE FROM invoices WHERE matter_of_expense=? AND originator=? AND date=?", (_matter_of_expense, _originator, _date,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
@@ -278,11 +303,14 @@ def pop_all_from_invoices(_cursor):
     ''' 
     @brief deletes all entries into 'matter of expense' table
     '''
+    global conn
     _cursor.execute("SELECT * FROM invoices")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
-        pop_from_invoice(_cursor, row[1], row[2], row[3]) 
+        pop_from_invoice(_cursor, row[1], row[2], row[3])
+    
+    conn.commit() 
 
 def show_all_invoices(_cursor):
     '''
@@ -312,7 +340,9 @@ def push_into_groups_of_expenses(_cursor, _name):
     '''
     print("    pushing 'groups of expenses'")
     try:
+        global conn
         _cursor.execute("INSERT INTO groups_of_expenses(name) values (?)", (_name,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
@@ -324,7 +354,9 @@ def pop_from_groups_of_expenses(_cursor, _name):
     '''
     print("    pushing 'groups of expenses'")
     try:
+        global conn
         _cursor.execute("DELETE FROM groups_of_expenses WHERE name=?", (_name,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
@@ -334,11 +366,14 @@ def pop_all_from_groups_of_expenses(_cursor):
     ''' 
     @brief deletes all entries into 'groups of expense' table
     '''
+    global conn
     _cursor.execute("SELECT * FROM groups_of_expenses")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1])
-        pop_from_groups_of_expenses(_cursor, row[1]) 
+        pop_from_groups_of_expenses(_cursor, row[1])
+        
+    conn.commit() 
 
 def select_from_groups_of_expense_where_name_match(_cursor, _name):
     '''
@@ -359,7 +394,9 @@ def push_into_groups_of_members(_cursor, _name):
     '''
     print("    pushing 'groups of members'")
     try:
+        global conn
         _cursor.execute("INSERT INTO groups_of_members(name) values (?)", (_name,))
+        conn.commit()
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
 
@@ -369,7 +406,9 @@ def pop_from_groups_of_members(_cursor, _name):
     '''
     print("    pushing 'groups of members'")
     try:
+        global conn
         _cursor.execute("DELETE FROM groups_of_members WHERE name=?", (_name,))
+        conn.commit()
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
     
@@ -377,11 +416,13 @@ def pop_all_from_groups_of_members(_cursor):
     '''
     @brief pops from group of members
     '''
+    global conn
     _cursor.execute("SELECT * FROM groups_of_members")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_groups_of_members(_cursor, row[1])
+    conn.commit()
         
 def select_from_groups_of_members_where_name_match(_cursor, _name):
     '''
@@ -411,7 +452,9 @@ def push_into_earnings(_cursor, _name, _account, _amount):
     '''
     print("    pushing 'earnings'")
     try:
+        global conn
         _cursor.execute("INSERT INTO earnings(name, account, amount) values (?, ?, ?)", (_name, _account, _amount))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
@@ -423,7 +466,9 @@ def pop_from_earnings(_cursor, _name):
     '''
     print("    pushing 'earnings'")
     try:
+        global conn
         _cursor.execute("DELETE FROM earnings WHERE name=?", (_name,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
@@ -433,11 +478,13 @@ def pop_all_from_earnings(_cursor):
     '''
     @brief pops from group of members
     '''
+    global conn
     _cursor.execute("SELECT * FROM earnings")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
-        pop_from_earnings(_cursor, row[1]) 
+        pop_from_earnings(_cursor, row[1])
+    conn.commit() 
 
 def select_from_earnings_where_name_match(_cursor, _name):
     '''
@@ -467,7 +514,9 @@ def push_into_accounts(_cursor, _name):
     '''
     print("    pushing 'accounts'")
     try:
+        global conn
         _cursor.execute("INSERT INTO accounts(name) values (?)", (_name,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
@@ -479,7 +528,9 @@ def pop_from_accounts(_cursor, _name):
     '''
     print("    pushing 'accounts'")
     try:
+        global conn
         _cursor.execute("DELETE FROM accounts WHERE name=?", (_name,))
+        conn.commit()
         return 0
     except sqlite3.Error as e:
         print("An error occurred: ", e.args[0])
@@ -489,11 +540,13 @@ def pop_all_from_accounts(_cursor):
     '''
     @brief pops from group of members
     '''
+    global conn
     _cursor.execute("SELECT * FROM earnings")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
         print("deleting ", row[1], row[2])
-        pop_from_earnings(_cursor, row[1]) 
+        pop_from_earnings(_cursor, row[1])
+    conn.commit() 
 
 def select_from_accounts_where_name_match(_cursor, _name):
     '''
