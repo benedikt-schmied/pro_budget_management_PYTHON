@@ -439,6 +439,7 @@ def pop_all_from_groups_of_members(_cursor):
     for row in list_of_members:
         print("deleting ", row[1], row[2])
         pop_from_groups_of_members(_cursor, row[1])
+        
     conn.commit()
     
 def get_entries_groups_of_members(_cursor):
