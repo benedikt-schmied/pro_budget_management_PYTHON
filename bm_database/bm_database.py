@@ -157,14 +157,10 @@ def get_entries_members(_cursor):
     '''
     @brief returns all entries from members
     '''
-    entries=[]
-    
-    print(">>>>>>>>>>>><<get all entries")
-    
+    entries=[]    
     _cursor.execute("select * from members")
     list_of_members = _cursor.fetchall()
     for row in list_of_members:
-        print("get entries and print ", row[1])
         entries.append(row[1])
         
     return entries
@@ -249,9 +245,7 @@ def get_entries_matter_of_expense(_cursor):
     '''
     @brief returns all entries from members
     @return string
-    '''
-    print(">>>>>>>>>>>><<get all entries")
-    
+    '''    
     entries = []
     
     for row in _cursor.execute("select * from matter_of_expense"):
@@ -259,8 +253,6 @@ def get_entries_matter_of_expense(_cursor):
         
     return entries
         
-
-
 def show_all_groups_of_expenses(_cursor):
     '''
     @brief shows all group of expenses
@@ -321,6 +313,19 @@ def show_all_invoices(_cursor):
     for row in _cursor.execute("select * from invoices"):
         print(row)
         
+def get_entries_invoices(_cursor):
+    '''
+    @brief returns all entries from invoices
+    @return string
+    '''    
+    
+    # we need a variable in order to return the etnries
+    entries = []
+    
+    for row in _cursor.execute("select * from invoices"):
+        entries.append(row)
+    return entries
+        
 def select_from_invoices_where_matter_of_expense_match(_cursor, _matter_of_expense):
     '''
     @brief selects a specific entry where the name matches
@@ -374,6 +379,18 @@ def pop_all_from_groups_of_expenses(_cursor):
         pop_from_groups_of_expenses(_cursor, row[1])
         
     conn.commit() 
+    
+def get_entries_groups_of_expenses(_cursor):
+    '''
+    @brief returns all entries from accounts
+    '''
+    entries=[]    
+    _cursor.execute("select * from groups_of_expenses")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        entries.append(row[1])
+        
+    return entries
 
 def select_from_groups_of_expense_where_name_match(_cursor, _name):
     '''
@@ -423,6 +440,18 @@ def pop_all_from_groups_of_members(_cursor):
         print("deleting ", row[1], row[2])
         pop_from_groups_of_members(_cursor, row[1])
     conn.commit()
+    
+def get_entries_groups_of_members(_cursor):
+    '''
+    @brief returns all entries from groups of members
+    '''
+    entries=[]    
+    _cursor.execute("select * from groups_of_members")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        entries.append(row[1])
+        
+    return entries
         
 def select_from_groups_of_members_where_name_match(_cursor, _name):
     '''
@@ -486,6 +515,18 @@ def pop_all_from_earnings(_cursor):
         pop_from_earnings(_cursor, row[1])
     conn.commit() 
 
+def get_entries_earnings(_cursor):
+    '''
+    @brief returns all entries from earnings
+    '''
+    entries=[]    
+    _cursor.execute("select * from earnings")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        entries.append(row[1])
+        
+    return entries
+
 def select_from_earnings_where_name_match(_cursor, _name):
     '''
     @brief selects a specific entry where the name matches
@@ -547,6 +588,18 @@ def pop_all_from_accounts(_cursor):
         print("deleting ", row[1], row[2])
         pop_from_earnings(_cursor, row[1])
     conn.commit() 
+
+def get_entries_accounts(_cursor):
+    '''
+    @brief returns all entries from accounts
+    '''
+    entries=[]    
+    _cursor.execute("select * from accounts")
+    list_of_members = _cursor.fetchall()
+    for row in list_of_members:
+        entries.append(row[1])
+        
+    return entries
 
 def select_from_accounts_where_name_match(_cursor, _name):
     '''

@@ -61,36 +61,181 @@ class c_menu_help():
     def run(self):
         return
 
-class c_menu_print():
+class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
     ''' print menu
     '''
     
     def __init__(self):
         
-                # we need a variable which holds the main menu    
-        self.menu_top = []
-        self.menu_top.append(c_menu_items('at', 'all tables', 'print all tables', self.all_tables))
-        self.menu_top.append(c_menu_items('me', 'members', 'print the member table', self.members))
-        self.menu_top.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
-        self.menu_top.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
-        self.menu_top.append(c_menu_items('gm', 'groups of members', 'invoices', self.members))
-        self.menu_top.append(c_menu_items('ge', 'groups of expenses', self.expenses))
-        self.menu_top.append(c_menu_items('ea', 'earnings', 'earnings', self.earnings))
-        self.menu_top.append(c_menu_items('ac', 'accounts', 'accounts', self.accounts))
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'menu_print')
         
+        # we need a variable which holds the main menu    
+        self.menu_print = []
+        self.menu_print.append(c_menu_items('at', 'all tables', 'print all tables', self.all_tables))
+        self.menu_print.append(c_menu_items('me', 'members', 'print the member table', self.members))
+        self.menu_print.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_print.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
+        self.menu_print.append(c_menu_items('gm', 'groups of members', 'groups of members', self.groups_of_members))
+        self.menu_print.append(c_menu_items('ge', 'groups of expenses', self.groups_of_expenses))
+        self.menu_print.append(c_menu_items('ea', 'earnings', 'earnings', self.earnings))
+        self.menu_print.append(c_menu_items('ac', 'accounts', 'accounts', self.accounts))
         return
     
     def all_tables(self):
-        return
-    
-    def matter_of_expense(self):
+        self.logger.warn('all tables')
+        self.members()
+        self.matter_of_expense()
+        self.invoices()
+        self.groups_of_expenses()
+        self.earnings()
+        self.accounts
         return
     
     def members(self):
+        ''' print the members entries
+        '''
+        
+        # push a message to the logger
+        self.logger.warn('members')
+        
+        # now, connect to the database
+        d = bm_database.connect()
+        
+        # fetch the entries
+        entries = bm_database.get_entries_members(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+
+        # disconnect again
+        bm_database.disconnect(d)
+        return 
+        return
+    
+    def matter_of_expense(self):
+        ''' print the matter of expense entries
+        
+        '''
+        
+        # push a message to the logger
+        self.logger.warn('matter of expense')
+        
+        d = bm_database.connect()
+        entries = bm_database.get_entries_matter_of_expense(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+
+        bm_database.disconnect(d)
         return
     
     def invoices(self):
+        ''' print the invoices entries
+        '''
+        
+        # push a message into the logger
+        self.logger.warn('matter of expense')
+        
+        # now, connect to the database
+        d = bm_database.connect()
+        
+        # fetch the entries
+        entries = bm_database.get_entries_invoices(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+
+        # disconnect again
+        bm_database.disconnect(d)
         return 
+    
+    def groups_of_members(self):
+        ''' print the group of members entries
+        '''
+        
+        # push a message into the logger
+        self.logger.warn('groups of members')
+                
+        # now, connect to the database
+        d = bm_database.connect()
+        
+        # fetch the entries
+        entries = bm_database.get_entries_groups_of_members(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+
+        # disconnect again
+        bm_database.disconnect(d)
+        return    
+    
+    
+    def groups_of_expenses(self):
+        ''' print the group of expenses entries
+        '''
+        
+        # push a message into the logger
+        self.logger.warn('groups of expenses')
+                
+        # now, connect to the database
+        d = bm_database.connect()
+        
+        # fetch the entries
+        entries = bm_database.get_entries_groups_of_expenses(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+
+        # disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def earnings(self):
+        ''' print the earnings entries
+        '''
+        
+        # push a message into the logger
+        self.logger.warn('earnings')
+        
+        # now, connect to the database
+        d = bm_database.connect()
+        
+        # fetch the entries
+        entries = bm_database.get_entries_earnings(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+
+        # disconnect again
+        bm_database.disconnect(d)
+        return
+    
+    def accounts(self):
+        ''' print the accounts entries
+        '''
+        
+        # push a message into the logger
+        self.logger.warn('accounts')
+                
+        # now, connect to the database
+        d = bm_database.connect()
+        
+        # fetch the entries
+        entries = bm_database.get_entries_accounts(d)
+        
+        # run over all entries
+        for cnti in entries:
+            print("\t\t <-> \t {}\t{}".format(cnti[0], cnti[1]))
+
+        # disconnect again
+        bm_database.disconnect(d)
+        return
     
     def run(self):
         
@@ -100,19 +245,23 @@ class c_menu_print():
         insert a new entry into a table
         or modify an entry within a table
         '''    
-        
+        self.logger.warn('running')
         while True:
+            
+            # first print the menu
+            for cnt in range(0, len(self.menu_print)):
+                print("{}\t{}".format(self.menu_print[cnt].get_cmd(), self.menu_print[cnt].get_help_text()))
             
             c = input("-->")
             
             print(c)
-            
+
             # no, we have to loop over the top menu items in 
             # order to find what we've got to docmd
-            for cnt in range(0, len(self.menu_top)):
-                if c == self.menu_top[cnt].cmd:
-                    print(self.menu_top[cnt].get_help_text())
-                    self.menu_top[cnt].fun(cnt)
+            for cnt in range(0, len(self.menu_print)):
+                if c == self.menu_print[cnt].cmd:
+                    print(self.menu_print[cnt].get_help_text())
+                    self.menu_print[cnt].fun()
            
             if c =='q':
                 break
@@ -155,19 +304,9 @@ class c_menu_top():
         '''
         @param _midx    menu index
         '''
+        menu_print = c_menu_print()
+        menu_print.run()
         
-        d = bm_database.connect()
-
-        entries = bm_database.get_entries_matter_of_expense(d)
-        
-        # run over all entries
-        for cnti in entries:
-            print(cnti)
-            
-        bm_database.show_all_matter_of_expense(d)
-        bm_database.disconnect(d) 
-
-    
     def menu_modify(self, _midx):
         '''
         @param _midx:
@@ -206,6 +345,9 @@ class c_menu_top():
         '''    
         
         while True:
+            
+            for cnt in range(0, len(self.menu_top)):
+                print("{}\t{}".format(self.menu_top[cnt].get_cmd(), self.menu_top[cnt].get_help_text()))
             
             c = input("-->")
             
