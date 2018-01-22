@@ -18,6 +18,7 @@ import os
 import argparse
 import bm_database
 import mod_logging_mkI_PYTHON
+from cmdmenu import *
 
 class c_menu_items():
     
