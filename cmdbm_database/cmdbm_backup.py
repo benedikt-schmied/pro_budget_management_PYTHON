@@ -17,8 +17,11 @@ import argparse
 import bm_database
 import mod_logging_mkI_PYTHON
 from cmdmenu import *
+import zipfile
+import time
+import collections
 
-class c_import_export(mod_logging_mkI_PYTHON.c_logging):
+class c_backup(mod_logging_mkI_PYTHON.c_logging):
 
     def __init__(self):
         
@@ -28,6 +31,8 @@ class c_import_export(mod_logging_mkI_PYTHON.c_logging):
         self.menu_top = []
         self.menu_top.append(c_menu_items('i', 'import', 'import a file', self.menu_import))
         self.menu_top.append(c_menu_items('e', 'export', 'export a file', self.menu_export))
+        self.menu_top.append(c_menu_items('t', 'test', 'test routine', self.menu_named))
+        self.menu_top.append(c_menu_items('c', 'config', 'configuration files', self.menu_config))
         self.menu_top.append(c_menu_items('h', 'help', 'help menu', self.menu_help))
     
     def get_idx_by_cmd(self, _cmd):
@@ -43,13 +48,47 @@ class c_import_export(mod_logging_mkI_PYTHON.c_logging):
         '''
         @param _midx    menu index
         '''
+
+    def menu_named(self, _midx):
+        '''
+        @param _midx     menu index
+        '''
+        matter_of_expense = collections.namedtuple('matter_of_expense', ['name', 'amount', 'account'])
+        autokosten = matter_of_expense(name = 'Autokosten', amount = 6000.0, account = '1')
+        versicherung = matter_of_expense(name = 'Versicherung', amount = 200.0, account = '2')
+        print(autokosten)
+        print(versicherung)
+        print(autokosten.amount + versicherung.amount)
+        
+        import csv
+        
+        for entry in map(matter_of_expense._make, csv.reader(open("bm_matter_of_expense.csv", "rt", encoding='ascii'))):
+            print(entry.name, entry.amount)
+        return
+    
+    def menu_config(self, _midx):
+        
+        import configparser
+        config = configparser.ConfigParser()
+        
+        print(config.sections())
+        config.read('example.ini')
+        print(config.sections())
+        print(type(config))
+        test = config['TEST']
+        print(type(test))
+        print(test['PORT'])
+        
         return
 
     def menu_export(self, _midx):
         '''
         @param _midx:
         '''   
-        return 
+        with zipfile.ZipFile('backup_{}.zip'.format(time.strftime('%Y%m%d%H%M%S')), 'w') as myzip:
+            myzip.write('bm_database.db')
+        return
+    
         
     def menu_help(self, _midx):
         '''
@@ -98,5 +137,5 @@ if __name__ == "__main__":
     parser.add_argument('user', default='admin', help='who is in charge of making changes or printing lists')
                         
     args = parser.parse_args()
-    menu = c_import_export()
+    menu = c_backup()
     menu.run()
