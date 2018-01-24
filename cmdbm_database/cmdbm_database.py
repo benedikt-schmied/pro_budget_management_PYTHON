@@ -83,7 +83,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         return
     
     def all_tables(self):
-        self.logger.info('all tables')
+        self.logger.warn('all tables')
         self.members()
         self.matter_of_expense()
         self.invoices()
@@ -99,7 +99,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message to the logger
-        self.logger.info('members')
+        self.logger.warn('members')
         
         # now, connect to the database
         d = bm_database.connect()
@@ -124,7 +124,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message to the logger
-        self.logger.info('matter of expense')
+        self.logger.warn('matter of expense')
         
         d = bm_database.connect()
         entries = bm_database.get_entries_matter_of_expense(d)
@@ -145,7 +145,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.info('invoices')
+        self.logger.warn('invoices')
         
         # show an introduction line
         print("\t\t ~~~ invoices")
@@ -169,7 +169,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.info('groups of members')
+        self.logger.warn('groups of members')
         
         # show an introduction line
         print("\t\t ~~~ groups of members")
@@ -194,7 +194,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.info('groups of expenses')
+        self.logger.warn('groups of expenses')
         
         # show an introduction line
         print("\t\t ~~~ groups of expenses")
@@ -218,7 +218,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.info('earnings')
+        self.logger.warn('earnings')
         
         # show an introduction line
         print("\t\t ~~~ earnings")
@@ -242,7 +242,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.info('accounts')
+        self.logger.warn('accounts')
         
         # show an introduction line
         print("\t\t ~~~ accounts")        
@@ -266,7 +266,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message into the logger
-        self.logger.info('classes')
+        self.logger.warn('classes')
         
         # show an introduction line
         print("\t\t ~~~ classes")        
@@ -293,7 +293,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         insert a new entry into a table
         or modify an entry within a table
         '''    
-        self.logger.info('running')
+        self.logger.warn('running')
         while True:
             
             # first print the menu
@@ -341,7 +341,7 @@ class c_menu_insert():
         '''
         
         # push a message to the logger
-        self.logger.info('members')
+        self.logger.warn('members')
         
         # show all members so far
         menu_print = c_menu_print()
@@ -370,7 +370,7 @@ class c_menu_insert():
         '''
         
         # push a message to the logger
-        self.logger.info('matter of expense')
+        self.logger.warn('matter of expense')
 
         # print all existing entries
         menu_print = c_menu_print()
@@ -416,7 +416,7 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.info('matter of invoices')
+        self.logger.warn('matter of invoices')
     
         # ask the user for specific inputs    
         matter_of_expense = input("\t\t <--> matter of expense: ")
@@ -438,7 +438,7 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.info('groups of members')
+        self.logger.warn('groups of members')
 
         # print the members table in order to help the user
         menu_print = c_menu_print()
@@ -463,7 +463,7 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.info('groups of expenses')
+        self.logger.warn('groups of expenses')
 
                 # print the members table in order to help the user
         menu_print = c_menu_print()
@@ -487,7 +487,7 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.info('earnings')
+        self.logger.warn('earnings')
 
         # print the members table in order to help the user
         menu_print = c_menu_print()
@@ -517,7 +517,7 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.info('accounts')
+        self.logger.warn('accounts')
 
         # print the members table in order to help the user
         menu_print = c_menu_print()
@@ -541,7 +541,7 @@ class c_menu_insert():
         '''
         
         # push a message into the logger
-        self.logger.info('classes')
+        self.logger.warn('classes')
 
         # ask the user for specific inputs
         name = input("\t\t <--> name: ")
@@ -564,7 +564,7 @@ class c_menu_insert():
         insert a new entry into a table
         or modify an entry within a table
         '''    
-        self.logger.info('running')
+        self.logger.warn('running')
         while True:
             
             # first print the menu
@@ -610,7 +610,7 @@ class c_menu_delete():
         '''
         
         # push a message to the logger
-        self.logger.info('members')
+        self.logger.warn('members')
     
         # show the existing members
         menu_print = c_menu_print()
@@ -636,7 +636,7 @@ class c_menu_delete():
         '''
         
         # push a message to the logger
-        self.logger.info('matter of expense')
+        self.logger.warn('matter of expense')
         
         # print the current items
         menu_print = c_menu_print()
@@ -660,7 +660,7 @@ class c_menu_delete():
         '''
         
         # push a message into the logger
-        self.logger.info('matter of invoices')
+        self.logger.warn('matter of invoices')
 
         # print the current items
         menu_print = c_menu_print()
@@ -684,7 +684,7 @@ class c_menu_delete():
         '''
         
         # push a message into the logger
-        self.logger.info('groups of members')
+        self.logger.warn('groups of members')
 
         # print the current items
         menu_print = c_menu_print()
@@ -709,7 +709,7 @@ class c_menu_delete():
         '''
         
         # push a message into the logger
-        self.logger.info('groups of expenses')
+        self.logger.warn('groups of expenses')
 
         # print the current items
         menu_print = c_menu_print()
@@ -733,7 +733,7 @@ class c_menu_delete():
         '''
         
         # push a message into the logger
-        self.logger.info('earnings')
+        self.logger.warn('earnings')
 
         # print the current items
         menu_print = c_menu_print()
@@ -757,7 +757,7 @@ class c_menu_delete():
         '''
         
         # push a message into the logger
-        self.logger.info('accounts')
+        self.logger.warn('accounts')
 
         # print the current items
         menu_print = c_menu_print()
@@ -781,7 +781,7 @@ class c_menu_delete():
         '''
         
         # push a message into the logger
-        self.logger.info('classes')
+        self.logger.warn('classes')
 
         # print the current items
         menu_print = c_menu_print()
@@ -808,7 +808,7 @@ class c_menu_delete():
         insert a new entry into a table
         or modify an entry within a table
         '''    
-        self.logger.info('running')
+        self.logger.warn('running')
         while True:
             
             # first print the menu
@@ -835,7 +835,7 @@ class c_menu_calc():
     
     def __init__(self):
         
-        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd')
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd.warn')
         
         # we need a variable which holds the main menu    
         self.menu_calc = []
@@ -847,7 +847,7 @@ class c_menu_calc():
         '''
         
         # push a message to the logger
-        self.logger.info('members')
+        self.logger.warn('members')
         
         # connect to the database
         d = bm_database.connect()
@@ -886,7 +886,7 @@ class c_menu_calc():
         insert a new entry into a table
         or modify an entry within a table
         '''    
-        self.logger.info('running')
+        self.logger.warn('running')
         while True:
             
             # first print the menu
