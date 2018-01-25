@@ -14,6 +14,25 @@ logging module for various purposes
 import logging
 import time
 
+class c_sublogging():
+    
+    def __init__(self, _logname):
+        
+        # create a logger
+        self.logger = logging.getLogger(_logname)
+        
+        # create a handle for standard error stream and file output
+        
+        # add both handles to the logger
+        self.logger.addHandler(logging.NullHandler())
+         
+    def testrun(self):
+        self.logger.info("info message")
+        self.logger.warn("warning message")
+        self.logger.debug("debug message")
+        self.logger.error("error message")
+        self.logger.critical("critical message")
+
 class c_logging():
     
     def __init__(self, _logname):
