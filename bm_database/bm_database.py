@@ -8,46 +8,68 @@ import sqlite3
 from collections import namedtuple
 
 
-# (id integer primary key, name text unique, group_of_members integer)
+''' database definitions
+first, there comes a nametuple in order to ease data retrivals
+second, there is a dictionary which holds the data types for each column
+'''
+
+# table of members
 t_bm_table_members = namedtuple('t_bm_table_members', ['id', 'name', 'group_of_members'])
 
-# "id integer primary key, name text, originator_class integer, originator integer, 
-# provider_class integer, provider name, group_of_expenses integer, amount float, frequency integer, account integer)
+s_bm_table_members = {'id': 'integer primary key', 'name': 'text unique', 'group_of_members': 'integer'}
+
+# matter of expenses 
 t_bm_table_matter_of_expenses = namedtuple('t_bm_table_matter_of_expenses', [ \
     'id', 'name', 'originator', 'originator_class', 'provider', 'provider_class', \
     'groups_of_expenses', 'amount', 'frequency', 'account'\
     ])
 
-# (id integer primary key, matter_of_expense integer, originator_class integer, originator integer, date text)
-t_bm_table_invoice = nameduple('t_bm_table_invoice', [ \
+s_bm_table_matter_of_expenses = {'id': 'integer primary key', 'name': 'text', 'originator_class': 'integer', 'originator': 'integer', \
+    'provider_class': 'integer', 'provider': 'integer', 'group_of_expenses': 'integer', 'amount': 'float', \
+    'frequency': 'integer', 'account': 'integer'}
+
+# invoices
+t_bm_table_invoice = namedtuple('t_bm_table_invoice', [ \
     'id', 'matter_of_expense', 'originator_class', 'originator', 'date' \
    ]) 
 
-# (id integer primary key, name text unique)
+s_bm_table_invoice = {'id': 'primary key', 'matter_of_expense': 'integer', 'originator_class': 'integer', \
+    'originator': 'integer', 'data': 'text'}
+
+# groups of expenses
 t_bm_table_groups_expenses = namedtuple('t_bm_table_groups_expenses', [\
     'id', 'name' \
     ]) 
 
-# (id integer primary key, name text unique)
+s_bm_table_groups_of_expenses = {'id': 'integer primary key', 'name': 'text unique'}
+
+# groups of members
 t_bm_table_groups_of_members = namedtuple('t_bm_table_groups_of_members', [\
     'id', 'name' \
     ])
 
+s_bm_table_groups_of_members = {'id': 'integer primary key', 'name': 'text unique'}
 
-# (id integer primary key, name text unique, account integer, amount integer)
+# earnings
 t_bm_table_earnings = namedtuple('t_bm_table_earnings', [ \
     'id', 'name', 'account', 'amount' \
     ])
 
-# (id integer primary key, name text unique)")
+s_bm_table_earnings = {'id': 'integer primary key', 'name': 'text unique', 'account': 'integer', 'amount': 'integer'}
+
+# accounts
 t_bm_table_accounts = namedtuple('t_bm_table_accounts', [\
     'id', 'name' \
     ])
-                                 
-# (id integer primary key, name text unigue)")
+
+s_bm_table_earnings = {'id': 'integer primary key', 'name': 'text unique'}
+
+# table of classes
 t_bm_table_class = namedtuple('t_bm_table_class', [\
     'id', 'name'\
     ])
+
+s_bm_table_class = {'id': 'integer primary key', 'name': 'text unigue'}
 
 
 def retrieve_definition_member(_idx):
