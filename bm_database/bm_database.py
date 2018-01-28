@@ -72,30 +72,24 @@ t_bm_table_class = namedtuple('t_bm_table_class', [\
 s_bm_table_class = {'id': 'integer primary key', 'name': 'text unigue'}
 
 
-def retrieve_definition_member(_idx):
-    ''' returns the defining string for this table
-    @param _idx: index
-    '''
-    if _idx == 0:
-        return 'integer primary key'
-    elif _idx == 1:
-        return 'text unique'
-    elif _idx == 2:
-        return 'integer'
-    else:
-        return 'error' # returning this string will cause the SQL statement to fail
+class c_tables():
     
-def retrieve_definition_matter_of_expense(_idx):
-    ''' returns the defining string for this table
-    '''
-    if _idx == 0:
-        return 'integer primary key'
-    if _idx == 1:
-        return 'text'
-    if (_idx == 2) or (_idx == 3) or (_idx == 4) or (_idx == 5) or (_idx == 6) or (_idx == 8) or (_idx == 9):
-        return 'integer'
-    if (_idx == 7):
-        return 'float'
+    def __init__(self, _name, _fun, _fields):
+        self.name = _name
+        self.fun = _fun
+        self.fields = _fields
+
+    def get_name(self):
+        return self.name
+    
+    def get_fun(self):
+        return self.fun
+
+    def get_fields(self):
+        return self.fields
+    
+class c
+
 
 conn = 0
 
@@ -120,21 +114,7 @@ def disconnect(_cursor):
     '''
     _cursor.close()
 
-class c_tables():
-    
-    def __init__(self, _name, _fun, _fields):
-        self.name = _name
-        self.fun = _fun
-        self.fields = _fields
 
-    def get_name(self):
-        return self.name
-    
-    def get_fun(self):
-        return self.fun
-
-    def get_fields(self):
-        return self.fields
 
 def setup_db(_cursor):
     '''    setup the database
