@@ -42,22 +42,24 @@ class c_logging():
         
         # create a handle for standard error stream and file output
         self.stderrhdl  = logging.StreamHandler()
-        self.filehdl    = logging.FileHandler("{}_{}.log".format(_logname, time.strftime('%Y%m%d%H%M%S')))
+        #self.filehdl    = logging.FileHandler("{}_{}.log".format(_logname, time.strftime('%Y%m%d%H%M%S')))
         
         # set the debugging levels for both handlers
         self.stderrhdl.setLevel(logging.DEBUG)
-        self.filehdl.setLevel(logging.DEBUG)
+        #self.filehdl.setLevel(logging.DEBUG)
         
         # create a formatter
-        self.formatter = logging.Formatter('%(asctime)s %(name)-2s %(levelname)-8s %(message)s')
+        self.formatter = logging.Formatter('%(asctime)s %(name)-25s %(levelname)-10s %(message)s')
         
         # assign the formatter to both handles
         self.stderrhdl.setFormatter(self.formatter)
-        self.filehdl.setFormatter(self.formatter)
+        #self.filehdl.setFormatter(self.formatter)
         
         # add both handles to the logger
-        #self.logger.addHandler(self.stderrhdl)
+        self.logger.addHandler(self.stderrhdl)
         #self.logger.addHandler(self.filehdl)
+        
+        self.logger.setLevel(logging.DEBUG)
         
     def testrun(self):
         self.logger.info("info message")

@@ -3,13 +3,15 @@
 import sys
 
 sys.path.append('./../mod_logging_mkI_PYTHON')
-
+sys.path.append('./../_pro')
+from bm_globals import *
+import mod_logging_mkI_PYTHON
 import sqlite3
 from collections import namedtuple
 
 
 ''' database definitions
-first, there comes a nametuple in order to ease data retrivals
+first, there comes a namedtuple in order to ease data retrivals
 second, there is a dictionary which holds the data types for each column
 '''
 
@@ -71,8 +73,9 @@ t_bm_table_class = namedtuple('t_bm_table_class', [\
 
 s_bm_table_class = {'id': 'integer primary key', 'name': 'text unigue'}
 
+class c_bm_database():
 
-class c_tables():
+class c_bm_tables():
     
     def __init__(self, _name, _fun, _fields):
         self.name = _name
@@ -87,9 +90,20 @@ class c_tables():
 
     def get_fields(self):
         return self.fields
-    
-class c
 
+
+
+class c_bm_table_members(mod_logging_mkI_PYTHON.c_sublogging, c_bm_tables):
+    ''' budget management database's member table
+    '''
+    
+    
+    def __init__(self, ):
+        ''' constructor
+        '''
+        mod_logging_mkI_PYTHON.c_sublogging(self, )
+        
+        
 
 conn = 0
 
@@ -894,7 +908,29 @@ def show_all_class(_cursor):
     '''
     for row in _cursor.execute("select * from class"):
         print(row)
+          
+class c_app(mod_logging_mkI_PYTHON.c_logging):
+    ''' application, does not really do anything
+    
+    child class of c_logging
+    '''
+    
+    
+    def __init__(self):
+        ''' constructor
+        '''
+        mod_logging_mkI_PYTHON.c_logging(self, g_program_name + ".bm_database")
+        
+        
+        return
+    
+    def run(self):
+        ''' runs the main 
+        '''
+        self.logger.info("application running")
+        
             
 if __name__ == "__main__":
     # execute only if run as a script
-    main()
+    app = c_app()
+    app.run()
