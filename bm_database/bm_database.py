@@ -9,6 +9,7 @@ import mod_logging_mkI_PYTHON
 import sqlite3
 from collections import namedtuple
 
+g_program_suffix = "bm_database"
 
 ''' database definitions
 first, there comes a namedtuple in order to ease data retrivals
@@ -16,13 +17,23 @@ second, there is a dictionary which holds the data types for each column
 '''
 
 # table of members
-t_bm_table_members = namedtuple('t_bm_table_members', ['id', 'name', 'group_of_members'])
+
+# long definition which contains the ID as well
+t_bm_members_l = namedtuple('t_bm_members_l', ['id', 'name', 'group_of_members'])
+
+# short definition which does not contain the ID
+t_bm_members_s = namedtuple('t_bm_members_s', ['name', 'group_of_members'])
 
 s_bm_table_members = {'id': 'integer primary key', 'name': 'text unique', 'group_of_members': 'integer'}
 
 # matter of expenses 
-t_bm_table_matter_of_expenses = namedtuple('t_bm_table_matter_of_expenses', [ \
+t_bm_matter_of_expenses_l = namedtuple('t_bm_matter_of_expenses_l', [ \
     'id', 'name', 'originator', 'originator_class', 'provider', 'provider_class', \
+    'groups_of_expenses', 'amount', 'frequency', 'account'\
+    ])
+
+t_bm_matter_of_expenses_s = namedtuple('t_bm_matter_of_expenses_s', [ \
+    'name', 'originator', 'originator_class', 'provider', 'provider_class', \
     'groups_of_expenses', 'amount', 'frequency', 'account'\
     ])
 
@@ -74,198 +85,299 @@ t_bm_table_class = namedtuple('t_bm_table_class', [\
 s_bm_table_class = {'id': 'integer primary key', 'name': 'text unigue'}
 
 class c_bm_database():
-
-class c_bm_tables():
+    ''' database class
+    '''
+    def __init__(self):
+        self.conn = None
+        self.cursor = None
+        return
     
-    def __init__(self, _name, _fun, _fields):
-        self.name = _name
-        self.fun = _fun
-        self.fields = _fields
+    def connect(self):
+        '''    connect to the database
+        '''
+        self.conn = sqlite3.connect("test.db")
+        self.cursor = self.conn.cursor()
+        return (self.conn, self.cursor)
+    
+    def disconnect(self):
+        ''' disconnect from the database
+        '''
+        self.cursor.close()
+        return 
+        
+    def manual_db_command(self, _text):
+        self.cursor.execute(_text)
+        self.conn.commit
 
+class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
+    ''' father class for tables
+    
+    class members 
+    fun  function
+    fields fields
+    name name
+    '''
+    
+    def __init__(self, _name, _fun, _conn, _cursor, _ttuple, _tset):
+        ''' constructors which builds up a table
+        
+        @param _name: name
+        @param _fun: function
+        @param _fields: fields 
+        ''' 
+        
+        # call the sublogger's constructor
+        mod_logging_mkI_PYTHON.c_sublogging.__init__(self, g_program_name + ".{}.{}".format(g_program_suffix, _name))
+        
+        # assign the specific name of the table
+        self.name = _name
+        
+        # what does function mean?
+        self.fun = _fun
+        
+        # assign the tuples as well as the set
+        self.ttuples = _ttuple
+        self.tsets = _tset
+
+        # assign the cursor and the database connection
+        self.conn = _conn
+        self.cursor = _cursor
+        
     def get_name(self):
+        ''' returns the name 
+        @param name: 
+        '''
         return self.name
     
     def get_fun(self):
+        ''' returns the function
+        @return: function
+        '''
         return self.fun
 
-    def get_fields(self):
-        return self.fields
+    def get_tuples(self):
+        ''' returns the fields
+        '''
+        return self.ttuples
 
+    def _get_columns(self):
+        ''' private method returning the columns
+        
+        @return: returns the name of the columns
+        '''
+        
+        # returns all fields of the corresponding named tuple
+        return self.get_tuples()._fields
 
+    def _get_type_of_colum(self, _name):
+        ''' private method returning the type of a column
+        '''
+        
+        return self.tsets[_name]
 
-class c_bm_table_members(mod_logging_mkI_PYTHON.c_sublogging, c_bm_tables):
+    def setup(self, _dryrun = 0):
+        ''' setups the table within the database
+        '''
+        
+        stmt = "CREATE TABLE {} (".format(self.name)
+        for item in self._get_columns():
+            
+            stmt = stmt + item + " {},".format(self._get_type_of_colum(item))
+        
+        # leaving the for - loop from above, there is one colon to much, delete it!
+        stmt = stmt[:-1] + ")"
+        
+        # send a small debugging information
+        self.logger.debug("setup statement: '"+ stmt + "'")
+        
+        if _dryrun == 0:
+            try:
+                self.cursor.execute(stmt)
+                self.conn.commit()
+            except sqlite3.Error as e:
+                self.logger.critical("An error occurred: {}".format(e.args[0]))
+                return -1    
+        
+    
+    def destroy(self, _dryrun = '0'):
+        ''' destroy the table
+        
+        @param _dryrun: '1', the method does not take the sql execute 
+            statement's path
+        '''
+        stmt = "DROP TABLE {}".format(self.name)
+        
+        # send a small debugging information
+        self.logger.debug("setup statement: '"+ stmt + "'")
+        
+        if _dryrun == 0:
+            self.cursor.execute(stmt)
+            self.conn.commit()
+
+    def _push(self, _args, _dryrun = 0):
+        ''' generic push method
+        
+        @param _args:
+        @param _dryrun: '1', the method does not take the sql execute 
+            statement's path
+            
+        @return: 
+        '''
+        
+        # initialize the variable
+        stmt = "INSERT INTO {} (".format(self.name)
+        
+        # now, loop over the columns    
+        for item in self._get_columns():
+            if item == "id":
+                continue
+            stmt = stmt + item + ", "
+         
+        stmt = stmt[:-2] + ") values ("
+        
+        # loop over all columns
+        for item in self._get_columns():
+            if item == "id":
+                continue
+            stmt = stmt + "?,"
+        
+        # finalize the statement
+        stmt = stmt[:-1] + ")"
+        
+        # push a message into the logger
+        self.logger.debug(stmt + "{}".format(_args))
+
+        # check, whether this is just a dry run
+        if _dryrun == 0:
+            try:
+                self.cursor.execute(stmt, _args)
+                self.conn.commit()
+            except sqlite3.Error as e:
+                self.logger.critical("An error occurred: {}".format(e.args[0]))
+                return -1
+
+    def _pop(self, _args, _dryrun = 0):
+        ''' pops an entry from the table
+        
+        @param _args: 
+        @param _dryrun: '1', the method does not take the sql execute 
+            statement's path
+        '''
+        
+                # initialize the variable
+        stmt = "DELETE FROM {} WHERE ".format(self.name)
+        
+        # now, loop over the columns    
+        for item in self._get_columns():
+            if item == "id":
+                continue
+            stmt = stmt + item + " = ? and "
+
+        # finalize the statement         
+        stmt = stmt[:-4]
+        
+        # push a message into the logger
+        self.logger.debug(stmt + "{}".format(_args))
+
+        # check, whether this is just a dry run
+        if _dryrun == 0:
+            try:
+                self.cursor.execute(stmt, _args)
+                self.conn.commit()
+                return 0
+            except sqlite3.Error as e:
+                self.logger.critical("An error occurred: {}".format(e.args[0]))
+                return -1
+
+        
+    def _pop_all(self):
+        ''' pops all entries from the table
+
+        @param _cursor database cursor
+        '''
+        stmt = "SELECT * FROM {}".format(self.name)
+        self.logger.debug(stmt)
+        self.cursor.execute(stmt)
+
+        entries = self.cursor.fetchall()
+        for row in entries:
+            self.logger.debug("deleting {}".format(row))
+            self._pop((row[1], row[2]))
+        
+    def _select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
+    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
+
+    def get_all(self):
+        '''
+        '''
+        raise NotImplementedError
+
+class c_bm_table_members(c_bm_tables):
     ''' budget management database's member table
     '''
     
-    
-    def __init__(self, ):
+    def __init__(self, _conn, _cursor):
         ''' constructor
         '''
-        mod_logging_mkI_PYTHON.c_sublogging(self, )
         
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "members", None, _conn, _cursor, t_bm_members_l, s_bm_table_members)
+        self.logger.debug("constructor")
+    
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
         
-
-conn = 0
-
-def main():
-    '''    main routine
-    \return void
-    '''
-    c= connect()
-    setup_db(c)
-    disconnect(c)
-
-def connect():
-    '''    connect to the database
-    '''
-    global conn
-    conn = sqlite3.connect("budget_management.db")
-    c = conn.cursor()
-    return c
-
-def disconnect(_cursor):
-    '''    disconnect from the database
-    '''
-    _cursor.close()
-
-
-
-def setup_db(_cursor):
-    '''    setup the database
-    
-    @param _cursor    database cursor
-    '''
-    print("setting up the database as well as the tables")
-   
-    
-   
-   
-    for i in range(0,8):
+        @param _args    either you give me a set, or a tuple
         
-        cmdstr = "CREATE TABLE "
+        @return: 
+        '''
         
-        try:
-            if i == 0:
-                
-                # start the specific entry within the command string
-                cmdstr = cmdstr + "members ("
-                
-                # loop over all fields
-                for cnt in range(0, len(t_bm_table_members._fields)):
-                    cmdstr = cmdstr + "{} {}".format(t_bm_table_members._fields[cnt], retrieve_definition_member(cnt))
-                    
-                    if cnt < (len(t_bm_table_members._fields) - 1):
-                        cmdstr = cmdstr + ", "
-                
-                cmdstr = cmdstr + ")"
-                _cursor.execute(cmdstr)
-            elif i == 1:
-                
-                # start the specific entry within the command string
-                cmdstr = cmdstr + "matter_of_expense ("
-                
-                # loop over all fields
-                for cnt in range(0, len(t_bm_table_matter_of_expenses._fields)):
-                    cmdstr = cmdstr + "{} {}".format(t_bm_table_matter_of_expenses._fields[cnt], retrieve_definition_matter_of_expense(cnt))
-                
-                    if cnt < (len(t_bm_table_members._fields) - 1):
-                        cmdstr = cmdstr + ", "
-                
-                cmdstr = cmdstr + ")"
-                _cursor.execute(cmdstr)
-            elif i == 2:
-                _cursor.execute("CREATE TABLE invoices (id integer primary key, matter_of_expense integer, originator_class integer, originator integer, date text)")
-            elif i == 3:
-                _cursor.execute("CREATE TABLE groups_of_expenses (id integer primary key, name text unique)")
-            elif i == 4:
-                _cursor.execute("CREATE TABLE groups_of_members (id integer primary key, name text unique)")
-            elif i == 5:
-                _cursor.execute("CREATE TABLE earnings (id integer primary key, name text unique, account integer, amount integer)")    
-            elif i == 6:
-                _cursor.execute("CREATE TABLE accounts (id integer primary key, name text unique)")
-            elif i == 7:
-                _cursor.execute("CREATE TABLE class (id integer primary key, name text unigue)")
-                        
-        except sqlite3.Error as e:
-            print("An error occurred:", e.args[0])
-    
-    global conn 
-    conn.commit()
-    
-    return _cursor
+        # call generic push method 
+        self._push(_args)
 
-def destroy_db(_cursor):
-    '''   destroy the database again
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
     
-    @param _cursor    database cursor
-    '''
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        
+        # call generic pop method
+        self._pop(_args)
+        
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
+        
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
     
-    print("destroying the database which includes the tables")
-    
-    for i in [7,6,5,4,3,2,1,0]:
-        try:
-            if i == 0:
-                _cursor.execute("DROP TABLE members")
-            elif i == 1:
-                _cursor.execute("DROP TABLE matter_of_expense")
-            elif i == 2:
-                _cursor.execute("DROP TABLE invoices")
-            elif i == 3:
-                _cursor.execute("DROP TABLE groups_of_expenses")
-            elif i == 4:
-                _cursor.execute("DROP TABLE groups_of_members")
-            elif i == 5:
-                _cursor.execute("DROP TABLE earnings")    
-            elif i == 6:
-                _cursor.execute("DROP TABLE accounts")
-            elif i == 7:
-                _cursor.execute("DROP Table classes")
-        except sqlite3.Error as e:
-            print("An error occurred:", e.args[0])
-    global conn
-    conn.commit()
-    return _cursor
-    
-def manual_db_command(_cursor, _text):
-    _cursor.execute(_text)
-    global conn
-    conn.commit
-    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
 
-def push_into_members(_cursor, _name, _group):
-    '''    pushes a new entry into 'members' table
-    
-    @param _cursor   database cursor
-    @param _name     member's name
-    @param _group    member's group ID
-    '''
-#     print("    pushing member")
-#     try:
-    global conn
-     
-    _cursor.execute("INSERT INTO members(name, group_of_members) values (?,?)", (_name, _group,))
-     
-    conn.commit()
-    return 0
-#     except sqlite3.Error as e:
-#         print("An error occurred:", e.args[0])
-#         return -1                 
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        raise NotImplementedError
 
 def pop_from_members(_cursor, _name):
-    '''    pops a new entry into 'members' table
-    
-    @param _cursor   database cursor
-    @param _name     member's name
-    '''
-    print("    pop from member '{}'".format(_name))
-    try:
-        global conn
-        _cursor.execute("DELETE FROM members WHERE name=?", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred:", e.args[0])
-        return -1
+    pass
     
 def pop_from_members_where_id(_cursor, _id):
     '''    pops a new entry into 'members' table
@@ -915,21 +1027,36 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
     child class of c_logging
     '''
     
-    
     def __init__(self):
         ''' constructor
         '''
-        mod_logging_mkI_PYTHON.c_logging(self, g_program_name + ".bm_database")
-        
-        
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, g_program_name + ".{}".format(g_program_suffix))
         return
     
     def run(self):
         ''' runs the main 
         '''
-        self.logger.info("application running")
+        self.logger.debug("application running")
         
-            
+        bm_database = c_bm_database()
+        (conn, cursor) =  bm_database.connect()
+        
+        bm_table_members = c_bm_table_members(conn, cursor)
+        bm_table_members.setup()
+        data = t_bm_members_s(name = "test2", group_of_members = 1)
+        bm_table_members.push(("test3", 2))
+        bm_table_members.push(("test4", 2))
+        bm_table_members.show_all()
+        bm_table_members.pop(("test3", 2))
+        bm_table_members.show_all()
+        bm_table_members.pop(("test3", 2))
+        bm_table_members.pop(("test15", 1))
+        bm_table_members.pop_all()
+        bm_table_members.show_all()
+#         bm_table_members.destroy()
+        
+        bm_database.disconnect()
+    
 if __name__ == "__main__":
     # execute only if run as a script
     app = c_app()

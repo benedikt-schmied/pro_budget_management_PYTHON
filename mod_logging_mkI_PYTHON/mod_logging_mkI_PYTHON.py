@@ -45,7 +45,7 @@ class c_logging():
         #self.filehdl    = logging.FileHandler("{}_{}.log".format(_logname, time.strftime('%Y%m%d%H%M%S')))
         
         # set the debugging levels for both handlers
-        self.stderrhdl.setLevel(logging.DEBUG)
+        self.stderrhdl.setLevel(logging.NOTSET)
         #self.filehdl.setLevel(logging.DEBUG)
         
         # create a formatter
@@ -59,7 +59,7 @@ class c_logging():
         self.logger.addHandler(self.stderrhdl)
         #self.logger.addHandler(self.filehdl)
         
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(5)
         
     def testrun(self):
         self.logger.info("info message")
