@@ -394,7 +394,7 @@ class c_bm_table_members(c_bm_tables):
         @param _name     member's name
         '''
         try:
-            self.cursor.execute("DELETE FROM members WHERE id=?", (_id,))
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
             self.conn.commit()
             return 0
         except sqlite3.Error as e:
@@ -407,7 +407,7 @@ class c_bm_table_members(c_bm_tables):
         @param _cursor database cursor
         '''   
         try:
-            self.cursor.execute("SELECT id FROM members WHERE name=?", (_name,))
+            self.cursor.execute("SELECT id FROM {} WHERE name=?".format(self.name), (_name,))
             return self.cursor.fetchone()[0]
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
@@ -419,37 +419,106 @@ class c_bm_table_members(c_bm_tables):
         @param _cursor database cursor
         '''   
         try:
-            self.cursor.execute("SELECT id FROM members WHERE id=?", (_id,))
+            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
             return self.cursor.fetchone()[0]
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
             return -1
 
-def push_into_matter_of_expense(_cursor, _name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account):
-    '''    pushes a new entry into 'matter of expense' table
+class c_bm_table_matter_of_expense(c_bm_tables):
+    ''' budget management database's member table
     '''
-    print("    pushing 'matter_of_expense'")
-    try:
-        global conn
-        _cursor.execute("INSERT INTO matter_of_expense(name, originator_class, originator, provider_class, provider, group_of_expenses, amount, frequency, account) values (?,?,?,?,?,?,?,?,?)", (_name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred:", e.args[0])
-        return -1  
+    
+    def __init__(self, _conn, _cursor):
+        ''' constructor
+        '''
+        
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "matter_of_expense", None, _conn, _cursor, t_bm_members_l, s_bm_table_members)
+        self.logger.debug("constructor")
+    
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
+        
+        @param _args    either you give me a set, or a tuple
+        
+        @return: 
+        '''
+        
+        # call generic push method 
+        self._push(_args)
 
-def pop_from_matter_of_expense(_cursor, _name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account):
-    '''   pushes a new entry into 'matter of expense' table
-    '''
-    print("    deleting 'matter_of_expense'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM matter_of_expense WHERE name=? AND originator_class=? AND originator=? AND provider_class=? AND provider=? AND group_of_expenses=? AND amount=? AND frequency=?AND account=?", (_name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred:", e.args[0])
-        return -1
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
+    
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        
+        # call generic pop method
+        self._pop(_args)
+        
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
+        
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
+    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
+
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        return self._get_all()
+    
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
+        
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
+
+    def select_where_name_match(self, _name):
+        '''   selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE name=?".format(self.name), (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
+
+    def update_where_id_match(self, _id):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
     
 def pop_from_matter_of_expense_where_id(_cursor, _id):
     '''    pushes a new entry into 'matter of expense' table
