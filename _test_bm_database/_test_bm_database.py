@@ -2,9 +2,16 @@
 # coding=latin-1
 
 import sys
-import sqlite3
-import os
+
+
+sys.path.append('../bm_database')
+sys.path.append('../mod_logging_mkI_PYTHON')
+sys.path.append('../_pro')
+
+import mod_logging_mkI_PYTHON
 import bm_database
+from bm_globals import *
+
 from enum import Enum
 
 class test_result(Enum):
@@ -351,25 +358,35 @@ def _test__push_into_accounts():
     
     return 0
 
-def main():
+class c_app(mod_logging_mkI_PYTHON.c_logging):
+    ''' 
+    
+    child of mod_logging_mkI_PYTHON 
     '''
-    \brief main routine
-    \param void
-    '''
-    d=[]
-    d.append(c_test_case(_test__push_into_members))
-#     d.append(c_test_case(_test__push_into_matter_of_expenses))
-#     d.append(c_test_case(_test__push_into_invoice))
-#     d.append(c_test_case(_test__push_into_groups_of_expenses))
-#     d.append(c_test_case(_test__push_into_earnings))
-#     d.append(c_test_case(_test__push_into_accounts))
-    for cnti in range(0, len(d)):
-        if (d[cnti].fun() != 0):
-            print("test ", cnti, " failed")
-            return
-    print("all tests successful")
+    
+    def __init__(self):
+        ''' constructor which configures the logging library
+        '''
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, g_program_name)
+        
+    def run(self):
+        '''
+        '''
+        d=[]
+        d.append(c_test_case(_test__push_into_members))
+    #     d.append(c_test_case(_test__push_into_matter_of_expenses))
+    #     d.append(c_test_case(_test__push_into_invoice))
+    #     d.append(c_test_case(_test__push_into_groups_of_expenses))
+    #     d.append(c_test_case(_test__push_into_earnings))
+    #     d.append(c_test_case(_test__push_into_accounts))
+        for cnti in range(0, len(d)):
+            if (d[cnti].fun() != 0):
+                print("test ", cnti, " failed")
+                return
+        print("all tests successful")
 
 if __name__ == "__main__":
     # execute only if run as a script
     print("standalone")
-    main()
+    app = c_app()
+    app.run()

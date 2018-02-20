@@ -3,7 +3,9 @@
 	<name>_test_bm_database</name>
 	<comment></comment>
 	<projects>
+		<project>_pro</project>
 		<project>bm_database</project>
+		<project>mod_logging_mkI_PYTHON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

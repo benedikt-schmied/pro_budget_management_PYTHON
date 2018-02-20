@@ -289,7 +289,6 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
                 self.logger.critical("An error occurred: {}".format(e.args[0]))
                 return -1
 
-        
     def _pop_all(self):
         ''' pops all entries from the table
 
@@ -302,7 +301,10 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         entries = self.cursor.fetchall()
         for row in entries:
             self.logger.debug("deleting {}".format(row))
-            self._pop((row[1], row[2]))
+            
+            # we do not expect to have the ID within the statement, hence
+            # delete it
+            self._pop(row[1:])
         
     def _select_matching_id(self):
         ''' selects an entry with a matching ID
@@ -314,10 +316,19 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         '''
         raise NotImplementedError
 
-    def get_all(self):
+    def _get_all(self):
+        ''' returns all entries
         '''
-        '''
-        raise NotImplementedError
+        entries=[]
+        self.cursor.execute("select * from members")
+        
+        list_of_entries = self.cursor.fetchall()
+        for row in list_of_entries:
+            
+            # we do not return the ID
+            entries.append(row[1:])
+        
+        return entries
 
 class c_bm_table_members(c_bm_tables):
     ''' budget management database's member table
@@ -374,84 +385,45 @@ class c_bm_table_members(c_bm_tables):
     def get_all(self):
         '''
         '''
-        raise NotImplementedError
-
-def pop_from_members(_cursor, _name):
-    pass
+        return self._get_all()
     
-def pop_from_members_where_id(_cursor, _id):
-    '''    pops a new entry into 'members' table
-    
-    @param _cursor   database cursor
-    @param _name     member's name
-    '''
-    try:
-        global conn
-        _cursor.execute("DELETE FROM members WHERE id=?", (_id,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred:", e.args[0])
-        return -1
-
-def pop_all_from_members(_cursor):
-    '''   pop all entries from the 'member' table
-    
-    @param _cursor database cursor
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM members")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1])
-        pop_from_members(_cursor, row[1])
-
-    conn.commit()
-    
-    
-def show_all_members(_cursor):
-    '''   shows all members
-    
-    @param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from members"):
-        print(row)
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
         
-def get_entries_members(_cursor):
-    '''   returns all entries from members
-    '''
-    entries=[]    
-    _cursor.execute("select * from members")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        entries.append([row[0], row[1], row[2]])
-        
-    return entries
-        
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM members WHERE id=?", (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
 
-def select_from_members_where_name_match(_cursor, _name):
-    '''   selects a specific entry where the name matches
-    
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM members WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
+    def select_where_name_match(self, _name):
+        '''   selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM members WHERE name=?", (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
 
-def update_in_members_where_id_match(_cursor, _id, _entries):
-    '''    selects a specific entry where the name matches
-    
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM members WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
+    def update_where_id_match(self, _id):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM members WHERE id=?", (_id,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
 
 def push_into_matter_of_expense(_cursor, _name, _originator_class, _originator, _provider_class, _provider, _group, _amount, _frequency, _account):
     '''    pushes a new entry into 'matter of expense' table
@@ -1043,16 +1015,54 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
         
         bm_table_members = c_bm_table_members(conn, cursor)
         bm_table_members.setup()
-        data = t_bm_members_s(name = "test2", group_of_members = 1)
-        bm_table_members.push(("test3", 2))
-        bm_table_members.push(("test4", 2))
+        
+        # create an array in order to push data
+        data = []
+        data.append(t_bm_members_s(name = "test2", group_of_members = 1))
+        data.append(t_bm_members_s(name = "test3", group_of_members = 1))
+        data.append(t_bm_members_s(name = "test4", group_of_members = 1))
+        data.append(t_bm_members_s(name = "test5", group_of_members = 1))
+        
+        # push data into the table
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            bm_table_members.push(item)
+        
+        # push a message into the logger that we will start to show it all
+        self.logger.warn("show it all") 
         bm_table_members.show_all()
-        bm_table_members.pop(("test3", 2))
+
+        # now, pop one after the other and show the entries in between
+        self.logger.warn("pop one after the other")
+        for item in data:
+            bm_table_members.pop(item)
+            bm_table_members.show_all()
+        
+        # push the data again into the table
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            bm_table_members.push(item)
+        
+        # show it all
+        self.logger.warn("show it all")
         bm_table_members.show_all()
-        bm_table_members.pop(("test3", 2))
-        bm_table_members.pop(("test15", 1))
+        
+        # and pop it once
+        self.logger.warn("pop all")
         bm_table_members.pop_all()
+        
+        # show it all
+        self.logger.warn("show it all")
         bm_table_members.show_all()
+
+        # use the getall functions in order to retrieve it
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            bm_table_members.push(item)
+
+        entries = bm_table_members.get_all()
+        for item in entries:
+            self.logger.debug(item)
 #         bm_table_members.destroy()
         
         bm_database.disconnect()
