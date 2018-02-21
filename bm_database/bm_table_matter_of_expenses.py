@@ -10,7 +10,6 @@ import sqlite3
 from collections import namedtuple
 from bm_tables import *
 
-g_program_suffix = "accounts"
 
 ''' database definitions
 first, there comes a namedtuple in order to ease data retrivals
@@ -29,7 +28,7 @@ t_bm_matter_of_expenses_s = namedtuple('t_bm_matter_of_expenses_s', [ \
     ])
 
 s_bm_table_matter_of_expenses = {'id': 'integer primary key', 'name': 'text', 'originator_class': 'integer', 'originator': 'integer', \
-    'provider_class': 'integer', 'provider': 'integer', 'group_of_expenses': 'integer', 'amount': 'float', \
+    'provider_class': 'integer', 'provider': 'integer', 'groups_of_expenses': 'integer', 'amount': 'float', \
     'frequency': 'integer', 'account': 'integer'}
 
 
@@ -115,3 +114,53 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
             return -1
+    
+    def _test_routines(self):
+        
+        self.setup()
+        
+        data = []
+        data.append(t_bm_matter_of_expenses_s(name = "test", originator = 1, originator_class = 1, provider = 1, provider_class = 1, 
+                                              groups_of_expenses = 1, amount = 1.4, frequency = 1, account = 1))
+        data.append(t_bm_matter_of_expenses_s(name = "test2", originator = 1, originator_class = 1, provider = 1, provider_class = 1, 
+                                              groups_of_expenses = 1, amount = 1.4, frequency = 1, account = 1))
+        
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+        
+        # push a message into the logger that we will start to show it all
+        self.logger.warn("show it all") 
+        self.show_all()
+
+        # now, pop one after the other and show the entries in between
+        self.logger.warn("pop one after the other")
+        for item in data:
+            self.pop(item)
+            self.show_all()
+        
+        # push the data again into the table
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+        
+        # show it all
+        self.logger.warn("show it all")
+        self.show_all()
+        
+        # and pop it once
+        self.logger.warn("pop all")
+        self.pop_all()
+        
+        # show it all
+        self.logger.warn("show it all")
+        self.show_all()
+
+        # use the getall functions in order to retrieve it
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+
+        entries = self.get_all()
+        for item in entries:
+            self.logger.debug(item)

@@ -10,7 +10,6 @@ import sqlite3
 from collections import namedtuple
 from bm_tables import *
 
-g_program_suffix = "accounts"
 
 ''' database definitions
 first, there comes a namedtuple in order to ease data retrivals

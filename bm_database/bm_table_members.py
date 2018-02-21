@@ -10,8 +10,6 @@ import sqlite3
 from collections import namedtuple
 from bm_tables import *
 
-g_program_suffix = "accounts"
-
 ''' database definitions
 first, there comes a namedtuple in order to ease data retrivals
 second, there is a dictionary which holds the data types for each column
@@ -120,3 +118,53 @@ class c_bm_table_members(c_bm_tables):
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
             return -1
+        
+    def _test_routines(self):
+        
+        self.setup()
+        
+        data = []
+        data.append(t_bm_members_s(name = "test2", group_of_members = 1))
+        data.append(t_bm_members_s(name = "test3", group_of_members = 1))
+        data.append(t_bm_members_s(name = "test4", group_of_members = 1))
+        data.append(t_bm_members_s(name = "test5", group_of_members = 1))
+        
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+        
+        # push a message into the logger that we will start to show it all
+        self.logger.warn("show it all") 
+        self.show_all()
+
+        # now, pop one after the other and show the entries in between
+        self.logger.warn("pop one after the other")
+        for item in data:
+            self.pop(item)
+            self.show_all()
+        
+        # push the data again into the table
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+        
+        # show it all
+        self.logger.warn("show it all")
+        self.show_all()
+        
+        # and pop it once
+        self.logger.warn("pop all")
+        self.pop_all()
+        
+        # show it all
+        self.logger.warn("show it all")
+        self.show_all()
+
+        # use the getall functions in order to retrieve it
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+
+        entries = self.get_all()
+        for item in entries:
+            self.logger.debug(item)
