@@ -42,43 +42,67 @@ s_bm_table_matter_of_expenses = {'id': 'integer primary key', 'name': 'text', 'o
     'frequency': 'integer', 'account': 'integer'}
 
 # invoices
-t_bm_table_invoice = namedtuple('t_bm_table_invoice', [ \
+t_bm_table_invoice_l = namedtuple('t_bm_table_invoice_l', [ \
     'id', 'matter_of_expense', 'originator_class', 'originator', 'date' \
+   ]) 
+
+t_bm_table_invoice_s = namedtuple('t_bm_table_invoice_s', [ \
+    'matter_of_expense', 'originator_class', 'originator', 'date' \
    ]) 
 
 s_bm_table_invoice = {'id': 'primary key', 'matter_of_expense': 'integer', 'originator_class': 'integer', \
     'originator': 'integer', 'data': 'text'}
 
 # groups of expenses
-t_bm_table_groups_expenses = namedtuple('t_bm_table_groups_expenses', [\
+t_bm_table_groups_of_expenses_l = namedtuple('t_bm_table_groups_of_expenses_l', [\
     'id', 'name' \
+    ]) 
+
+t_bm_table_groups_of_expenses_s = namedtuple('t_bm_table_groups_of_expenses_s', [\
+    'name' \
     ]) 
 
 s_bm_table_groups_of_expenses = {'id': 'integer primary key', 'name': 'text unique'}
 
 # groups of members
-t_bm_table_groups_of_members = namedtuple('t_bm_table_groups_of_members', [\
+t_bm_table_groups_of_members_l = namedtuple('t_bm_table_groups_of_members_l', [\
     'id', 'name' \
+    ])
+
+t_bm_table_groups_of_members_s = namedtuple('t_bm_table_groups_of_members_s', [\
+    'name' \
     ])
 
 s_bm_table_groups_of_members = {'id': 'integer primary key', 'name': 'text unique'}
 
 # earnings
-t_bm_table_earnings = namedtuple('t_bm_table_earnings', [ \
+t_bm_table_earnings_l = namedtuple('t_bm_table_earnings_l', [ \
     'id', 'name', 'account', 'amount' \
+    ])
+
+t_bm_table_earnings_l = namedtuple('t_bm_table_earnings_s', [ \
+    'name', 'account', 'amount' \
     ])
 
 s_bm_table_earnings = {'id': 'integer primary key', 'name': 'text unique', 'account': 'integer', 'amount': 'integer'}
 
 # accounts
-t_bm_table_accounts = namedtuple('t_bm_table_accounts', [\
+t_bm_table_accounts_l = namedtuple('t_bm_table_accounts_l', [\
     'id', 'name' \
     ])
 
-s_bm_table_earnings = {'id': 'integer primary key', 'name': 'text unique'}
+t_bm_table_accounts_s = namedtuple('t_bm_table_accounts_s', [\
+    'name' \
+    ])
+
+s_bm_table_accounts = {'id': 'integer primary key', 'name': 'text unique'}
 
 # table of classes
-t_bm_table_class = namedtuple('t_bm_table_class', [\
+t_bm_table_class_l = namedtuple('t_bm_table_class_l', [\
+    'id', 'name'\
+    ])
+
+t_bm_table_class_s = namedtuple('t_bm_table_class_s', [\
     'id', 'name'\
     ])
 
@@ -434,7 +458,90 @@ class c_bm_table_matter_of_expense(c_bm_tables):
         '''
         
         # call the father's class constructor
-        c_bm_tables.__init__(self, "matter_of_expense", None, _conn, _cursor, t_bm_members_l, s_bm_table_members)
+        c_bm_tables.__init__(self, "matter_of_expense", None, _conn, _cursor, t_bm_matter_of_expenses_l, s_bm_table_matter_of_expenses)
+        self.logger.debug("constructor")
+    
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
+        
+        @param _args    either you give me a set, or a tuple
+        
+        @return: 
+        '''
+        
+        # call generic push method 
+        self._push(_args)
+
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
+    
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        
+        # call generic pop method
+        self._pop(_args)
+        
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
+        
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
+    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
+
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        return self._get_all()
+    
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
+        
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
+
+    def select_where_name_match(self, _name):
+        '''   selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE name=?".format(self.name), (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
+
+class c_bm_table_groups_of_expenses(c_bm_tables):
+    ''' budget management database's member table
+    '''
+    
+    def __init__(self, _conn, _cursor):
+        ''' constructor
+        '''
+        
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "groups_of_expenses", None, _conn, _cursor, t_bm_table_groups_of_expenses_l, s_bm_table_groups_of_expenses)
         self.logger.debug("constructor")
     
     def push(self, _args):
@@ -519,548 +626,481 @@ class c_bm_table_matter_of_expense(c_bm_tables):
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
             return -1
-    
-def pop_from_matter_of_expense_where_id(_cursor, _id):
-    '''    pushes a new entry into 'matter of expense' table
-    '''
-    print("    deleting 'matter_of_expense'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM matter_of_expense WHERE id=? ", (_id,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred:", e.args[0])
-        return -1      
-    
-def pop_all_from_matter_of_expense(_cursor):
-    '''    deletes all entries into 'matter of expense' table
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM matter_of_expense")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1], row[2])
-        pop_from_matter_of_expense(_cursor, row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]) 
-    conn.commit()
 
-def select_from_matter_of_expense_where_name_match(_cursor, _name):
-    '''   selects a specific entry where the name matches
-    
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM matter_of_expense WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
-
-def show_all_matter_of_expense(_cursor):
-    '''   shows all matter of expenses
-    
-    @param cursor    database cursor
+class c_bm_table_invoice(c_bm_tables):
+    ''' budget management database's member table
     '''
-    for row in _cursor.execute("select * from matter_of_expense"):
-        print(row)
+    
+    def __init__(self, _conn, _cursor):
+        ''' constructor
+        '''
         
-def get_entries_matter_of_expense(_cursor):
-    '''   returns all entries from members
-    @return string
-    '''    
-    entries = []
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "invoices", None, _conn, _cursor, t_bm_table_invoice_l, s_bm_table_invoice)
+        self.logger.debug("constructor")
     
-    for row in _cursor.execute("select * from matter_of_expense"):
-        entries.append([row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]])
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
         
-    return entries
+        @param _args    either you give me a set, or a tuple
         
-def show_all_groups_of_expenses(_cursor):
-    '''   shows all group of expenses
-    
-    @param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from groups_of_expenses"):
-        print(row)
-
-def push_into_invoice(_cursor, _matter_of_expense, _originator_class, _originator, _date):
-    '''   pushes a new entry into the 'invoice' table
-    '''
-    print("    pushing 'invoices'")
-    try:
-        global conn
-        _cursor.execute("INSERT INTO invoices(matter_of_expense, originator_class, originator, date) values (?,?,?,?)", (_matter_of_expense, _originator_class, _originator, _date,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred:", e.args[0])
-        return -1 
-
-def pop_from_invoice(_cursor, _matter_of_expense, _originator_class, _originator, _date):
-    '''   deletes entry from the 'invoice' table
-    '''
-
-    print("    deleting 'invoices'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM invoices WHERE matter_of_expense=? AND originator_class=? AND originator=? AND date=?", (_matter_of_expense, _originator_class, _originator, _date,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-
-def pop_from_invoice_where_id(_cursor, _id):
-    '''   deletes entry from the 'invoice' table
-    '''
-
-    print("    deleting 'invoices'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM invoices WHERE id=?", (_id,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-
-def pop_all_from_invoices(_cursor):
-    '''    deletes all entries into 'matter of expense' table
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM invoices")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1], row[2])
-        pop_from_invoice(_cursor, row[1], row[2], row[3], row[4])
-    
-    conn.commit() 
-
-def show_all_invoices(_cursor):
-    '''   shows all invoices
-    
-    @param cursor    database cursor            refresh()
-    '''
-    for row in _cursor.execute("select * from invoices"):
-        print(row)
+        @return: 
+        '''
         
-def get_entries_invoices(_cursor):
-    '''   returns all entries from invoices
-    @return string
-    '''    
+        # call generic push method 
+        self._push(_args)
+
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
     
-    # we need a variable in order to return the etnries
-    entries = []
-    
-    for row in _cursor.execute("select * from invoices"):
-        entries.append(row)
-    return entries
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
         
-def select_from_invoices_where_matter_of_expense_match(_cursor, _matter_of_expense):
-    '''   selects a specific entry where the name matches
-    
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM invoices WHERE matter_of_expense=?", (_matter_of_expense,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
-
-def push_into_groups_of_expenses(_cursor, _name):
-    '''   pushes a new entry into the 'group of expenses' table
-    '''
-    print("    pushing 'groups of expenses'")
-    try:
-        global conn
-        _cursor.execute("INSERT INTO groups_of_expenses(name) values (?)", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-    
-def pop_from_groups_of_expenses(_cursor, _name):
-    '''   pushes a new entry into the 'group of expenses' table
-    '''
-    print("    pushing 'groups of expenses'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM groups_of_expenses WHERE name=?", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1    
-    
-def pop_from_groups_of_expenses_where_id(_cursor, _id):
-    '''   pushes a new entry into the 'group of expenses' table
-    '''
-    print("    pushing 'groups of expenses'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM groups_of_expenses WHERE id=?", (_id,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1   
+        # call generic pop method
+        self._pop(_args)
         
-def pop_all_from_groups_of_expenses(_cursor):
-    '''    deletes all entries into 'groups of expense' table
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM groups_of_expenses")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1])
-        pop_from_groups_of_expenses(_cursor, row[1])
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
         
-    conn.commit() 
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
     
-def get_entries_groups_of_expenses(_cursor):
-    '''   returns all entries from accounts
-    '''
-    entries=[]    
-    _cursor.execute("select * from groups_of_expenses")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        entries.append([row[0], row[1]])
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
+
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        return self._get_all()
+    
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
         
-    return entries
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
 
-def select_from_groups_of_expense_where_name_match(_cursor, _name):
-    '''   selects a specific entry where the name matches
-    
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM groups_of_expenses WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
-
-def push_into_groups_of_members(_cursor, _name):
-    '''   pushes into group of members
-    '''
-    print("    pushing 'groups of members'")
-    try:
-        global conn
-        _cursor.execute("INSERT INTO groups_of_members(name) values (?)", (_name,))
-        conn.commit()
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-
-def pop_from_groups_of_members(_cursor, _name):
-    '''   pops from group of members
-    '''
-    print("    pushing 'groups of members'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM groups_of_members WHERE name=?", (_name,))
-        conn.commit()
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-
-
-def pop_from_groups_of_members_where_id(_cursor, _id):
-    '''   pops from group of members
-    '''
-    print("    pushing 'groups of members'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM groups_of_members WHERE id=?", (_id,))
-        conn.commit()
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-    
-def pop_all_from_groups_of_members(_cursor):
-    '''   pops from group of members
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM groups_of_members")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1], row[2])
-        pop_from_groups_of_members(_cursor, row[1])
+    def select_where_matter_of_expense_match(self, _name):
+        '''   selects a specnameific entry where the name matches
         
-    conn.commit()
-    
-def get_entries_groups_of_members(_cursor):
-    '''   returns all entries from groups of members
-    '''
-    entries=[]    
-    _cursor.execute("select * from groups_of_members")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        entries.append([row[0], row[1]])
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE matter_of_expense=?".format(self.name), (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
+
+    def update_where_id_match(self, _id):
+        '''    selects a specific entry where the name matches
         
-    return entries
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
         
-def select_from_groups_of_members_where_name_match(_cursor, _name):
-    '''   selects a specific entry where the name matches
+class c_bm_table_groups_of_members(c_bm_tables):
+    ''' budget management database's member table
+    '''
     
-    @param _cursor database cursor
-d    '''   
-    try:
-        _cursor.execute("SELECT id FROM groups_of_members WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
-
-def show_all_groups_of_members(_cursor):
-    '''   shows all group of members
-    
-    @param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from groups_of_members"):
-        print(row)
-
-def push_into_earnings(_cursor, _name, _account, _amount):
-    '''   pushes into earnings
-    '''
-    print("    pushing 'earnings'")
-    try:
-        global conn
-        _cursor.execute("INSERT INTO earnings(name, account, amount) values (?, ?, ?)", (_name, _account, _amount))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-
-def pop_from_earnings(_cursor, _name):
-    '''   pops from earnings
-    '''
-    print("    pushing 'earnings'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM earnings WHERE name=?", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-    
-def pop_from_earnings_where_id(_cursor, _id):
-    '''   pops from earnings
-    '''
-    print("    pushing 'earnings'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM earnings WHERE id=?", (_id,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-    
-def pop_all_from_earnings(_cursor):
-    '''   pops from group of members
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM earnings")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1], row[2])
-        pop_from_earnings(_cursor, row[1])
-    conn.commit() 
-
-def get_entries_earnings(_cursor):
-    '''   returns all entries from earnings
-    '''
-    entries=[]    
-    _cursor.execute("select * from earnings")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        entries.append([row[0], row[1], row[2], row[3]])
+    def __init__(self, _conn, _cursor):
+        ''' constructor
+        '''
         
-    return entries
-
-def select_from_earnings_where_name_match(_cursor, _name):
-    '''   selects a specific entry where the name matches
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "groups_of_members", None, _conn, _cursor, t_bm_table_groups_of_members_l, s_bm_table_groups_of_members)
+        self.logger.debug("constructor")
     
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM earnings WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
-
-def show_all_earnings(_cursor):
-    '''   shows all earnings
-    
-    @param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from earnings"):
-        print(row)
-
-def push_into_accounts(_cursor, _name):
-    '''   pushes into accounts
-    '''
-    print("    pushing 'accounts'")
-    try:
-        global conn
-        _cursor.execute("INSERT INTO accounts(name) values (?)", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-
-def pop_from_accounts(_cursor, _name):
-    '''   pops from accounts
-    '''
-    print("    pushing 'accounts'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM accounts WHERE name=?", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
- 
-def pop_from_accounts_where_id(_cursor, _id):
-    '''   pops from accounts
-    '''
-    print("    pushing 'accounts'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM accounts WHERE id=?", (_id,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-   
-def pop_all_from_accounts(_cursor):
-    '''   pops from group of members
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM earnings")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1], row[2])
-        pop_from_earnings(_cursor, row[1])
-    conn.commit() 
-
-def get_entries_accounts(_cursor):
-    '''   returns all entries from accounts
-    '''
-    entries=[]    
-    _cursor.execute("select * from accounts")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        entries.append([row[0], row[1]])
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
         
-    return entries
-
-def select_from_accounts_where_name_match(_cursor, _name):
-    '''   selects a specific entry where the name matches
-    
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM accounts WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
-
-def show_all_accounts(_cursor):
-    '''   shows all accounts
-    
-    @param cursor    database cursor
-    '''
-    for row in _cursor.execute("select * from accounts"):
-        print(row)
+        @param _args    either you give me a set, or a tuple
         
-def push_into_class(_cursor, _name):
-    '''   pushes into class
-    '''
-    print("    pushing 'class'")
-    try:
-        global conn
-        _cursor.execute("INSERT INTO class(name) values (?)", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-
-def pop_from_class(_cursor, _name):
-    '''   pops from class
-    '''
-    print("    pushing 'class'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM class WHERE name=?", (_name,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
- 
-def pop_from_class_where_id(_cursor, _id):
-    '''   pops from class
-    '''
-    print("    pushing 'class'")
-    try:
-        global conn
-        _cursor.execute("DELETE FROM class WHERE id=?", (_id,))
-        conn.commit()
-        return 0
-    except sqlite3.Error as e:
-        print("An error occurred: ", e.args[0])
-        return -1
-   
-def pop_all_from_class(_cursor):
-    '''   pops from group of members
-    '''
-    global conn
-    _cursor.execute("SELECT * FROM earnings")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        print("deleting ", row[1], row[2])
-        pop_from_earnings(_cursor, row[1])
-    conn.commit() 
-
-def get_entries_class(_cursor):
-    '''   returns all entries from class
-    '''
-    entries=[]    
-    _cursor.execute("select * from class")
-    list_of_members = _cursor.fetchall()
-    for row in list_of_members:
-        entries.append([row[0], row[1]])
+        @return: 
+        '''
         
-    return entries
+        # call generic push method 
+        self._push(_args)
 
-def select_from_class_where_name_match(_cursor, _name):
-    '''   selects a specific entry where the name matches
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
     
-    @param _cursor database cursor
-    '''   
-    try:
-        _cursor.execute("SELECT id FROM class WHERE name=?", (_name,))
-        return _cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print("An error occrred: ", e.args[0])
-        return -1
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        
+        # call generic pop method
+        self._pop(_args)
+        
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
+        
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
+    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
 
-def show_all_class(_cursor):
-    '''   shows all class
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        return self._get_all()
     
-    @param cursor    database cursor
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
+        
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
+
+    def select_where_name_match(self, _name):
+        '''   selects a specnameific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE name=?".format(self.name), (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
+
+    def update_where_id_match(self, _id):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1    
+
+class c_bm_table_earnings(c_bm_tables):
+    ''' budget management database's member table
     '''
-    for row in _cursor.execute("select * from class"):
-        print(row)
+    
+    def __init__(self, _conn, _cursor):
+        ''' constructor
+        '''
+        
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "earnings", None, _conn, _cursor, t_bm_table_earnings_l, s_bm_table_earnings)
+        self.logger.debug("constructor")
+    
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
+        
+        @param _args    either you give me a set, or a tuple
+        
+        @return: 
+        '''
+        
+        # call generic push method 
+        self._push(_args)
+
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
+    
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        
+        # call generic pop method
+        self._pop(_args)
+        
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
+        
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
+    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
+
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        return self._get_all()
+    
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
+        
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
+
+    def select_where_name_match(self, _name):
+        '''   selects a specnameific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE name=?".format(self.name), (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
+
+    def update_where_id_match(self, _id):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1    
+
+class c_bm_table_accounts(c_bm_tables):
+    ''' budget management database's member table
+    '''
+    
+    def __init__(self, _conn, _cursor):
+        ''' constructor
+        '''
+        
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "accounts", None, _conn, _cursor, t_bm_table_accounts_l, s_bm_table_accounts)
+        self.logger.debug("constructor")
+    
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
+        
+        @param _args    either you give me a set, or a tuple
+        
+        @return: 
+        '''
+        
+        # call generic push method 
+        self._push(_args)
+
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
+    
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        
+        # call generic pop method
+        self._pop(_args)
+        
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
+        
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
+    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
+
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        return self._get_all()
+    
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
+        
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
+
+    def select_where_name_match(self, _name):
+        '''   selects a specnameific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE name=?".format(self.name), (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
+
+    def update_where_id_match(self, _id):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1    
+
+class c_bm_table_class(c_bm_tables):
+    ''' budget management database's member table
+    '''
+    
+    def __init__(self, _conn, _cursor):
+        ''' constructor
+        '''
+        
+        # call the father's class constructor
+        c_bm_tables.__init__(self, "class", None, _conn, _cursor, t_bm_table_class_l, s_bm_table_class)
+        self.logger.debug("constructor")
+    
+    def push(self, _args):
+        '''    pushes a new entry into 'members' table
+        
+        @param _args    either you give me a set, or a tuple
+        
+        @return: 
+        '''
+        
+        # call generic push method 
+        self._push(_args)
+
+    def pop(self, _args):
+        '''    pops a new entry into 'members' table
+    
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        
+        # call generic pop method
+        self._pop(_args)
+        
+    def pop_all(self):
+        ''' pops all entries from the table
+        '''
+        self._pop_all()
+        
+    def select_matching_id(self):
+        ''' selects an entry with a matching ID
+        '''
+        raise NotImplementedError
+    
+    def show_matching_id(self):
+        ''' shows an entry with a matching ID
+        '''
+        raise NotImplementedError
+
+    def show_all(self):
+        for row in self.cursor.execute("select * from {}".format(self.name)):
+            self.logger.debug(row)
+
+    def get_all(self):
+        '''
+        '''
+        return self._get_all()
+    
+    def pop_where_id(self, _cursor, _id):
+        '''    pops a new entry into 'members' table
+        
+        @param _cursor   database cursor
+        @param _name     member's name
+        '''
+        try:
+            self.cursor.execute("DELETE FROM {} WHERE id=?".format(self.name), (_id,))
+            self.conn.commit()
+            return 0
+        except sqlite3.Error as e:
+            print("An error occurred:", e.args[0])
+            return -1
+
+    def select_where_name_match(self, _name):
+        '''   selects a specnameific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE name=?".format(self.name), (_name,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1
+
+    def update_where_id_match(self, _id):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''   
+        try:
+            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
+            return self.cursor.fetchone()[0]
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1    
           
 class c_app(mod_logging_mkI_PYTHON.c_logging):
     ''' application, does not really do anything
