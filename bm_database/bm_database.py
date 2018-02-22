@@ -68,13 +68,37 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
         bm_database = c_bm_database()
         (conn, cursor) =  bm_database.connect()
         
-        # create and test members
+        # create and test 'members'
         bm_table_members = c_bm_table_members(conn, cursor)
         bm_table_members._test_routines()
 
-        # create and test matter of expenses
+        # create and test 'matter of expenses'
         bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
         bm_table_matter_of_expenses._test_routines()
+
+        # create and test 'invoices'
+        bm_table_invoices = c_bm_table_invoices(conn, cursor)
+        bm_table_invoices._test_routines()
+
+        # create and test 'groups_of_members'
+        bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
+        bm_table_groups_of_members._test_routines()
+        
+        # create and test 'groups_of_expenses'
+        bm_table_groups_of_expenses = c_bm_table_groups_of_expenses(conn, cursor)
+        bm_table_groups_of_expenses._test_routines()
+
+        # create and test 'earnings'
+        bm_table_earnings = c_bm_table_earnings(conn, cursor)
+        bm_table_earnings._test_routines()
+
+        # create and test 'class'
+        bm_table_class = c_bm_table_class(conn, cursor)
+        bm_table_class._test_routines()
+
+        # create and test 'accounts'
+        bm_table_accounts = c_bm_table_accounts(conn, cursor)
+        bm_table_accounts._test_routines()
 
         # disconnect from the database again
         bm_database.disconnect()

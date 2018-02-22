@@ -228,7 +228,7 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         ''' returns all entries
         '''
         entries=[]
-        self.cursor.execute("select * from members")
+        self.cursor.execute("select * from {}".format(self.name))
         
         list_of_entries = self.cursor.fetchall()
         for row in list_of_entries:

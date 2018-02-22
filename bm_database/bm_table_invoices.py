@@ -26,7 +26,7 @@ t_bm_table_invoices_s = namedtuple('t_bm_table_invoices_s', [ \
    ]) 
 
 s_bm_table_invoices = {'id': 'primary key', 'matter_of_expense': 'integer', 'originator_class': 'integer', \
-    'originator': 'integer', 'data': 'text'}
+    'originator': 'integer', 'date': 'text'}
 
 class c_bm_table_invoices(c_bm_tables):
     ''' budget management database's member table
@@ -123,3 +123,53 @@ class c_bm_table_invoices(c_bm_tables):
             print("An error occrred: ", e.args[0])
             return -1
         
+    def _test_routines(self):
+        
+        self.setup()
+        
+        data = []
+        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
+        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
+        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
+        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
+        
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+        
+        # push a message into the logger that we will start to show it all
+        self.logger.warn("show it all") 
+        self.show_all()
+
+        # now, pop one after the other and show the entries in between
+        self.logger.warn("pop one after the other")
+        for item in data:
+            self.pop(item)
+            self.show_all()
+        
+        # push the data again into the table
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+        
+        # show it all
+        self.logger.warn("show it all")
+        self.show_all()
+        
+        # and pop it once
+        self.logger.warn("pop all")
+        self.pop_all()
+        
+        # show it all
+        self.logger.warn("show it all")
+        self.show_all()
+
+        # use the getall functions in order to retrieve it
+        self.logger.warn("pushing an array of data")
+        for item in data:
+            self.push(item)
+
+        entries = self.get_all()
+        for item in entries:
+            self.logger.debug(item)
+

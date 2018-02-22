@@ -22,7 +22,7 @@ t_bm_matter_of_expenses_l = namedtuple('t_bm_matter_of_expenses_l', [ \
     'groups_of_expenses', 'amount', 'frequency', 'account'\
     ])
 
-t_bm_matter_of_expenses_s = namedtuple('t_bm_matter_of_expenses_s', [ \
+t_bm_table_matter_of_expenses_s = namedtuple('t_bm_table_matter_of_expenses_s', [ \
     'name', 'originator', 'originator_class', 'provider', 'provider_class', \
     'groups_of_expenses', 'amount', 'frequency', 'account'\
     ])
@@ -120,9 +120,9 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
         self.setup()
         
         data = []
-        data.append(t_bm_matter_of_expenses_s(name = "test", originator = 1, originator_class = 1, provider = 1, provider_class = 1, 
+        data.append(t_bm_table_matter_of_expenses_s(name = "test", originator = 1, originator_class = 1, provider = 1, provider_class = 1, 
                                               groups_of_expenses = 1, amount = 1.4, frequency = 1, account = 1))
-        data.append(t_bm_matter_of_expenses_s(name = "test2", originator = 1, originator_class = 1, provider = 1, provider_class = 1, 
+        data.append(t_bm_table_matter_of_expenses_s(name = "test2", originator = 1, originator_class = 1, provider = 1, provider_class = 1, 
                                               groups_of_expenses = 1, amount = 1.4, frequency = 1, account = 1))
         
         self.logger.warn("pushing an array of data")
