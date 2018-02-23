@@ -8,72 +8,61 @@ sys.path.append('./../bm_database')
 from bm_globals import *
 import mod_logging_mkI_PYTHON
 from bm_table_matter_of_expenses import *
+from _test import *
 
-def _test__push_into_matter_of_expenses():
-    ''' 
-    \brief test function for 
-    push into matter of expenses
-    '''
-   
-    # connect to the database 
-    c=bm_database.connect()
-    
-    # setup the database
-    bm_database.setup_db(c)
-    
-    # use for - statement to loop upon the test cases
-    if bm_database.push_into_matter_of_expense(c, "Frisoer Benedikt", 1, 1, 1, 20, "monthly", 1) != 0:
-        return -1
-    
-    names = ['Hoeness', 'Lolita', 'Kevin']
-    for entry in names:
-        print(entry)
-        if bm_database.push_into_matter_of_expense(c, "Frisoer " + entry, 1, 1, 1, 20, "monthly", 1) != 0:
-            break
-    
-    bm_database.show_all_matter_of_expense(c)
-    
-    if bm_database.select_from_matter_of_expense_where_name_match(c, "Frisoer Benedikt") != 1:
-        return -1
-    else:
-        print("we've found an entry")
-    
+class _test_bm_table_matter_of_expenses(c_test_case):
+
+    def __init__(self, _conn, _cursor):
         
-    # destroy all entries in oder to run clean upcoming tests
-    bm_database.pop_all_from_matter_of_expense(c)
+        c_test_case.__init__(self, "matter_of_expenses", self._test__push_into_matter_of_expenses)
+        self.bm_table_matter_of_expense = c_bm_table_matter_of_expenses(_conn, _cursor)
 
-    print("now showing all members")
-
-    # check, whether there are still entries within this database
-    bm_database.show_all_matter_of_expense(c)
-    
-    # disconnect from the base  
-    bm_database.disconnect(c)
-    
-    # now, we connect again, and try to push these entries again
-    c = bm_database.connect()
-    
-    bm_database.show_all_matter_of_expense(c)
-    
-    names = ['Hoeness', 'Lolita', 'Kevin']
-    for entry in names:
-        print(entry)
-        if bm_database.push_into_matter_of_expense(c, "Frisoer " + entry, 1, 1, 1, 20, "monthly", 1) != 0:
-            break
-    
-    bm_database.show_all_matter_of_expense(c)
-    
-    bm_database.disconnect(c)
-    
-    print("reopen it again")
-    
-    c = bm_database.connect()
-    
-    bm_database.show_all_matter_of_expense(c)
-    
-    bm_database.disconnect(c)
-    
-    
-    
-    
-    return 0
+    def _test__push_into_matter_of_expenses(self):
+        ''' 
+        \brief test function for 
+        push into matter of expenses
+        '''
+        self.bm_table_matter_of_expense._test_routines()
+        
+        # create a list of members that are to be pushed into the table
+        names = ['Frisör', 'Autoversicherung', 'Essen', 'Trinken']
+        
+        # loop over all entries within the list of names
+        for entry in names:
+            
+            # quit the loop in case of an error
+            if self.bm_table_matter_of_expense.push(
+                t_bm_table_matter_of_expenses_s(
+                    name = entry, 
+                    originator = 1, 
+                    originator_class = 1, 
+                    provider = 1, 
+                    provider_class = 1,
+                    groups_of_expenses = 1, 
+                    amount = 1.4, 
+                    frequency = 1, 
+                    account = 1)
+            ) != 0:
+                return -1
+        
+        self.bm_table_matter_of_expense.show_all()
+        
+        # loop over all entries within the list of names
+        for entry in names:
+            
+            # quit the loop in case of an error
+            if self.bm_table_matter_of_expense.push(
+                t_bm_table_matter_of_expenses_s(
+                    name = entry, 
+                    originator = 1, 
+                    originator_class = 1, 
+                    provider = 1, 
+                    provider_class = 1,
+                    groups_of_expenses = 1, 
+                    amount = 1.4, 
+                    frequency = 1, 
+                    account = 1)
+            ) != 0:
+                return -1
+        self.bm_table_matter_of_expense.show_all()
+        return 0

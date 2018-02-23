@@ -14,9 +14,9 @@ from _test import *
 class _test_bm_table_members(c_test_case):
 
     def __init__(self, _conn, _cursor):
+        
         c_test_case.__init__(self, "table_member", self._test__push_into_members)
-        self.conn = _conn
-        self.cursor = _cursor
+        self.bm_table_members = c_bm_table_members(_conn, _cursor)
 
     def _test__push_into_members(self):
         ''' 
@@ -25,8 +25,8 @@ class _test_bm_table_members(c_test_case):
         '''
         
         # create and test 'members'
-        bm_table_members = c_bm_table_members(self.conn, self.cursor)
-        bm_table_members._test_routines()
+
+        self.bm_table_members._test_routines()
         
         # create a list of members that are to be pushed into the table
         names = ['Horst', 'Hoeness', 'Lolita', 'Kevin']
@@ -35,7 +35,7 @@ class _test_bm_table_members(c_test_case):
         for entry in names:
             
             # quit the loop in case of an error
-            if bm_table_members.push(
+            if self.bm_table_members.push(
                 t_bm_members_s(
                     name = entry, 
                     group_of_members = 1
@@ -43,13 +43,13 @@ class _test_bm_table_members(c_test_case):
             ) != 0:
                 return -1
         
-        bm_table_members.show_all()
+        self.bm_table_members.show_all()
         
         # loop over all entries within the list of names
         for entry in names:
             
             # quit the loop in case of an error
-            if bm_table_members.push(
+            if self.bm_table_members.push(
                 t_bm_members_s(
                     name = entry, 
                     group_of_members = 1
