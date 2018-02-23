@@ -102,6 +102,7 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
             try:
                 self.cursor.execute(stmt)
                 self.conn.commit()
+                return 0
             except sqlite3.Error as e:
                 self.logger.critical("An error occurred: {}".format(e.args[0]))
                 return -1    
@@ -160,6 +161,7 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
             try:
                 self.cursor.execute(stmt, _args)
                 self.conn.commit()
+                return 0
             except sqlite3.Error as e:
                 self.logger.critical("An error occurred: {}".format(e.args[0]))
                 return -1
@@ -181,7 +183,7 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
                 continue
             stmt = stmt + item + " = ? and "
 
-        # finalize the statement         
+        # finalize the statement                 return 0
         stmt = stmt[:-4]
         
         # push a message into the logger

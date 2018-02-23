@@ -45,7 +45,7 @@ class c_bm_table_members(c_bm_tables):
         '''
         
         # call generic push method 
-        self._push(_args)
+        return self._push(_args)
 
     def pop(self, _args):
         '''    pops a new entry into 'members' table
@@ -55,7 +55,7 @@ class c_bm_table_members(c_bm_tables):
         '''
         
         # call generic pop method
-        self._pop(_args)
+        return self._pop(_args)
         
     def pop_all(self):
         ''' pops all entries from the table
@@ -168,3 +168,4 @@ class c_bm_table_members(c_bm_tables):
         entries = self.get_all()
         for item in entries:
             self.logger.debug(item)
+        self.pop_all()
