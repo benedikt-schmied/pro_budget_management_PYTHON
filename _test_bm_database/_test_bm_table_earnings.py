@@ -52,7 +52,7 @@ class _test_bm_table_earnings(c_test_case):
                     account = 1, 
                     amount = 1235
                     )
-            ) != 0:
+            ) != -1:
                 return -1
         self.bm_table_earnings.show_all()
         return 0

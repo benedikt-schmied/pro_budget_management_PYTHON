@@ -48,7 +48,7 @@ class _test_bm_table_groups_of_members(c_test_case):
                 t_bm_table_groups_of_members_s(
                     name = entry
                     )
-            ) != 0:
+            ) != -1:
                 return -1
         self.bm_table_groups_of_members.show_all()
         return 0

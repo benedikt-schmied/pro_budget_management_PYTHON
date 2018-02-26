@@ -25,7 +25,7 @@ class _test_bm_table_groups_of_expenses(c_test_case):
         self.bm_table_groups_of_expenses._test_routines()
         
         # create a list of expenses that are to be pushed into the table
-        names = ['family', 'test3']
+        names = ['family', 'test4']
         
         # loop over all entries within the list of names
         for entry in names:
@@ -48,7 +48,7 @@ class _test_bm_table_groups_of_expenses(c_test_case):
                 t_bm_table_groups_of_expenses_s(
                     name = entry
                     )
-            ) != 0:
+            ) != -1:
                 return -1
         self.bm_table_groups_of_expenses.show_all()
         return 0

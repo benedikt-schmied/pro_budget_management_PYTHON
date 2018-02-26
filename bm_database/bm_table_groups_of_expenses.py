@@ -49,7 +49,7 @@ class c_bm_table_groups_of_expenses(c_bm_tables):
         '''
         
         # call generic push method 
-        self._push(_args)
+        return self._push(_args)
 
     def pop(self, _args):
         '''    pops a new entry into 'members' table
@@ -59,12 +59,12 @@ class c_bm_table_groups_of_expenses(c_bm_tables):
         '''
         
         # call generic pop method
-        self._pop(_args)
+        return self._pop(_args)
         
     def pop_all(self):
         ''' pops all entries from the table
         '''
-        self._pop_all()
+        return self._pop_all()
         
     def select_matching_id(self):
         ''' selects an entry with a matching ID

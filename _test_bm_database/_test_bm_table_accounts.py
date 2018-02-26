@@ -48,7 +48,7 @@ class _test_bm_table_accounts(c_test_case):
                 t_bm_table_accounts_s(
                     name = entry
                     )
-            ) != 0:
+            ) != -1:
                 return -1
         self.bm_table_accounts.show_all()
         return 0
