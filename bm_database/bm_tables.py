@@ -247,3 +247,11 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
             entries.append(row[1:])
         
         return entries
+    
+    def _get_all_l(self):
+        ''' returns all entries
+        '''
+        self.cursor.execute("select * from {}".format(self.name))
+        
+        list_of_entries = self.cursor.fetchall()
+        return list_of_entries

@@ -17,7 +17,7 @@ second, there is a dictionary which holds the data types for each column
 '''
 
 # matter of expenses 
-t_bm_matter_of_expenses_l = namedtuple('t_bm_matter_of_expenses_l', [ \
+t_bm_table_matter_of_expenses_l = namedtuple('t_bm_table_matter_of_expenses_l', [ \
     'id', 'name', 'originator', 'originator_class', 'provider', 'provider_class', \
     'groups_of_expenses', 'amount', 'frequency', 'account'\
     ])
@@ -41,7 +41,7 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
         '''
         
         # call the father's class constructor
-        c_bm_tables.__init__(self, "matter_of_expenses", None, _conn, _cursor, t_bm_matter_of_expenses_l, s_bm_table_matter_of_expenses)
+        c_bm_tables.__init__(self, "matter_of_expenses", None, _conn, _cursor, t_bm_table_matter_of_expenses_l, s_bm_table_matter_of_expenses)
         self.logger.debug("constructor")
     
     def push(self, _args):
@@ -101,6 +101,32 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
             cnt = 0
             
             for item in t_bm_table_matter_of_expenses_s._fields:
+                
+                pstr = pstr + item
+                pstr = pstr + " = "
+                pstr = pstr + str(row[cnt])
+                pstr = pstr + ", "
+                
+                # increment the counter variable
+                cnt = cnt + 1
+            
+            # delete the last two characters
+            pstr = pstr[:-2]
+            
+            print(pstr)
+    
+    def show_all_l(self):
+        ''' shows all entries
+        '''
+        
+        entries = self.get_all_l()
+        for row in entries:
+            
+            # start the string that shall be printed
+            pstr = "\t"
+            cnt = 0
+            
+            for item in t_bm_table_matter_of_expenses_l._fields:
                 
                 pstr = pstr + item
                 pstr = pstr + " = "

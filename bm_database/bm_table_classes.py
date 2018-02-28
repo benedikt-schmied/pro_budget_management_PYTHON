@@ -109,6 +109,32 @@ class c_bm_table_classes(c_bm_tables):
             pstr = pstr[:-2]
             
             print(pstr)
+            
+    def show_all_l(self):
+        ''' shows all entries
+        '''
+        
+        entries = self.get_all_l()
+        for row in entries:
+            
+            # start the string that shall be printed
+            pstr = "\t"
+            cnt = 0
+            
+            for item in t_bm_table_classes_l._fields:
+                
+                pstr = pstr + item
+                pstr = pstr + " = "
+                pstr = pstr + str(row[cnt])
+                pstr = pstr + ", "
+                
+                # increment the counter variable
+                cnt = cnt + 1
+            
+            # delete the last two characters
+            pstr = pstr[:-2]
+            
+            print(pstr)
     
     def pop_where_id(self, _cursor, _id):
         '''    pops a new entry into 'members' table

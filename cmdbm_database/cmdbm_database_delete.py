@@ -51,19 +51,17 @@ class c_menu_delete():
         self.logger.warn('members')
      
         # show the existing members
-        menu_print = c_menu_print()
-        menu_print.members()        
-     
-        # ask the user for specific inputs
-        row = input("\t\t <--> id: ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
-
+     
         # create a member class
         bm_table_members = c_bm_table_members(conn, cursor)
-         
+        bm_table_members.show_all_l()
+        
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+
         # now, push it to the table
         ret = bm_table_members.select_matching_id(row)
         if (ret != None):
@@ -81,23 +79,21 @@ class c_menu_delete():
         # push a message to the logger
         self.logger.warn('matter of expense')
          
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.matter_of_expense()
-         
-        # ask the user for specific inputs
-        nr = input("\t\t id = ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
 
         # create a member class
         bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
+        bm_table_matter_of_expenses.show_all_l()
          
-        # now, push it to the table
-        
-        bm_table_matter_of_expenses.pop()
+        # ask the user for specific inputs
+        nr = input("\t\t id = ")
+
+        # now, pop it to the table
+        ret = bm_table_matter_of_expenses.select_matching_id(nr)
+        if (ret != None):
+            bm_table_matter_of_expenses.pop(ret)
          
         # now, disconnect again
         bm_database.disconnect()
@@ -110,23 +106,21 @@ class c_menu_delete():
         # push a message into the logger
         self.logger.warn('matter of invoices')
  
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.invoices()
-         
-        # ask the user for specific inputs
-        row = input("\t\t <--> id: ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
 
         # create a member class
         bm_table_invoices = c_bm_table_invoices(conn, cursor)
+        bm_table_invoices.show_all_l()
          
-        # now, push it to the table
-        
-        bm_table_invoices.pop()
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+         
+        # now, pop it to the table
+        ret = bm_table_invoices.select_matching_id(row)
+        if (ret != None):
+            bm_table_invoices.pop(ret)
          
         # now, disconnect again
         bm_database.disconnect()
@@ -139,23 +133,21 @@ class c_menu_delete():
         # push a message into the logger
         self.logger.warn('groups of members')
  
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_members()
- 
-        # ask the user for specific inputs
-        row = input("\t\t <--> id: ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
 
         # create a member class
         bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
-         
-        # now, push it to the table
-        
-        bm_table_groups_of_members.pop()
+        bm_table_groups_of_members.show_all_l()
+ 
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+
+        # now, pop it to the table
+        ret = bm_table_groups_of_members.select_matching_id(row)
+        if (ret != None):
+            bm_table_groups_of_members.pop(ret)
          
         # now, disconnect again
         bm_database.disconnect()
@@ -169,23 +161,21 @@ class c_menu_delete():
         # push a message into the logger
         self.logger.warn('groups of expenses')
  
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_expenses()
- 
-        # ask the user for specific inputs
-        row = input("\t\t <--> id: ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
 
         # create a member class
         bm_table_groups_of_expenses = c_bm_table_groups_of_expenses(conn, cursor)
+        bm_table_groups_of_expenses.show_all_l()
+ 
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
          
-        # now, push it to the table
-        
-        bm_table_groups_of_expenses.pop()
+        # now, pop it to the table
+        ret = bm_table_groups_of_expenses.select_matching_id(row)
+        if (ret != None):
+            bm_table_groups_of_expenses.pop(ret)
          
         # now, disconnect again
         bm_database.disconnect()
@@ -198,23 +188,21 @@ class c_menu_delete():
         # push a message into the logger
         self.logger.warn('earnings')
  
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.earnings()
- 
-        # ask the user for specific inputs
-        row = input("\t\t <--> id: ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
 
         # create a member class
         bm_table_earnings = c_bm_table_earnings(conn, cursor)
-         
-        # now, push it to the table
-        
-        bm_table_earnings.pop()
+        bm_table_earnings.show_all_l()
+ 
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+
+        # now, pop it to the table
+        ret = bm_table_earnings.select_matching_id(row)
+        if (ret != None):
+            bm_table_earnings.pop(ret)
          
         # now, disconnect again
         bm_database.disconnect()
@@ -227,23 +215,21 @@ class c_menu_delete():
         # push a message into the logger
         self.logger.warn('accounts')
  
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_expenses()
- 
-        # ask the user for specific inputs
-        row = input("\t\t <--> id: ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
 
         # create a member class
         bm_table_accounts = c_bm_table_accounts(conn, cursor)
-         
-        # now, push it to the table
-        
-        bm_table_accounts.pop()
+        bm_table_accounts.show_all_l()
+ 
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
+
+        # now, pop it to the table
+        ret = bm_table_accounts.select_matching_id(row)
+        if (ret != None):
+            bm_table_accounts.pop(ret)
          
         # now, disconnect again
         bm_database.disconnect()
@@ -256,23 +242,21 @@ class c_menu_delete():
         # push a message into the logger
         self.logger.warn('classes')
  
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_expenses()
- 
-        # ask the user for specific inputs
-        row = input("\t\t <--> id: ")
-         
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
 
         # create a member class
         bm_table_classes = c_bm_table_classes(conn, cursor)
+        bm_table_classes.show_all_l()
+ 
+        # ask the user for specific inputs
+        row = input("\t\t <--> id: ")
          
-        # now, push it to the table
-        
-        bm_table_classes.pop()
+        # now, classes it to the table
+        ret = bm_table_classes.select_matching_id(row)
+        if (ret != None):
+            bm_table_classes.pop(ret)
          
         # now, disconnect again
         bm_database.disconnect()
