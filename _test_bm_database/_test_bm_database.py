@@ -17,7 +17,7 @@ import _test_bm_table_invoices
 import _test_bm_table_groups_of_members
 import _test_bm_table_groups_of_expenses
 import _test_bm_table_earnings
-import _test_bm_table_class
+import _test_bm_table_classes
 import _test_bm_table_accounts
 
 from bm_globals import *
@@ -44,7 +44,7 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
         self.test.append(_test_bm_table_groups_of_members._test_bm_table_groups_of_members(self.conn, self.cursor))
         self.test.append(_test_bm_table_groups_of_expenses._test_bm_table_groups_of_expenses(self.conn, self.cursor))
         self.test.append(_test_bm_table_earnings._test_bm_table_earnings(self.conn, self.cursor))
-        self.test.append(_test_bm_table_class._test_bm_table_class(self.conn, self.cursor))
+        self.test.append(_test_bm_table_classes._test_bm_table_classes(self.conn, self.cursor))
         self.test.append(_test_bm_table_accounts._test_bm_table_accounts(self.conn, self.cursor))
         
     def run(self):

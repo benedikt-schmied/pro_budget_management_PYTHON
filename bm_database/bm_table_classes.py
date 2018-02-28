@@ -17,17 +17,17 @@ second, there is a dictionary which holds the data types for each column
 '''
 
 # table of classes
-t_bm_table_class_l = namedtuple('t_bm_table_class_l', [\
+t_bm_table_classes_l = namedtuple('t_bm_table_classes_l', [\
     'id', 'name'\
     ])
 
-t_bm_table_class_s = namedtuple('t_bm_table_class_s', [\
+t_bm_table_classes_s = namedtuple('t_bm_table_classes_s', [\
     'name'\
     ])
 
-s_bm_table_class = {'id': 'integer primary key', 'name': 'text unigue'}
+s_bm_table_classes = {'id': 'integer primary key', 'name': 'text unigue'}
 
-class c_bm_table_class(c_bm_tables):
+class c_bm_table_classes(c_bm_tables):
     ''' budget management database's member table
     '''
     
@@ -36,7 +36,7 @@ class c_bm_table_class(c_bm_tables):
         '''
         
         # call the father's class constructor
-        c_bm_tables.__init__(self, "class", None, _conn, _cursor, t_bm_table_class_l, s_bm_table_class)
+        c_bm_tables.__init__(self, "class", None, _conn, _cursor, t_bm_table_classes_l, s_bm_table_classes)
         self.logger.debug("constructor")
     
     def push(self, _args):
@@ -127,10 +127,10 @@ class c_bm_table_class(c_bm_tables):
         self.setup()
         
         data = []
-        data.append(t_bm_table_class_s(name = "test"))
-        data.append(t_bm_table_class_s(name = "test2"))
-        data.append(t_bm_table_class_s(name = "test3"))
-        data.append(t_bm_table_class_s(name = "test4"))
+        data.append(t_bm_table_classes_s(name = "test"))
+        data.append(t_bm_table_classes_s(name = "test2"))
+        data.append(t_bm_table_classes_s(name = "test3"))
+        data.append(t_bm_table_classes_s(name = "test4"))
         
         self.logger.warn("pushing an array of data")
         for item in data:

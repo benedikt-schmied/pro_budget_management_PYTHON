@@ -18,7 +18,7 @@ sys.path.append('./../mod_logging_mkI_PYTHON')
 import sqlite3
 import os
 import argparse
-import bm_database
+from bm_database import *
 import mod_logging_mkI_PYTHON
 from cmdmenu import *
 
@@ -105,10 +105,14 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         self.logger.warn('members')
         
         # now, connect to the database
-        d = bm_database.connect()
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_members = c_bm_table_members(conn, cursor)
         
         # fetch the entries
-        entries = bm_database.get_entries_members(d)
+        entries = bm_table_members.get_all()
         
         # show an introduction line
         print("\t\t ~~~ members")
@@ -118,7 +122,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
             print("\t\t <-> \t index = {}, name = {}, group = {}".format(cnti[0], cnti[1], cnti[2]))
 
         # disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return 
     
     def matter_of_expense(self):
@@ -127,10 +131,17 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         '''
         
         # push a message to the logger
-        self.logger.warn('matter of expense')
+        self.logger.warn('matter of expenses')
         
-        d = bm_database.connect()
-        entries = bm_database.get_entries_matter_of_expense(d)
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
+        
+        # fetch the entries
+        entries = bm_table_matter_of_expenses.get_all()
         
         # show an introduction line
         print("\t\t ~~~ matter of expense")
@@ -140,7 +151,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
             print("\t\t <-> \t index = {}, name = {}, originator = {}, provider = {}, groups of expenses = {}, amount = {}, frequency = {}, account = {}".format(
                 cnti[0], cnti[1], cnti[2], cnti[3], cnti[4], cnti[5], cnti[6], cnti[7]))
 
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
     
     def invoices(self):
@@ -150,21 +161,25 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # push a message into the logger
         self.logger.warn('invoices')
         
-        # show an introduction line
-        print("\t\t ~~~ invoices")
-        
         # now, connect to the database
-        d = bm_database.connect()
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_invoices = c_bm_table_invoices(conn, cursor)
         
         # fetch the entries
-        entries = bm_database.get_entries_invoices(d)
+        entries = bm_table_invoices.get_all()
+        
+        # show an introduction line
+        print("\t\t ~~~ invoices")
         
         # run over all entries
         for cnti in entries:
             print("\t\t <-> \t index = {}, name = \t{}".format(cnti[0], cnti[1]))
 
         # disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return 
     
     def groups_of_members(self):
@@ -174,21 +189,25 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # push a message into the logger
         self.logger.warn('groups of members')
         
-        # show an introduction line
-        print("\t\t ~~~ groups of members")
-        
         # now, connect to the database
-        d = bm_database.connect()
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
         
         # fetch the entries
-        entries = bm_database.get_entries_groups_of_members(d)
+        entries = bm_table_groups_of_members.get_all()
+        
+        # show an introduction line
+        print("\t\t ~~~ groups of members")
         
         # run over all entries
         for cnti in entries:
             print("\t\t <-> \t index = {}, name = {}".format(cnti[0], cnti[1]))
 
         # disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return    
     
     
@@ -199,21 +218,25 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # push a message into the logger
         self.logger.warn('groups of expenses')
         
-        # show an introduction line
-        print("\t\t ~~~ groups of expenses")
-        
         # now, connect to the database
-        d = bm_database.connect()
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_groups_of_expenses = c_bm_table_groups_of_expenses(conn, cursor)
         
         # fetch the entries
-        entries = bm_database.get_entries_groups_of_expenses(d)
+        entries = bm_table_groups_of_expenses.get_all()
+        
+        # show an introduction line
+        print("\t\t ~~~ groups of expenses")
         
         # run over all entries
         for cnti in entries:
             print("\t\t <-> index = {}, name = {}".format(cnti[0], cnti[1]))
 
         # disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
     
     def earnings(self):
@@ -223,21 +246,25 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # push a message into the logger
         self.logger.warn('earnings')
         
-        # show an introduction line
-        print("\t\t ~~~ earnings")
-        
-        # now, connect to the database
-        d = bm_database.connect()
+                # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_earnings = c_bm_table_earnings(conn, cursor)
         
         # fetch the entries
-        entries = bm_database.get_entries_earnings(d)
+        entries = bm_table_earnings.get_all()
+        
+        # show an introduction line
+        print("\t\t ~~~ earnings")
         
         # run over all entries
         for cnti in entries:
             print("\t\t <-> \t index = {}, name = {}, account = {}, amount = {}".format(cnti[0], cnti[1], cnti[2], cnti[3]))
 
         # disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
     
     def accounts(self):
@@ -247,14 +274,18 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # push a message into the logger
         self.logger.warn('accounts')
         
-        # show an introduction line
-        print("\t\t ~~~ accounts")        
-        
-        # now, connect to the database
-        d = bm_database.connect()
+                # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_accounts = c_bm_table_accounts(conn, cursor)
         
         # fetch the entries
-        entries = bm_database.get_entries_accounts(d)
+        entries = bm_table_accounts.get_all()
+        
+        # show an introduction line
+        print("\t\t ~~~ accounts")        
         
         # run over all entries
         for cnti in entries:
@@ -271,21 +302,25 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # push a message into the logger
         self.logger.warn('classes')
         
-        # show an introduction line
-        print("\t\t ~~~ classes")        
-        
-        # now, connect to the database
-        d = bm_database.connect()
+                # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_classes = c_bm_table_classes(conn, cursor)
         
         # fetch the entries
-        entries = bm_database.get_entries_class(d)
+        entries = bm_table_classes.get_all()
+        
+        # show an introduction line
+        print("\t\t ~~~ classes")        
         
         # run over all entries
         for cnti in entries:
             print("\t\t <-> \t index = {}, account = {}".format(cnti[0], cnti[1]))
 
         # disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
     
     def run(self):

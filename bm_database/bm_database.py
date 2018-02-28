@@ -9,7 +9,7 @@ import mod_logging_mkI_PYTHON
 import sqlite3
 from collections import namedtuple
 from bm_table_accounts import *
-from bm_table_class import *
+from bm_table_classes import *
 from bm_table_earnings import *
 from bm_table_groups_of_expenses import *
 from bm_table_groups_of_members import *
@@ -23,7 +23,7 @@ second, there is a dictionary which holds the data types for each column
 '''
 
 class c_bm_database():
-    ''' database class
+    ''' database classes
     '''
     def __init__(self):
         self.conn = None
@@ -51,7 +51,7 @@ class c_bm_database():
 class c_app(mod_logging_mkI_PYTHON.c_logging):
     ''' application, does not really do anything
     
-    child class of c_logging
+    child classes of c_logging
     '''
     
     def __init__(self):
@@ -92,9 +92,9 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
         bm_table_earnings = c_bm_table_earnings(conn, cursor)
         bm_table_earnings._test_routines()
 
-        # create and test 'class'
-        bm_table_class = c_bm_table_class(conn, cursor)
-        bm_table_class._test_routines()
+        # create and test 'classes'
+        bm_table_classes = c_bm_table_classes(conn, cursor)
+        bm_table_classes._test_routines()
 
         # create and test 'accounts'
         bm_table_accounts = c_bm_table_accounts(conn, cursor)
