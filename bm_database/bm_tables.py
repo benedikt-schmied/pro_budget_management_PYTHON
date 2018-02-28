@@ -255,3 +255,39 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         
         list_of_entries = self.cursor.fetchall()
         return list_of_entries
+    
+    def update_matching_id(self, _id, _args):
+        '''    selects a specific entry where the name matches
+        
+        the statement looks similar to:
+        Update table_name
+        SET column1 = value1, column2 = value2, ...
+        WHERE condition
+        
+        @param _cursor database cursor
+        '''   
+        
+        try:
+            stmt = "Update {} SET ".format(self.name)
+            
+            # now, loop over the columns    
+            cnt = 0
+            for item in self._get_columns():
+                if item == "id":
+                    continue
+                
+                # TODO @ BS : needs further refinement
+                stmt = stmt + item + " = {}".format(_args(cnt))
+                
+                # increment the looop counter
+                cnt = cnt + 1
+            
+            # append the id
+            stmt = stmt + "WHERE id = {}".format(_id)
+            
+            # now, run this statement
+            self.cursor.execute(stmt)
+            return 0
+        except sqlite3.Error as e:
+            print("An error occrred: ", e.args[0])
+            return -1

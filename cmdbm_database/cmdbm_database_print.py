@@ -99,7 +99,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # show an introduction line
         print("\t\t ~~~ members")
         
-        bm_table_matter_of_expenses.show_all_l()
+        bm_table_matter_of_expenses.show_all()
         
 
         bm_database.disconnect()

@@ -51,9 +51,13 @@ class c_menu_modify():
         # push a message to the logger
         self.logger.warn('members')
      
-        # show the existing members
-        menu_print = c_menu_print()
-        menu_print.members()        
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
+        bm_table_groups_of_members.show_all()
      
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")

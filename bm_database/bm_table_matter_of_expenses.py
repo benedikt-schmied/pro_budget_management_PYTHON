@@ -119,7 +119,7 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
         ''' shows all entries
         '''
         
-        entries = self.get_all_l()
+        entries = self._get_all_l()
         for row in entries:
             
             # start the string that shall be printed
