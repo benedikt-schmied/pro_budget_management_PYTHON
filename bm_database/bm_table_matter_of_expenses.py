@@ -80,14 +80,39 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
         '''
         raise NotImplementedError
 
-    def show_all(self):
-        for row in self.cursor.execute("select * from {}".format(self.name)):
-            self.logger.debug(row)
-
     def get_all(self):
+        ''' fetches all entries from the database
         '''
+        entries = []
+        for row in self._get_all():
+            entries.append(t_bm_table_matter_of_expenses_s._make(row))
+        return entries
+
+    def show_all(self):
+        ''' shows all entries
         '''
-        return self._get_all()
+        
+        entries = self.get_all()
+        for row in entries:
+            
+            # start the string that shall be printed
+            pstr = "\t"
+            cnt = 0
+            
+            for item in t_bm_table_matter_of_expenses_s._fields:
+                
+                pstr = pstr + item
+                pstr = pstr + " = "
+                pstr = pstr + str(row[cnt])
+                pstr = pstr + ", "
+                
+                # increment the counter variable
+                cnt = cnt + 1
+            
+            # delete the last two characters
+            pstr = pstr[:-2]
+            
+            print(pstr)
     
     def pop_where_id(self, _cursor, _id):
         '''    pops a new entry into 'members' table

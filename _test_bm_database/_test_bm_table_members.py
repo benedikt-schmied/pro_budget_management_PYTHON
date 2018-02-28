@@ -36,7 +36,7 @@ class _test_bm_table_members(c_test_case):
             
             # quit the loop in case of an error
             if self.bm_table_members.push(
-                t_bm_members_s(
+                t_bm_table_members_s(
                     name = entry, 
                     group_of_members = 1
                 )
@@ -50,7 +50,7 @@ class _test_bm_table_members(c_test_case):
             
             # quit the loop in case of an error
             if self.bm_table_members.push(
-                t_bm_members_s(
+                t_bm_table_members_s(
                     name = entry, 
                     group_of_members = 1
                 )

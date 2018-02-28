@@ -16,10 +16,10 @@ second, there is a dictionary which holds the data types for each column
 '''
 
 # long definition which contains the ID as well
-t_bm_members_l = namedtuple('t_bm_members_l', ['id', 'name', 'group_of_members'])
+t_bm_table_members_l = namedtuple('t_bm_table_members_l', ['id', 'name', 'group_of_members'])
 
 # short definition which does not contain the ID
-t_bm_members_s = namedtuple('t_bm_members_s', ['name', 'group_of_members'])
+t_bm_table_members_s = namedtuple('t_bm_table_members_s', ['name', 'group_of_members'])
 
 s_bm_table_members = {'id': 'integer primary key', 'name': 'text unique', 'group_of_members': 'integer'}
 
@@ -33,7 +33,7 @@ class c_bm_table_members(c_bm_tables):
         '''
         
         # call the father's class constructor
-        c_bm_tables.__init__(self, "members", None, _conn, _cursor, t_bm_members_l, s_bm_table_members)
+        c_bm_tables.__init__(self, "members", None, _conn, _cursor, t_bm_table_members_l, s_bm_table_members)
         self.logger.debug("constructor")
     
     def push(self, _args):
@@ -72,14 +72,39 @@ class c_bm_table_members(c_bm_tables):
         '''
         raise NotImplementedError
 
-    def show_all(self):
-        for row in self.cursor.execute("select * from {}".format(self.name)):
-            self.logger.debug(row)
-
     def get_all(self):
+        ''' fetches all entries from the database
         '''
+        entries = []
+        for row in self._get_all():
+            entries.append(t_bm_table_members_s._make(row))
+        return entries
+
+    def show_all(self):
+        ''' shows all entries
         '''
-        return self._get_all()
+        
+        entries = self.get_all()
+        for row in entries:
+            
+            # start the string that shall be printed
+            pstr = "\t"
+            cnt = 0
+            
+            for item in t_bm_table_members_s._fields:
+                
+                pstr = pstr + item
+                pstr = pstr + " = "
+                pstr = pstr + str(row[cnt])
+                pstr = pstr + ", "
+                
+                # increment the counter variable
+                cnt = cnt + 1
+            
+            # delete the last two characters
+            pstr = pstr[:-2]
+            
+            print(pstr)
     
     def pop_where_id(self, _cursor, _id):
         '''    pops a new entry into 'members' table
@@ -124,10 +149,10 @@ class c_bm_table_members(c_bm_tables):
         self.setup()
         
         data = []
-        data.append(t_bm_members_s(name = "test2", group_of_members = 1))
-        data.append(t_bm_members_s(name = "test3", group_of_members = 1))
-        data.append(t_bm_members_s(name = "test4", group_of_members = 1))
-        data.append(t_bm_members_s(name = "test5", group_of_members = 1))
+        data.append(t_bm_table_members_s(name = "test2", group_of_members = 1))
+        data.append(t_bm_table_members_s(name = "test3", group_of_members = 1))
+        data.append(t_bm_table_members_s(name = "test4", group_of_members = 1))
+        data.append(t_bm_table_members_s(name = "test5", group_of_members = 1))
         
         self.logger.warn("pushing an array of data")
         for item in data:
