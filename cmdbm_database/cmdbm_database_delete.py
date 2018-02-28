@@ -21,7 +21,7 @@ import argparse
 from bm_database import *
 import mod_logging_mkI_PYTHON
 from cmdmenu import *
-from cmdbm_database_setup import *
+from cmdbm_database_print import *
 
 class c_menu_delete():
     ''' print menu
@@ -57,15 +57,20 @@ class c_menu_delete():
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_members = c_bm_table_members(conn, cursor)
          
         # now, push it to the table
-#         bm_database.pop_from_members(d, _name = name)
-        bm_database.pop_from_members_where_id(d, _id = row)
+        ret = bm_table_members.select_matching_id(row)
+        if (ret != None):
+            bm_table_members.pop(ret)
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def matter_of_expense(self):
@@ -83,14 +88,19 @@ class c_menu_delete():
         # ask the user for specific inputs
         nr = input("\t\t id = ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
          
         # now, push it to the table
-        bm_database.pop_from_matter_of_expense_where_id(d, _id = nr)
+        
+        bm_table_matter_of_expenses.pop()
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def invoices(self):
@@ -107,14 +117,19 @@ class c_menu_delete():
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_invoices = c_bm_table_invoices(conn, cursor)
          
         # now, push it to the table
-        bm_database.pop_from_invoice_where_id(d, _id = row)
+        
+        bm_table_invoices.pop()
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def groups_of_members(self):
@@ -131,14 +146,19 @@ class c_menu_delete():
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
          
         # now, push it to the table
-        bm_database.pop_from_groups_of_members_where_id(d, _id = row)
+        
+        bm_table_groups_of_members.pop()
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return   
      
      
@@ -156,14 +176,19 @@ class c_menu_delete():
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_groups_of_expenses = c_bm_table_groups_of_expenses(conn, cursor)
          
         # now, push it to the table
-        bm_database.pop_from_groups_of_expenses_where_id(d, _id = row)
+        
+        bm_table_groups_of_expenses.pop()
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return 
      
     def earnings(self):
@@ -180,14 +205,19 @@ class c_menu_delete():
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_earnings = c_bm_table_earnings(conn, cursor)
          
         # now, push it to the table
-        bm_database.pop_from_earnings_where_id(d, _id = row)
+        
+        bm_table_earnings.pop()
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def accounts(self):
@@ -204,14 +234,19 @@ class c_menu_delete():
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_accounts = c_bm_table_accounts(conn, cursor)
          
         # now, push it to the table
-        bm_database.pop_from_accounts_where_id(d, _id = row)
+        
+        bm_table_accounts.pop()
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def classes(self):
@@ -228,14 +263,19 @@ class c_menu_delete():
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_classes = c_bm_table_classes(conn, cursor)
          
         # now, push it to the table
-        bm_database.pop_from_class_where_id(d, _id = row)
+        
+        bm_table_classes.pop()
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def run(self):

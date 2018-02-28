@@ -216,10 +216,18 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
             # delete it
             self._pop(row[1:])
         
-    def _select_matching_id(self):
+    def _select_matching_id(self, _id):
         ''' selects an entry with a matching ID
-        '''
-        raise NotImplementedError
+        '''#         bm_database.pop_from_members(d, _name = name)
+        stmt = "SELECT * FROM {} WHERE id = {}".format(self.name, _id)
+        self.logger.debug(stmt)
+        self.cursor.execute(stmt)
+
+        entries = self.cursor.fetchone()
+            
+        # we do not expect to have the ID within the statement, hence
+        # delete it
+        return entries
     
     def show_matching_id(self):
         ''' shows an entry with a matching ID

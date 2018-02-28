@@ -58,17 +58,18 @@ class c_bm_table_accounts(c_bm_tables):
         '''
         
         # call generic pop method
-        return self._pop(_args)
+        args = _args[1:]
+        return self._pop(args)
         
     def pop_all(self):
         ''' pops all entries from the table
         '''
         return self._pop_all()
         
-    def select_matching_id(self):
+    def select_matching_id(self, _id):
         ''' selects an entry with a matching ID
         '''
-        raise NotImplementedError
+        return self._select_matching_id(_id)
     
     def show_matching_id(self):
         ''' shows an entry with a matching ID

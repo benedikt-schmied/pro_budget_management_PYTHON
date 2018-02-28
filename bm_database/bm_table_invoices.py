@@ -59,7 +59,8 @@ class c_bm_table_invoices(c_bm_tables):
         '''
         
         # call generic pop method
-        return self._pop(_args)
+        args = _args[1:]
+        return self._pop(args)
         
     def pop_all(self):
         ''' pops all entries from the table
@@ -71,10 +72,10 @@ class c_bm_table_invoices(c_bm_tables):
         '''
         raise NotImplementedError
     
-    def show_matching_id(self):
+    def show_matching_id(self, _id):
         ''' shows an entry with a matching ID
         '''
-        raise NotImplementedError
+        return self._select_matching_id(_id)
     
     def get_all(self):
         ''' fetches all entries from the database
