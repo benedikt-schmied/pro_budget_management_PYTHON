@@ -56,21 +56,33 @@ class c_menu_modify():
         (conn, cursor) = bm_database.connect()
 
         # create a member class
-        bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
-        bm_table_groups_of_members.show_all()
+        bm_table_members = c_bm_table_members(conn, cursor)
+        bm_table_members.show_all_l()
      
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-#         bm_database.pop_from_members(d, _name = name)
-        bm_database.pop_from_members_where_id(d, _id = row)
+        
+        # select the entry
+        entries = bm_table_members.select_matching_id(row)
+        
+        name = input("\t\t <--> give us the name: ({}) ".format(entries.name))
+        if not name:
+            name = entries.name
+        
+        group_of_members = input("\t\t <--> give us the group of members: ({}) ".format(entries.group_of_members))
+        if not group_of_members:
+            group_of_members = entries.group_of_members
+        
+        bm_table_members.update_matching_id(row, 
+                                            t_bm_table_members_l(
+                                                id = row, 
+                                                name = name,
+                                                group_of_members = group_of_members
+                                                )
+                                            )
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def matter_of_expense(self):

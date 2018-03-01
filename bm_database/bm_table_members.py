@@ -66,7 +66,7 @@ class c_bm_table_members(c_bm_tables):
     def select_matching_id(self, _id):
         ''' selects an entry with a matching ID
         '''
-        return self._select_matching_id(_id)
+        return t_bm_table_members_l._make(self._select_matching_id(_id))
     
     def show_matching_id(self):
         ''' shows an entry with a matching ID
@@ -79,6 +79,14 @@ class c_bm_table_members(c_bm_tables):
         entries = []
         for row in self._get_all():
             entries.append(t_bm_table_members_s._make(row))
+        return entries
+
+    def get_all_l(self):
+        ''' fetches all entries from the database
+        '''
+        entries = []
+        for row in self._get_all_l():
+            entries.append(t_bm_table_members_l._make(row))
         return entries
 
     def show_all(self):
@@ -159,17 +167,13 @@ class c_bm_table_members(c_bm_tables):
             print("An error occrred: ", e.args[0])
             return -1
 
-    def update_where_id_match(self, _id):
+    def update_matching_id(self, _id, _args):
         '''    selects a specific entry where the name matches
         
         @param _cursor database cursor
-        '''   
-        try:
-            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
-            return self.cursor.fetchone()[0]
-        except sqlite3.Error as e:
-            print("An error occrred: ", e.args[0])
-            return -1
+        '''
+                    
+        self._update_matching_id(_id, _args)
         
     def _test_routines(self):
         

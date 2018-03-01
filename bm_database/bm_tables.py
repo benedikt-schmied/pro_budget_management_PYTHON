@@ -256,7 +256,7 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         list_of_entries = self.cursor.fetchall()
         return list_of_entries
     
-    def update_matching_id(self, _id, _args):
+    def _update_matching_id(self, _id, _args):
         '''    selects a specific entry where the name matches
         
         the statement looks similar to:
@@ -267,6 +267,14 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         @param _cursor database cursor
         '''   
         
+                # we need a list in order to pass the arguments as an array
+        args = []
+        
+        for item in self.ttuples._fields:
+            if item == "id":
+                continue
+            args.append(getattr(_args, item))
+        
         try:
             stmt = "Update {} SET ".format(self.name)
             
@@ -276,17 +284,21 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
                 if item == "id":
                     continue
                 
-                # TODO @ BS : needs further refinement
-                stmt = stmt + item + " = {}".format(_args(cnt))
+                stmt = stmt + item + " = '{}', ".format(args[cnt])
                 
                 # increment the looop counter
                 cnt = cnt + 1
             
+            stmt = stmt[:-2] + " "
+            
             # append the id
             stmt = stmt + "WHERE id = {}".format(_id)
             
+            self.logger.critical(stmt)
+            
             # now, run this statement
             self.cursor.execute(stmt)
+            self.conn.commit()
             return 0
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
