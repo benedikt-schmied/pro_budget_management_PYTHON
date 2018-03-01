@@ -29,7 +29,7 @@ class c_menu_calc():
      
     def __init__(self):
          
-        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd.warn')
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, g_program_name + ".calc")
          
         # we need a variable which holds the main menu    
         self.menu_calc = []
@@ -41,35 +41,40 @@ class c_menu_calc():
         '''
          
         # push a message to the logger
-        self.logger.warn('members')
+        self.logger.warn('total expenses')
          
-        # connect to the database
-        d = bm_database.connect()
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
          
-        # now, push it to the table
-        entries = []
-        entries = bm_database.get_entries_matter_of_expense(d)
+        # create a member class
+        bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
+        bm_table_matter_of_expenses.show_all_l()
+        
+        bm_table_earnings = c_bm_table_earnings(conn, cursor)
+        bm_table_earnings.show_all_l()
+        
         amount = 0
-        for item in entries:
-            print("\t\t name = {}, amount = {}, frequency = {}".format(item[1], item[7], item[8]))
+        
+        for item in bm_table_matter_of_expenses.get_all():
+            print("\t\t name = {}, amount = {}, frequency = {}".format(item.name, item.amount, item.frequency))
              
-            if item[8] > 4:
-                divider = item[8] / 4
-                amount = amount + (item[7] / divider)
+            if item.frequency > 4:
+                divider = item.frequency / 4
+                amount = amount + (item.amount / divider)
             else:
-                amount = amount + (item[7])
+                amount = amount + (item.amount)
          
-        entries = []
-        entries = bm_database.get_entries_earnings(d)
+
         earnings = 0
-        for item in entries:
-            print("\t\t name = {}, account = {}, amount = {}".format(item[1], item[2], item[3]))
-            earnings = earnings + item[3]
-         
+        for item in bm_table_earnings.get_all():
+            print("\t\t name = {}, account = {}, amount = {}".format(item.name, item.account, item.amount))
+            earnings = earnings + item.amount
+
         print("\t\t amount = {}, which means, we've got an income of {}, spare {}".format(amount, earnings, earnings - amount))
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def run(self):

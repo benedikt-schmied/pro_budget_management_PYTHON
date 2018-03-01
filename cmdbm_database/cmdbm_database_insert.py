@@ -35,7 +35,7 @@ class c_menu_insert():
         # we need a variable which holds the main menu    
         self.menu_insert = []
         self.menu_insert.append(c_menu_items('me', 'members', 'member table', self.members))
-        self.menu_insert.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_insert.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expenses))  
         self.menu_insert.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
         self.menu_insert.append(c_menu_items('gm', 'groups of members', 'groups of members', self.groups_of_members))
         self.menu_insert.append(c_menu_items('ge', 'groups of expenses', 'groups of expenses', self.groups_of_expenses))
@@ -54,15 +54,15 @@ class c_menu_insert():
         # show all members so far
         menu_print = c_menu_print()
         menu_print.members()
-         
-        # ask the user for specific inputs        
-        name = input("\t\t <--> name: ")
-
-        # show all members so far
-        menu_print.groups_of_members()
-         
-        # ask the user for specific inputs        
-        group_of_members = input("\t\t <--> groups_of_members: ")
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_members_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
 
         # now, connect to the database
         bm_database = c_bm_database()
@@ -71,52 +71,33 @@ class c_menu_insert():
         # create a member class
         bm_table_members = c_bm_table_members(conn, cursor)
         
-        # create a variable which holds the entries
-        test = t_bm_table_members_s(name = name, 
-                                    group_of_members = group_of_members)
-         
-        bm_table_members.push(test)
+        # push the entries into the table 
+        bm_table_members.push(t_bm_table_members_s._make(args))
+        
         # now, disconnect again
         bm_database.disconnect()
         return
 #     
-    def matter_of_expense(self):
-        ''' insert into matter of expense
-         
+    def matter_of_expenses(self):
+        ''' insert into matter_of_expenses entries
         '''
          
         # push a message to the logger
-        self.logger.warn('matter of expense')
- 
-        # print all existing entries
+        self.logger.warn('matter_of_expenses')
+         
+        # show all matter_of_expenses so far
         menu_print = c_menu_print()
-        menu_print.matter_of_expense()
- 
-        # ask the user for specific iputs
-        name = input("\t\t <--> name: ")
-         
-        # print the members table in order to help the user
-        menu_print.classes()
-        menu_print.members()
-        menu_print.groups_of_members()
-         
-        originator_class = input("\t\t <--> originator class: ")
-        originator = input("\t\t <--> originator: ")
-        provider_class = input("\t\t <--> provider class: ")
-        provider = input("\t\t <--> provider: ")
-         
-        # print the groups of expenses table
-        menu_print.groups_of_expenses()
-        group = input("\t\t <--> group: ")
-        amount = input("\t\t <--> amount: ")
-         
-        # tell the user to give the frequency in weeks
-        frequency = input("\t\t <--> frequency [weeks]: ")
-         
-        # print the accounts table
-        menu_print.accounts()
-        account = input("\t\t <--> account: ")
-         
+        menu_print.matter_of_expenses()
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_matter_of_expenses_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
+
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
@@ -124,211 +105,213 @@ class c_menu_insert():
         # create a member class
         bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
         
-        # create a variable which holds the entries
-        test = t_bm_table_matter_of_expenses_s(
-                    name = name, 
-                    originator = originator, 
-                    originator_class = originator_class, 
-                    provider = provider, 
-                    provider_class = provider_class,
-                    groups_of_expenses = group, 
-                    amount = amount, 
-                    frequency = frequency, 
-                    account = account)
-         
-        bm_table_matter_of_expenses.push(test)
+        # push the entries into the table 
+        bm_table_matter_of_expenses.push(t_bm_table_matter_of_expenses_s._make(args))
         
         # now, disconnect again
         bm_database.disconnect()
         return
 #     
     def invoices(self):
-        ''' insert into the invoices table
+        ''' insert into invoices entries
         '''
          
-        # push a message into the logger
-        self.logger.warn('matter of invoices')
-     
-        # ask the user for specific inputs    
-        matter_of_expense = input("\t\t <--> matter of expense: ")
-        originator = input("\t\t <--> originator: ")
-        date = input("\t\t <--> date: ")
+        # push a message to the logger
+        self.logger.warn('invoices')
          
+        # show all invoices so far
+        menu_print = c_menu_print()
+        menu_print.invoices()
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_invoices_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
+
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
-         
-        test = t_bm_table_invoices_s(
-                    matter_of_expense = matter_of_expense, 
-                    originator_class = originator, 
-                    originator = originator, 
-                    date = date
-                    )
-        
-        # now, push it to the table
+
+        # create a member class
         bm_table_invoices = c_bm_table_invoices(conn, cursor)
-         
-        bm_table_invoices.push(test)
+        
+        # push the entries into the table 
+        bm_table_invoices.push(t_bm_table_invoices_s._make(args))
         
         # now, disconnect again
         bm_database.disconnect()
         return
      
     def groups_of_members(self):
-        ''' insert into the group of members table
+        ''' insert into groups_of_members entries
         '''
          
-        # push a message into the logger
-        self.logger.warn('groups of members')
- 
-        # print the members table in order to help the user
+        # push a message to the logger
+        self.logger.warn('groups_of_members')
+         
+        # show all groups_of_members so far
         menu_print = c_menu_print()
         menu_print.groups_of_members()
- 
-        # ask the user for specific inputs
-        name = input("\t\t <--> name: ")
-         
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_groups_of_members_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
+
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
-         
-        test = t_bm_table_groups_of_members_s(
-                    name = name
-                    )
-        
-        # now, push it to the table
+
+        # create a member class
         bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
-         
-        bm_table_groups_of_members.push(test)
+        
+        # push the entries into the table 
+        bm_table_groups_of_members.push(t_bm_table_groups_of_members_s._make(args))
         
         # now, disconnect again
         bm_database.disconnect()
-        return   
+        return
      
      
     def groups_of_expenses(self):
-        ''' insert into the group of expenses tables
+        ''' insert into groups_of_expenses entries
         '''
          
-        # push a message into the logger
-        self.logger.warn('groups of expenses')
- 
-                # print the members table in order to help the user
+        # push a message to the logger
+        self.logger.warn('groups_of_expenses')
+         
+        # show all groups_of_expenses so far
         menu_print = c_menu_print()
         menu_print.groups_of_expenses()
- 
-        # ask the user for specific inputs
-        name = input("\t\t <--> name: ")
-         
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_groups_of_expenses_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
+
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
-         
-        test = t_bm_table_groups_of_expenses_s(
-                    name = name
-                    )
-        
-        # now, push it to the table
+
+        # create a member class
         bm_table_groups_of_expenses = c_bm_table_groups_of_expenses(conn, cursor)
-         
-        bm_table_groups_of_expenses.push(test)
+        
+        # push the entries into the table 
+        bm_table_groups_of_expenses.push(t_bm_table_groups_of_expenses_s._make(args))
         
         # now, disconnect again
         bm_database.disconnect()
-        return 
+        return
      
     def earnings(self):
-        ''' print the earnings entries
+        ''' insert into earnings entries
         '''
          
-        # push a message into the logger
+        # push a message to the logger
         self.logger.warn('earnings')
- 
-        # print the members table in order to help the user
+         
+        # show all earnings so far
         menu_print = c_menu_print()
         menu_print.earnings()
- 
-        # ask the user for specific inputs
-        name = input("\t\t <--> name: ")
-         
-        # print the members table in order to help the user
-        menu_print.accounts()
-         
-        account = input("\t\t <--> account: ")
-        amount = input("\t\t <--> amount: ")
-         
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_earnings_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
+
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
-         
-        test = t_bm_table_earnings_s(
-                    name = name, 
-                    account = account, 
-                    amount = amount
-                    )
-        
-        # now, push it to the table
+
+        # create a member class
         bm_table_earnings = c_bm_table_earnings(conn, cursor)
-         
-        bm_table_earnings.push(test)
+        
+        # push the entries into the table 
+        bm_table_earnings.push(t_bm_table_earnings_s._make(args))
         
         # now, disconnect again
         bm_database.disconnect()
         return
      
     def accounts(self):
-        ''' print the accounts entries
+        ''' insert into accounts entries
         '''
          
-        # push a message into the logger
+        # push a message to the logger
         self.logger.warn('accounts')
- 
-        # print the members table in order to help the user
+         
+        # show all accounts so far
         menu_print = c_menu_print()
         menu_print.accounts()
- 
-        # ask the user for specific inputs
-        name = input("\t\t <--> name: ")
-         
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_accounts_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
+
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
-         
-        test = t_bm_table_accounts_s(
-                    name = name
-                    )
-        
-        # now, push it to the table
+
+        # create a member class
         bm_table_accounts = c_bm_table_accounts(conn, cursor)
-         
-        bm_table_accounts.push(test)
+        
+        # push the entries into the table 
+        bm_table_accounts.push(t_bm_table_accounts_s._make(args))
         
         # now, disconnect again
         bm_database.disconnect()
         return
      
     def classes(self):
-        ''' print the classes entries
+        ''' insert into classes entries
         '''
          
-        # push a message into the logger
+        # push a message to the logger
         self.logger.warn('classes')
- 
-        # ask the user for specific inputs
-        name = input("\t\t <--> name: ")
          
+        # show all classes so far
+        menu_print = c_menu_print()
+        menu_print.classes()
+        
+        # we need a generic list in order to fetch the items
+        args = []
+        
+        # loop and fetch the entries
+        for item in t_bm_table_classes_s._fields:
+            args.append(input("\t\t <--> give us the {}:  ".format(item)))
+            if not args[-1]:
+                return 0
+
         # now, connect to the database
         bm_database = c_bm_database()
         (conn, cursor) = bm_database.connect()
-         
-        test = t_bm_table_classes_s(
-                    name = name
-                    )
-        
-        # now, push it to the table
+
+        # create a member class
         bm_table_classes = c_bm_table_classes(conn, cursor)
-         
-        bm_table_classes.push(test)
+        
+        # push the entries into the table 
+        bm_table_classes.push(t_bm_table_classes_s._make(args))
         
         # now, disconnect again
         bm_database.disconnect()

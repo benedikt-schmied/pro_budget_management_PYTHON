@@ -53,16 +53,16 @@ class c_backup(mod_logging_mkI_PYTHON.c_logging):
         '''
         @param _midx     menu index
         '''
-        matter_of_expense = collections.namedtuple('matter_of_expense', ['name', 'amount', 'account'])
-        autokosten = matter_of_expense(name = 'Autokosten', amount = 6000.0, account = '1')
-        versicherung = matter_of_expense(name = 'Versicherung', amount = 200.0, account = '2')
+        matter_of_expenses = collections.namedtuple('matter_of_expenses', ['name', 'amount', 'account'])
+        autokosten = matter_of_expenses(name = 'Autokosten', amount = 6000.0, account = '1')
+        versicherung = matter_of_expenses(name = 'Versicherung', amount = 200.0, account = '2')
         print(autokosten)
         print(versicherung)
         print(autokosten.amount + versicherung.amount)
         
         import csv
         
-        for entry in map(matter_of_expense._make, csv.reader(open("bm_matter_of_expense.csv", "rt", encoding='ascii'))):
+        for entry in map(matter_of_expenses._make, csv.reader(open("bm_matter_of_expense.csv", "rt", encoding='ascii'))):
             print(entry.name, entry.amount)
         return
     

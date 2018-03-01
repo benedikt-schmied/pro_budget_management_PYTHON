@@ -74,7 +74,7 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
     def select_matching_id(self, _id):
         ''' selects an entry with a matching ID
         '''
-        return self._select_matching_id(_id)
+        return t_bm_table_matter_of_expenses_l._make(self._select_matching_id(_id))
     
     def show_matching_id(self):
         ''' shows an entry with a matching ID
@@ -166,7 +166,15 @@ class c_bm_table_matter_of_expenses(c_bm_tables):
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
             return -1
-    
+
+    def update_matching_id(self, _id, _args):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''
+                    
+        self._update_matching_id(_id, _args)
+
     def _test_routines(self):
         
         self.setup()

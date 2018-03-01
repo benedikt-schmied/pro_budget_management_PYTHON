@@ -29,12 +29,12 @@ class c_menu_delete():
      
     def __init__(self):
          
-        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd')
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, g_program_name + ".delete")
          
         # we need a variable which holds the main menu    
         self.menu_delete = []
         self.menu_delete.append(c_menu_items('me', 'members', 'member table', self.members))
-        self.menu_delete.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_delete.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expenses))  
         self.menu_delete.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
         self.menu_delete.append(c_menu_items('gm', 'groups of members', 'groups of members', self.groups_of_members))
         self.menu_delete.append(c_menu_items('ge', 'groups of expenses', 'groups of expenses', self.groups_of_expenses))
@@ -71,7 +71,7 @@ class c_menu_delete():
         bm_database.disconnect()
         return
      
-    def matter_of_expense(self):
+    def matter_of_expenses(self):
         ''' insert into matter of expense
          
         '''

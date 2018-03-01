@@ -18,14 +18,14 @@ second, there is a dictionary which holds the data types for each column
 
 # invoicess
 t_bm_table_invoices_l = namedtuple('t_bm_table_invoices_l', [ \
-    'id', 'matter_of_expense', 'originator_class', 'originator', 'date' \
+    'id', 'matter_of_expenses', 'originator_class', 'originator', 'date' \
    ]) 
 
 t_bm_table_invoices_s = namedtuple('t_bm_table_invoices_s', [ \
-    'matter_of_expense', 'originator_class', 'originator', 'date' \
+    'matter_of_expenses', 'originator_class', 'originator', 'date' \
    ]) 
 
-s_bm_table_invoices = {'id': 'primary key', 'matter_of_expense': 'integer', 'originator_class': 'integer', \
+s_bm_table_invoices = {'id': 'primary key', 'matter_of_expenses': 'integer', 'originator_class': 'integer', \
     'originator': 'integer', 'date': 'text'}
 
 class c_bm_table_invoices(c_bm_tables):
@@ -67,10 +67,11 @@ class c_bm_table_invoices(c_bm_tables):
         '''
         return self._pop_all()
         
-    def select_matching_id(self):
+    def select_matching_id(self, _id):
         ''' selects an entry with a matching ID
         '''
-        raise NotImplementedError
+        return t_bm_table_invoices_l._make(self._select_matching_id(_id))
+    
     
     def show_matching_id(self, _id):
         ''' shows an entry with a matching ID
@@ -157,7 +158,7 @@ class c_bm_table_invoices(c_bm_tables):
         @param _cursor database cursor
         '''   
         try:
-            self.cursor.execute("SELECT id FROM {} WHERE matter_of_expense=?".format(self.name), (_name,))
+            self.cursor.execute("SELECT id FROM {} WHERE matter_of_expenses=?".format(self.name), (_name,))
             return self.cursor.fetchone()[0]
         except sqlite3.Error as e:
             print("An error occrred: ", e.args[0])
@@ -175,15 +176,23 @@ class c_bm_table_invoices(c_bm_tables):
             print("An error occrred: ", e.args[0])
             return -1
         
+    def update_matching_id(self, _id, _args):
+        '''    selects a specific entry where the name matches
+        
+        @param _cursor database cursor
+        '''
+                    
+        self._update_matching_id(_id, _args)
+        
     def _test_routines(self):
         
         self.setup()
         
         data = []
-        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
-        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
-        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
-        data.append(t_bm_table_invoices_s(matter_of_expense = 1, originator_class = 1, originator = 1, date = 1))
+        data.append(t_bm_table_invoices_s(matter_of_expenses = 1, originator_class = 1, originator = 1, date = 1))
+        data.append(t_bm_table_invoices_s(matter_of_expenses = 1, originator_class = 1, originator = 1, date = 1))
+        data.append(t_bm_table_invoices_s(matter_of_expenses = 1, originator_class = 1, originator = 1, date = 1))
+        data.append(t_bm_table_invoices_s(matter_of_expenses = 1, originator_class = 1, originator = 1, date = 1))
         
         self.logger.warn("pushing an array of data")
         for item in data:
