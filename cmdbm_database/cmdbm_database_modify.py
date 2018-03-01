@@ -377,55 +377,7 @@ class c_menu_modify():
             
             if c =='q':
                 break
-             
-class c_menu_calc():
-    ''' print menu
-    '''
-     
-    def __init__(self):
-         
-        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd.warn')
-         
-        # we need a variable which holds the main menu    
-        self.menu_calc = []
-        self.menu_calc.append(c_menu_items('te', 'total_expenses', 'give me the total expenses', self.total_expenses))
-        return
-     
-    def total_expenses(self):
-        ''' calc the total expenses
-        '''
-         
-        # push a message to the logger
-        self.logger.warn('members')
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        entries = []
-        entries = bm_database.get_entries_matter_of_expense(d)
-        amount = 0
-        for item in entries:
-            print("\t\t name = {}, amount = {}, frequency = {}".format(item[1], item[7], item[8]))
-             
-            if item[8] > 4:
-                divider = item[8] / 4
-                amount = amount + (item[7] / divider)
-            else:
-                amount = amount + (item[7])
-         
-        entries = []
-        entries = bm_database.get_entries_earnings(d)
-        earnings = 0
-        for item in entries:
-            print("\t\t name = {}, account = {}, amount = {}".format(item[1], item[2], item[3]))
-            earnings = earnings + item[3]
-         
-        print("\t\t amount = {}, which means, we've got an income of {}, spare {}".format(amount, earnings, earnings - amount))
-         
-        # now, disconnect again
-        bm_database.disconnect(d)
-        return
+
      
     def run(self):
          
