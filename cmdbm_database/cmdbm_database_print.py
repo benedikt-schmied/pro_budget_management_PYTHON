@@ -35,7 +35,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         self.menu_print = []
         self.menu_print.append(c_menu_items('at', 'all tables', 'print all tables', self.all_tables))
         self.menu_print.append(c_menu_items('me', 'members', 'print the member table', self.members))
-        self.menu_print.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_print.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expenses))  
         self.menu_print.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
         self.menu_print.append(c_menu_items('gm', 'groups of members', 'groups of members', self.groups_of_members))
         self.menu_print.append(c_menu_items('ge', 'groups of expenses', 'groups of expenses', self.groups_of_expenses))
@@ -47,7 +47,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
     def all_tables(self):
         self.logger.warn('all tables')
         self.members()
-        self.matter_of_expense()
+        self.matter_of_expenses()
         self.invoices()
         self.groups_of_members()
         self.groups_of_expenses()
@@ -81,7 +81,7 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         bm_database.disconnect()
         return 
     
-    def matter_of_expense(self):
+    def matter_of_expenses(self):
         ''' print the matter of expense entries
         
         '''
@@ -119,16 +119,12 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # create a member class
         bm_table_invoices = c_bm_table_invoices(conn, cursor)
         
-        # fetch the entries
-        entries = bm_table_invoices.get_all()
-        
         # show an introduction line
         print("\t\t ~~~ invoices")
         
         # run over all entries
-        for cnti in entries:
-            print("\t\t <-> \t index = {}, name = \t{}".format(cnti[0], cnti[1]))
-
+        bm_table_invoices.show_all()
+        
         # disconnect again
         bm_database.disconnect()
         return 
@@ -147,15 +143,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # create a member class
         bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
         
-        # fetch the entries
-        entries = bm_table_groups_of_members.get_all()
-        
         # show an introduction line
         print("\t\t ~~~ groups of members")
         
-        # run over all entries
-        for cnti in entries:
-            print("\t\t <-> \t index = {}, name = {}".format(cnti[0], cnti[1]))
+        # show an introduction line
+        bm_table_groups_of_members.show_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -176,15 +168,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # create a member class
         bm_table_groups_of_expenses = c_bm_table_groups_of_expenses(conn, cursor)
         
-        # fetch the entries
-        entries = bm_table_groups_of_expenses.get_all()
-        
         # show an introduction line
         print("\t\t ~~~ groups of expenses")
         
         # run over all entries
-        for cnti in entries:
-            print("\t\t <-> index = {}, name = {}".format(cnti[0], cnti[1]))
+        bm_table_groups_of_expenses.show_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -204,15 +192,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # create a member class
         bm_table_earnings = c_bm_table_earnings(conn, cursor)
         
-        # fetch the entries
-        entries = bm_table_earnings.get_all()
-        
         # show an introduction line
         print("\t\t ~~~ earnings")
         
         # run over all entries
-        for cnti in entries:
-            print("\t\t <-> \t index = {}, name = {}, account = {}, amount = {}".format(cnti[0], cnti[1], cnti[2], cnti[3]))
+        bm_table_earnings.show_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -232,15 +216,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # create a member class
         bm_table_accounts = c_bm_table_accounts(conn, cursor)
         
-        # fetch the entries
-        entries = bm_table_accounts.get_all()
-        
         # show an introduction line
         print("\t\t ~~~ accounts")        
         
         # run over all entries
-        for cnti in entries:
-            print("\t\t <-> \t index = {}, account = {}".format(cnti[0], cnti[1]))
+        bm_table_accounts.show_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -260,15 +240,11 @@ class c_menu_print(mod_logging_mkI_PYTHON.c_logging):
         # create a member class
         bm_table_classes = c_bm_table_classes(conn, cursor)
         
-        # fetch the entries
-        entries = bm_table_classes.get_all()
-        
         # show an introduction line
         print("\t\t ~~~ classes")        
         
         # run over all entries
-        for cnti in entries:
-            print("\t\t <-> \t index = {}, account = {}".format(cnti[0], cnti[1]))
+        bm_table_classes.show_all()
 
         # disconnect again
         bm_database.disconnect()

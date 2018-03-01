@@ -35,7 +35,7 @@ class c_menu_modify():
         # we need a variable which holds the main menu    
         self.menu_modify = []
         self.menu_modify.append(c_menu_items('me', 'members', 'member table', self.members))
-        self.menu_modify.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_modify.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expenses))  
         self.menu_modify.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
         self.menu_modify.append(c_menu_items('gm', 'groups of members', 'groups of members', self.groups_of_members))
         self.menu_modify.append(c_menu_items('ge', 'groups of expenses', 'groups of expenses', self.groups_of_expenses))
@@ -65,194 +65,288 @@ class c_menu_modify():
         # select the entry
         entries = bm_table_members.select_matching_id(row)
         
-        name = input("\t\t <--> give us the name: ({}) ".format(entries.name))
-        if not name:
-            name = entries.name
+        args = []
+        args.append(row)
         
-        group_of_members = input("\t\t <--> give us the group of members: ({}) ".format(entries.group_of_members))
-        if not group_of_members:
-            group_of_members = entries.group_of_members
-        
-        bm_table_members.update_matching_id(row, 
-                                            t_bm_table_members_l(
-                                                id = row, 
-                                                name = name,
-                                                group_of_members = group_of_members
-                                                )
-                                            )
+        # loop and fetch the entries
+        for item in t_bm_table_members_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_members.update_matching_id(row, t_bm_table_members_l._make(args))
          
         # now, disconnect again
         bm_database.disconnect()
         return
      
-    def matter_of_expense(self):
-        ''' insert into matter of expense
-         
+    def matter_of_expenses(self):
+        ''' insert into matter_of_expenses entries
         '''
          
         # push a message to the logger
-        self.logger.warn('matter of expense')
-         
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.matter_of_expense()
-         
+        self.logger.warn('matter_of_expenses')
+     
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
+        bm_table_matter_of_expenses.show_all_l()
+     
         # ask the user for specific inputs
-        nr = input("\t\t id = ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        bm_database.pop_from_matter_of_expense_where_id(d, _id = nr)
+        row = input("\t\t <--> id: ")
+        
+        # select the entry
+        entries = bm_table_matter_of_expenses.select_matching_id(row)
+        
+        args = []
+        args.append(row)
+        
+        # loop and fetch the entries
+        for item in t_bm_table_matter_of_expenses_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_matter_of_expenses.update_matching_id(row, t_bm_table_matter_of_expenses_l._make(args))
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def invoices(self):
-        ''' insert into the invoices table
+        ''' insert into invoices entries
         '''
          
-        # push a message into the logger
-        self.logger.warn('matter of invoices')
- 
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.invoices()
-         
+        # push a message to the logger
+        self.logger.warn('invoices')
+     
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_invoices = c_bm_table_invoices(conn, cursor)
+        bm_table_invoices.show_all_l()
+     
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        bm_database.pop_from_invoice_where_id(d, _id = row)
+        
+        # select the entry
+        entries = bm_table_invoices.select_matching_id(row)
+        
+        args = []
+        args.append(row)
+        
+        # loop and fetch the entries
+        for item in t_bm_table_invoices_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_invoices.update_matching_id(row, t_bm_table_invoices_l._make(args))
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def groups_of_members(self):
-        ''' insert into the group of members table
+        ''' insert into groups_of_members entries
         '''
          
-        # push a message into the logger
-        self.logger.warn('groups of members')
- 
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_members()
- 
+        # push a message to the logger
+        self.logger.warn('groups_of_members')
+     
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_groups_of_members = c_bm_table_groups_of_members(conn, cursor)
+        bm_table_groups_of_members.show_all_l()
+     
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        bm_database.pop_from_groups_of_members_where_id(d, _id = row)
+        
+        # select the entry
+        entries = bm_table_groups_of_members.select_matching_id(row)
+        
+        args = []
+        args.append(row)
+        
+        # loop and fetch the entries
+        for item in t_bm_table_groups_of_members_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_groups_of_members.update_matching_id(row, t_bm_table_groups_of_members_l._make(args))
          
         # now, disconnect again
-        bm_database.disconnect(d)
-        return   
+        bm_database.disconnect()
+        return
      
      
     def groups_of_expenses(self):
-        ''' insert into the group of expenses tables
+        ''' insert into groups_of_expenses entries
         '''
          
-        # push a message into the logger
-        self.logger.warn('groups of expenses')
- 
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_expenses()
- 
+        # push a message to the logger
+        self.logger.warn('groups_of_expenses')
+     
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_groups_of_expenses = c_bm_table_groups_of_expenses(conn, cursor)
+        bm_table_groups_of_expenses.show_all_l()
+     
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        bm_database.pop_from_groups_of_expenses_where_id(d, _id = row)
+        
+        # select the entry
+        entries = bm_table_groups_of_expenses.select_matching_id(row)
+        
+        args = []
+        args.append(row)
+        
+        # loop and fetch the entries
+        for item in t_bm_table_groups_of_expenses_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_groups_of_expenses.update_matching_id(row, t_bm_table_groups_of_expenses_l._make(args))
          
         # now, disconnect again
-        bm_database.disconnect(d)
-        return 
+        bm_database.disconnect()
+        return
      
     def earnings(self):
-        ''' print the earnings entries
+        ''' insert into earnings entries
         '''
          
-        # push a message into the logger
+        # push a message to the logger
         self.logger.warn('earnings')
- 
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.earnings()
- 
+     
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_earnings = c_bm_table_earnings(conn, cursor)
+        bm_table_earnings.show_all_l()
+     
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        bm_database.pop_from_earnings_where_id(d, _id = row)
+        
+        # select the entry
+        entries = bm_table_earnings.select_matching_id(row)
+        
+        args = []
+        args.append(row)
+        
+        # loop and fetch the entries
+        for item in t_bm_table_earnings_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_earnings.update_matching_id(row, t_bm_table_earnings_l._make(args))
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def accounts(self):
-        ''' print the accounts entries
+        ''' insert into accounts entries
         '''
          
-        # push a message into the logger
+        # push a message to the logger
         self.logger.warn('accounts')
- 
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_expenses()
- 
+     
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_accounts = c_bm_table_accounts(conn, cursor)
+        bm_table_accounts.show_all_l()
+     
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        bm_database.pop_from_accounts_where_id(d, _id = row)
+        
+        # select the entry
+        entries = bm_table_accounts.select_matching_id(row)
+        
+        args = []
+        args.append(row)
+        
+        # loop and fetch the entries
+        for item in t_bm_table_accounts_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_accounts.update_matching_id(row, t_bm_table_accounts_l._make(args))
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def classes(self):
-        ''' print the classes entries
+        ''' insert into classes entries
         '''
          
-        # push a message into the logger
+        # push a message to the logger
         self.logger.warn('classes')
- 
-        # print the current items
-        menu_print = c_menu_print()
-        menu_print.groups_of_expenses()
- 
+     
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+
+        # create a member class
+        bm_table_classes = c_bm_table_classes(conn, cursor)
+        bm_table_classes.show_all_l()
+     
         # ask the user for specific inputs
         row = input("\t\t <--> id: ")
-         
-        # connect to the database
-        d = bm_database.connect()
-         
-        # now, push it to the table
-        bm_database.pop_from_class_where_id(d, _id = row)
+        
+        # select the entry
+        entries = bm_table_classes.select_matching_id(row)
+        
+        args = []
+        args.append(row)
+        
+        # loop and fetch the entries
+        for item in t_bm_table_classes_l._fields:
+            if item == 'id':
+                continue
+            args.append(input("\t\t <--> give us the {}: ({}) ".format(item, getattr(entries, item))))
+            if not args[-1]:
+                args[-1] = getattr(entries, item)
+#                                             )
+        bm_table_classes.update_matching_id(row, t_bm_table_classes_l._make(args))
          
         # now, disconnect again
-        bm_database.disconnect(d)
+        bm_database.disconnect()
         return
      
     def run(self):

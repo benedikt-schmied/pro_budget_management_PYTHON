@@ -34,7 +34,7 @@ class c_menu_setup(mod_logging_mkI_PYTHON.c_logging):
         self.menu_print = []
         self.menu_print.append(c_menu_items('at', 'all tables', 'print all tables', self.all_tables))
         self.menu_print.append(c_menu_items('me', 'members', 'print the member table', self.members))
-        self.menu_print.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expense))  
+        self.menu_print.append(c_menu_items('ex', 'matter of expense', 'matter of expense', self.matter_of_expenses))  
         self.menu_print.append(c_menu_items('in', 'invoices', 'invoices', self.invoices))
         self.menu_print.append(c_menu_items('gm', 'groups of members', 'groups of members', self.groups_of_members))
         self.menu_print.append(c_menu_items('ge', 'groups of expenses', 'groups of expenses', self.groups_of_expenses))
@@ -46,7 +46,7 @@ class c_menu_setup(mod_logging_mkI_PYTHON.c_logging):
     def all_tables(self):
         self.logger.warn('all tables')
         self.members()
-        self.matter_of_expense()
+        self.matter_of_expenses()
         self.invoices()
         self.groups_of_members()
         self.groups_of_expenses()
@@ -74,7 +74,7 @@ class c_menu_setup(mod_logging_mkI_PYTHON.c_logging):
         bm_database.disconnect()
         return 
     
-    def matter_of_expense(self):
+    def matter_of_expenses(self):
         ''' print the matter of expense entries
         
         '''

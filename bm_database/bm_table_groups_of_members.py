@@ -69,7 +69,7 @@ class c_bm_table_groups_of_members(c_bm_tables):
     def select_matching_id(self, _id):
         ''' selects an entry with a matching ID
         '''
-        return self._select_matching_id(_id)
+        return t_bm_table_groups_of_members_l._make(self._select_matching_id(_id))
     
     def show_matching_id(self):
         ''' shows an entry with a matching ID
@@ -164,17 +164,13 @@ class c_bm_table_groups_of_members(c_bm_tables):
             print("An error occrred: ", e.args[0])
             return -1
 
-    def update_where_id_match(self, _id):
+    def update_matching_id(self, _id, _args):
         '''    selects a specific entry where the name matches
         
         @param _cursor database cursor
-        '''   
-        try:
-            self.cursor.execute("SELECT id FROM {} WHERE id=?".format(self.name), (_id,))
-            return self.cursor.fetchone()[0]
-        except sqlite3.Error as e:
-            print("An error occrred: ", e.args[0])
-            return -1    
+        '''
+                    
+        self._update_matching_id(_id, _args)
         
     def _test_routines(self):
         
