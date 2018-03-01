@@ -30,7 +30,7 @@ class c_menu_modify():
      
     def __init__(self):
          
-        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd')
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, g_program_name + ".modify")
          
         # we need a variable which holds the main menu    
         self.menu_modify = []
@@ -374,36 +374,6 @@ class c_menu_modify():
                 if c == self.menu_modify[cnt].cmd:
                     print(self.menu_modify[cnt].get_help_text())
                     self.menu_modify[cnt].fun()
-            
-            if c =='q':
-                break
-
-     
-    def run(self):
-         
-        '''
-        this is the main menu, you can either tell us to 
-        print a table
-        insert a new entry into a table
-        or modify an entry within a table
-        '''    
-        self.logger.warn('running')
-        while True:
-             
-            # first print the menu
-            for cnt in range(0, len(self.menu_calc)):
-                print("{}\t{}".format(self.menu_calc[cnt].get_cmd(), self.menu_calc[cnt].get_help_text()))
-             
-            c = input("-->")
-             
-            print(c)
- 
-            # no, we have to loop over the top menu items in 
-            # order to find what we've got to docmd
-            for cnt in range(0, len(self.menu_calc)):
-                if c == self.menu_calc[cnt].cmd:
-                    print(self.menu_calc[cnt].get_help_text())
-                    self.menu_calc[cnt].fun()
             
             if c =='q':
                 break

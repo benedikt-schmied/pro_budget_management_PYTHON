@@ -29,7 +29,7 @@ class c_menu_delete():
      
     def __init__(self):
          
-        mod_logging_mkI_PYTHON.c_logging.__init__(self, 'cmd')
+        mod_logging_mkI_PYTHON.c_logging.__init__(self, g_program_name + ".delete")
          
         # we need a variable which holds the main menu    
         self.menu_delete = []
