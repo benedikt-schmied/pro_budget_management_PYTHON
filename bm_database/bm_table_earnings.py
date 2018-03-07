@@ -85,6 +85,14 @@ class c_bm_table_earnings(c_bm_tables):
             entries.append(t_bm_table_earnings_s._make(row))
         return entries
 
+    def get_all_l(self):
+        ''' fetches all entries from the database
+        '''
+        entries = []
+        for row in self._get_all_l():
+            entries.append(t_bm_table_earnings_l._make(row))
+        return entries
+
     def show_all(self):
         ''' shows all entries
         '''

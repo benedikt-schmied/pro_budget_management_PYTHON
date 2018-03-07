@@ -33,7 +33,7 @@ class c_bm_database():
     def connect(self):
         '''    connect to the database
         '''
-        self.conn = sqlite3.connect("test.db")
+        self.conn = sqlite3.connect("budget_management.db")
         self.cursor = self.conn.cursor()
         return (self.conn, self.cursor)
     
