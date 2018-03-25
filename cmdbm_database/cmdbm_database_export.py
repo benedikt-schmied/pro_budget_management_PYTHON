@@ -13,6 +13,7 @@ a table and which prints human readable information
 '''
 
 import sys
+import bm_export
 sys.path.append('./../bm_database')
 sys.path.append('./../mod_logging_mkI_PYTHON')
 import sqlite3
@@ -21,7 +22,8 @@ import argparse
 from bm_database import *
 import mod_logging_mkI_PYTHON
 from cmdmenu import *
-
+from bm_export import *
+import time
 
 class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
     ''' print menu
@@ -46,13 +48,34 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
     
     def all_tables(self):
         self.logger.warn('all tables')
-        self.members()
-        self.matter_of_expenses()
-        self.groups_of_members()
-        self.groups_of_expenses()
-        self.earnings()
-        self.accounts()
-        self.classes()
+        
+        lfun = [
+            self.members,
+            self.matter_of_expenses,
+            self.groups_of_members,
+            self.groups_of_expenses,
+            self.earnings,
+            self.accounts
+            ]
+        
+        l_bm_export = c_bm_export(
+            _name = "testexport", 
+            _date = time.strftime("%Y%m%d")
+            )
+        
+        for fun in lfun:
+            ret = fun()
+            if (ret != None):
+                l_bm_export.push(
+                    _subject    = ret[0], 
+                    _intro      = "intro {}".format(ret[0].split("_")),
+                    _headings   = ret[1], 
+                    _data       = ret[2], 
+                    _results    = ret[3],
+                    _outro      = "outro {}".format(ret[0].split("_"))
+                    )
+        l_bm_export.write_to_file()
+        
         return
     
     def members(self):
@@ -74,11 +97,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         # show an introduction line
         print("\t\t ~~~ members")
         
-        bm_table_members._export_all()
+        ret = bm_table_members._prepare_export_all()
 
         # disconnect again
         bm_database.disconnect()
-        return 
+        return ret 
     
     def matter_of_expenses(self):
         ''' print the matter of expense entries
@@ -98,11 +121,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         # show an introduction line
         print("\t\t ~~~ members")
         
-        bm_table_matter_of_expenses._export_all()
+        ret = bm_table_matter_of_expenses._prepare_export_all()
         
 
         bm_database.disconnect()
-        return
+        return ret
     
     def invoices(self):
         ''' print the invoices entries
@@ -122,11 +145,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ invoices")
         
         # run over all entries
-        bm_table_invoices._export_all()
+        ret = bm_table_invoices._prepare_export_all()
         
         # disconnect again
         bm_database.disconnect()
-        return 
+        return ret 
     
     def groups_of_members(self):
         ''' print the group of members entries
@@ -146,11 +169,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ groups of members")
         
         # show an introduction line
-        bm_table_groups_of_members._export_all()
+        ret = bm_table_groups_of_members._prepare_export_all()
 
         # disconnect again
         bm_database.disconnect()
-        return    
+        return ret   
     
     
     def groups_of_expenses(self):
@@ -171,11 +194,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ groups of expenses")
         
         # run over all entries
-        bm_table_groups_of_expenses._export_all()
+        ret = bm_table_groups_of_expenses._prepare_export_all()
 
         # disconnect again
         bm_database.disconnect()
-        return
+        return ret
     
     def earnings(self):
         ''' print the earnings entries
@@ -195,11 +218,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ earnings")
         
         # run over all entries
-        bm_table_earnings._export_all()
+        ret = bm_table_earnings._prepare_export_all()
 
         # disconnect again
         bm_database.disconnect()
-        return
+        return ret
     
     def accounts(self):
         ''' print the accounts entries
@@ -219,11 +242,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ accounts")        
         
         # run over all entries
-        bm_table_accounts._export_all()
+        ret = bm_table_accounts._prepare_export_all()
 
         # disconnect again
         bm_database.disconnect()
-        return
+        return ret
     
     def classes(self):
         ''' print the classes entries
@@ -243,11 +266,11 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ classes")        
         
         # run over all entries
-        bm_table_classes._export_all()
+        bm_table_classes._prepare_export_all()
 
         # disconnect again
         bm_database.disconnect()
-        return
+        return None
     
     def run(self):
         
