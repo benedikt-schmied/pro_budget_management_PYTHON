@@ -24,7 +24,7 @@ import time
 
 test_t = namedtuple("test_t", ["account", "amount"])
 
-class c_cmdbm_database_tex(mod_logging_mkI_PYTHON.c_sublogging):
+class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
 
     def __init__(self, _name, _date, _headings, _data, _results):
         ''' constructor which fills up the internal variables
@@ -111,7 +111,7 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
         return
     
     def run(self):
-        l_cmdbm_database_tex = c_cmdbm_database_tex(
+        l_bm_export = c_bm_export(
             _name = "sql_to_tex", 
             _date = time.strftime("%Y%m%d%H%M%s"), 
             _headings = ["column1", "column2", "column3"], 
@@ -123,7 +123,7 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
                 ["51", "52", "53"],
                 ], 
             _results = ["42", "43", "444"])
-        l_cmdbm_database_tex.write_to_file()
+        l_bm_export.write_to_file()
         
 if __name__ == "__main__":
     # execute only if run as a script
