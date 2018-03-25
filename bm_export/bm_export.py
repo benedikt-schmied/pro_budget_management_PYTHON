@@ -55,8 +55,8 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
 
             # first, create the tex - specific stuff
             texfile.write("\\documentclass{scrartcl}\n");
-            texfile.write("\\usepackage[paperwidth=30cm,paperheight=48cm]\
-                {geometry}\n");
+            #texfile.write("\\usepackage[paperwidth=30cm,paperheight=48cm]\
+            #    {geometry}\n");
             texfile.write("\\usepackage{booktabs}\n");
             
             texfile.write("\\begin{document}\n");
@@ -85,7 +85,13 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
                 texfile.write(dstr)
                 dstr = ""
             
-            texfile.write("&&\\\\ \midrule\n")
+            estr = ""
+            for _ in range(0, len(self.headings)):
+                estr = estr + "&"
+            
+            estr = estr[:-1]
+            
+            texfile.write(estr + "\\\\ \midrule\n")
             
             # now, create the headings
             rstr = ""
@@ -102,7 +108,7 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
             texfile.close()
         
         os.system("pdflatex " + filename + ".tex")
-        os.system("okular " + filename + ".pdf")
+#         os.system("okular " + filename + ".pdf")
 
 class c_app(mod_logging_mkI_PYTHON.c_logging):
     

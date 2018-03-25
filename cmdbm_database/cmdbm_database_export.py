@@ -48,7 +48,6 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         self.logger.warn('all tables')
         self.members()
         self.matter_of_expenses()
-        self.invoices()
         self.groups_of_members()
         self.groups_of_expenses()
         self.earnings()
@@ -99,7 +98,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         # show an introduction line
         print("\t\t ~~~ members")
         
-        bm_table_matter_of_expenses.show_all()
+        bm_table_matter_of_expenses._export_all()
         
 
         bm_database.disconnect()
@@ -123,7 +122,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ invoices")
         
         # run over all entries
-        bm_table_invoices.show_all()
+        bm_table_invoices._export_all()
         
         # disconnect again
         bm_database.disconnect()
@@ -147,7 +146,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ groups of members")
         
         # show an introduction line
-        bm_table_groups_of_members.show_all()
+        bm_table_groups_of_members._export_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -172,7 +171,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ groups of expenses")
         
         # run over all entries
-        bm_table_groups_of_expenses.show_all()
+        bm_table_groups_of_expenses._export_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -196,7 +195,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ earnings")
         
         # run over all entries
-        bm_table_earnings.show_all()
+        bm_table_earnings._export_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -220,7 +219,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ accounts")        
         
         # run over all entries
-        bm_table_accounts.show_all()
+        bm_table_accounts._export_all()
 
         # disconnect again
         bm_database.disconnect()
@@ -244,7 +243,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         print("\t\t ~~~ classes")        
         
         # run over all entries
-        bm_table_classes.show_all()
+        bm_table_classes._export_all()
 
         # disconnect again
         bm_database.disconnect()

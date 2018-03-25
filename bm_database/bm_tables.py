@@ -313,17 +313,21 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         headings = []
         
         for item in self.ttuples._fields:
-            headings.append(item)
+            hstr = ""
+            for subitem in item.split("_"):
+                hstr = hstr + subitem + " "
+            hstr = hstr[:-1]
+            headings.append(hstr)
             
         data = self._get_all_l()
         
         results = []
-        for _ in range(0, len(self.ttuples)):
+        for _ in range(0, len(self.ttuples._fields)):
             results.append(" ")
         
         l_bm_export = c_bm_export(
             _name = self.name, 
-            _date = time.strftime("%Y%m%d%H%M%s"), 
+            _date = time.strftime("%Y%m%d"), 
             _headings = headings, 
             _data = data, 
             _results = results)
