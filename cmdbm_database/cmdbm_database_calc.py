@@ -13,6 +13,7 @@ a table and which prints human readable information
 '''
 
 import sys
+from collections import namedtuple
 import bm_table_matter_of_expenses
 import bm_table_earnings
 import bm_table_accounts
@@ -26,6 +27,9 @@ import mod_logging_mkI_PYTHON
 from cmdmenu import *
 from cmdbm_database_setup import *
 import time
+from cmdbm_database_tex import *
+
+test_t = namedtuple("test_t", ["account", "amount"])
 
 class c_menu_calc():
     ''' print menu
@@ -42,6 +46,7 @@ class c_menu_calc():
         self.menu_calc.append(c_menu_items('sd', 'saldo', 'saldo', self.saldo))
         self.menu_calc.append(c_menu_items('tr', 'transfer', 'transfer', self.transfer))
         self.menu_calc.append(c_menu_items('aa', 'all', 'all', self.aa))
+        self.menu_calc.append(c_menu_items('te', 'test', 'test', self.test))
         self.menu_calc.append(c_menu_items('ep', 'personal expenses person', 'give me the personal', self.personal_expenses))
         
         return
@@ -149,7 +154,7 @@ class c_menu_calc():
         
         cursor.execute(stmt)
         
-        self.f.write("==  Positionen f¸r Person {}==\n".format(_personidx))
+        self.f.write("==  Positionen f√ºr Person {}==\n".format(_personidx))
         
         self.f.write("Bezeichnung, Betrag, Frequenz in Wochen\n")
         
@@ -164,7 +169,7 @@ class c_menu_calc():
             else:
                 sum = sum + float(item[1])
     
-        self.f.write("==  Gesamtbetrag f¸r Person {} ==\n".format(_personidx))
+        self.f.write("==  Gesamtbetrag f√ºr Person {} ==\n".format(_personidx))
         self.f.write("{}\n".format(sum))
         print("Person {} Summe {}".format(_personidx, sum))
         sys.stdout.flush()
@@ -215,6 +220,8 @@ class c_menu_calc():
         
         pass
     
+
+    
     def transfer(self):
         ''' first, select all accounts that receive money
         then, subtract from the incoming money the amount which is said to
@@ -233,11 +240,6 @@ class c_menu_calc():
         bm_table_earnings = c_bm_table_earnings(conn, cursor)
         bm_table_accounts = c_bm_table_accounts(conn, cursor)
         
-        reslist = []
-        
-        # fetch all earnings, hence we will get in touch with the accounts
-        ealist = bm_table_earnings.get_all_l()
-        
         # fetch all accounts
         aclist = bm_table_accounts.get_all_l()
         
@@ -246,54 +248,86 @@ class c_menu_calc():
         
         # transmitter list
         tralist = []
-        
-        # now, look into each account, and check whether there is a positive saldo
+            
+        # loop over the earnings list
         for ac in aclist:
             
-            # reset the residual money
-            residual = 0
+            # check, whether this is account has got a posi
+            stmt = "SELECT name, amount, frequency \
+                    FROM matter_of_expenses \
+                    WHERE account = {}".format(ac.id)
             
-            # loop over the earnings list
-            for ea in ealist:
+            # take the db cursor and fetch the entries
+            cursor.execute(stmt)
+            
+            # reset the sum variable
+            sum = 0
+            
+            # fetch the entries
+            for it in cursor.fetchall():
                 
-                # check, whether this is account has got a posi
-                stmt = "SELECT name, amount, frequency \
-                        FROM matter_of_expenses \
-                        WHERE account = {}".format(ea.account)
+                print(it)
                 
-                # take the db cursor and fetch the entries
-                cursor.execute(stmt)
-                
-                # reset the sum variable
-                sum = 0
-                
-                # fetch the entries
-                for it in cursor.fetchall():
-                    
-                    print(it)
-                    
-                    if it[2] > 4:
-                        sum = sum + float(it[1]) / it[2] * 4
-                    else:
-                        sum = sum + float(it[1])
-                
+                if it[2] > 4:
+                    sum = sum + float(it[1]) / it[2] * 4
+                else:
+                    sum = sum + float(it[1])
+            
+            stmt = "SELECT name, amount \
+                FROM earnings \
+                WHERE account = {}".format(ac.id)
+            
+            cursor.execute(stmt)
+            income = cursor.fetchone()
+            print(income)
+            if income != None:
+            
                 # calculate the residual money
-                residual = ea.amount - sum
-                
+                residual = float(income[1]) - sum
+            else:
+                residual = -sum
+        
             # this account receives money
             if residual <= 0:
-                reclist.append(ac)
+                reclist.append(test_t(ac.name, -residual))
             else: # this account transmits money
-                tralist.append(ac)
+                tralist.append(test_t(ac.name, residual))
 
-                
-                
-            print("account {}, amount {}".format(item.account, item.amount))
+        # now, start sorting both lists
+        reclist = sorted(reclist, key=lambda test_t: test_t.amount, reverse = True)
+        tralist = sorted(tralist, key=lambda test_t: test_t.amount, reverse = True)
+
+        print("transfer list {}".format(tralist))
+        print("receiver list {}".format(reclist))
+
+        test_t2 = namedtuple("test_t2", ["from_account", "to_account", "amount"])
+        
+        transfers = []
+        
+        # loop over all transmit accounts and define the transfers
+        for tra in tralist:
             
-                        print(residual)
-            
-
-
+            togive = tra.amount
+            cpyreclist = reclist
+            cnt = 0
+            for rec in cpyreclist:
+                
+                print(togive)
+                
+                if (togive - rec.amount) > 0:
+                    togive = togive - rec.amount
+                    # modify the entry and push it bak
+                    del(reclist[cnt])
+                    transfers.append(test_t2(tra.account, rec.account, rec.amount))
+                else:
+                    # modify the entry and push it bak
+                    reclist[cnt] = test_t(rec.account, togive)
+                    transfers.append(test_t2(tra.account, rec.account, togive))
+                    break
+                cnt = cnt + 1
+                
+        for tr in transfers:
+            print(tr)
         '''
         at this point, we have fetched all accounts that encounter incomings
         and we now, how much is left on this accounts. 
@@ -306,6 +340,31 @@ class c_menu_calc():
         # now, disconnect again
         bm_database.disconnect()
         return None
+
+
+    def test(self):
+        import os # for sys calls
+
+        with open("budget_management.tex", "wt") as texfile:
+
+            texfile.write("\\documentclass{scrartcl}\n");
+            texfile.write("\\usepackage[paperwidth=30cm,paperheight=48cm]\
+                {geometry}\n");
+            texfile.write("\\usepackage{booktabs}\n");
+            texfile.write("\\begin{document}\n");
+
+            texfile.write("\\begin{tabular}{ll} \\toprule \n");
+
+            texfile.write("Name & Spende \\\\ \\midrule\n");
+
+            texfile.write("1 &" + "2\\\\\n")
+            texfile.write("\\bottomrule\n \\end{tabular}\n ");
+            texfile.write("\\end{document}");
+
+            texfile.close()
+        os.system("pdflatex testfile.tex")
+        os.system("okular testfile.pdf")
+        
 
     def run(self):
          
@@ -320,7 +379,7 @@ class c_menu_calc():
         self.f = open("export.md", "wt")
 
         
-        self.f.write("= Pre‰mpel =\n")
+        self.f.write("= Pre√§mpel =\n")
         
         self.f.write("Export vom {}\n".format(time.strftime("%Y%m%d%H%M%S")))
         while True:

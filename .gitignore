@@ -102,3 +102,7 @@ ENV/
 
 *.db
 .settings
+
+*.tex
+*.aux
+*.pdf

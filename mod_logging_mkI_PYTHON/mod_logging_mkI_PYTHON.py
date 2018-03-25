@@ -59,7 +59,7 @@ class c_logging():
         self.logger.addHandler(self.stderrhdl)
         #self.logger.addHandler(self.filehdl)
         
-        self.logger.setLevel(35)
+        self.logger.setLevel(5)
         
     def testrun(self):
         self.logger.info("info message")
