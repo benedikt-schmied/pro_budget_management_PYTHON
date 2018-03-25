@@ -20,13 +20,14 @@ sys.path.append('./../mod_logging_mkI_PYTHON')
 sys.path.append('./../_pro')
 import mod_logging_mkI_PYTHON
 from bm_globals import *
+from bm_export_tex import *
 import time
 
 test_t = namedtuple("test_t", ["account", "amount"])
 
 class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
 
-    def __init__(self, _name, _date, _headings, _data, _results):
+    def __init__(self, _name, _date):
         ''' constructor which fills up the internal variables
         '''
         
@@ -34,9 +35,20 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
         
         self.name       = _name
         self.date       = _date
-        self.headings   = _headings
-        self.data       = _data
-        self.results    = _results
+        self.subjects   = []
+        
+    def push(self, _subject, _intro, _headings, _data, _results, _outro):
+        ''' pushes new data into 
+        '''
+        self.subjects.append(c_bm_export_tex(
+            _subject    = _subject,
+            _intro      = _intro,
+            _headings   = _headings, 
+            _data       = _data, 
+            _results    = _results,
+            _outro      = _outro)
+        )
+        return
 
     def write_to_file(self):
         '''
@@ -46,69 +58,26 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
         '''
         filename = "{}_{}".format(self.name, self.date)
 
-        # we need to make sure, that the dimension of date and heading is equal
-        if (len(self.data[0]) != len(self.headings) != len(self.results)):
-            self.logger.warn("length is unequal, quitting")
-            return -1
-
         with open(filename + ".tex", "wt") as texfile:
 
             # first, create the tex - specific stuff
             texfile.write("\\documentclass{scrartcl}\n");
-            #texfile.write("\\usepackage[paperwidth=30cm,paperheight=48cm]\
-            #    {geometry}\n");
+            texfile.write("\\usepackage[paperwidth=40cm,paperheight=48cm]\
+                {geometry}\n");
             texfile.write("\\usepackage{booktabs}\n");
             
             texfile.write("\\begin{document}\n");
 
-            cstr = ""
-            for _ in range(0, len(self.headings)):
-                cstr = cstr + "l"
-
-            texfile.write("\\begin{tabular}{" + cstr + "} \\toprule \n");
-            
-            # now, create the headings
-            hstr = ""
-            for heading in self.headings:
-                hstr = hstr + "{} &".format(heading)
-            
-            hstr = hstr[:-2] + "\\\\ \\midrule\n" 
-            texfile.write(hstr)
-
-            dstr = ""
-            
-            for row in self.data:
-                for column in row:
-                    dstr = dstr + "{} &".format(column)
-                dstr = dstr[:-2] + "\\\\\n"
-                self.logger.warn(dstr)
-                texfile.write(dstr)
-                dstr = ""
-            
-            estr = ""
-            for _ in range(0, len(self.headings)):
-                estr = estr + "&"
-            
-            estr = estr[:-1]
-            
-            texfile.write(estr + "\\\\ \midrule\n")
-            
-            # now, create the headings
-            rstr = ""
-            for result in self.results:
-                rstr = rstr + "{} &".format(result)
-            
-            rstr = rstr[:-2] + "\\\\ \n" 
-            texfile.write(rstr)
-            
-            texfile.write("\\bottomrule\n \\end{tabular}\n ");
+            # loop over the subjects and write those data
+            for subject in self.subjects:
+                texfile.write(subject.getitems())
             
             texfile.write("\\end{document}");
 
             texfile.close()
         
         os.system("pdflatex " + filename + ".tex")
-#         os.system("okular " + filename + ".pdf")
+        os.system("okular " + filename + ".pdf")
 
 class c_app(mod_logging_mkI_PYTHON.c_logging):
     
@@ -118,17 +87,24 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
     
     def run(self):
         l_bm_export = c_bm_export(
-            _name = "sql_to_tex", 
-            _date = time.strftime("%Y%m%d%H%M%s"), 
-            _headings = ["column1", "column2", "column3"], 
-            _data = [
-                ["11", "12", "13"],
-                ["21", "22", "23"],
-                ["31", "32", "33"],
-                ["41", "42", "43"],
-                ["51", "52", "53"],
-                ], 
-            _results = ["42", "43", "444"])
+            _name = "test_export", 
+            _date = time.strftime("%Y%m%d")
+            )
+        for cnt in range(0,5):
+            l_bm_export.push(
+                _subject = "sql_to_tex {}".format(cnt),
+                _intro  = "intro text {}".format(cnt), 
+                _headings = ["column1", "column2", "column3"], 
+                _data = [
+                    ["11", "12", "13"],
+                    ["21", "22", "23"],
+                    ["31", "32", "33"],
+                    ["41", "42", "43"],
+                    ["51", "52", "53"],
+                    ], 
+                _results = ["42", "43", "444"],
+                _outro = "outro text {}".format(cnt)
+                )
         l_bm_export.write_to_file()
         
 if __name__ == "__main__":
