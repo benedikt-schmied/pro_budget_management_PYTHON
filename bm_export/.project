@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>bm_database</name>
+	<name>bm_export</name>
 	<comment></comment>
 	<projects>
 		<project>_pro</project>
-		<project>bm_export</project>
 		<project>mod_logging_mkI_PYTHON</project>
 	</projects>
 	<buildSpec>

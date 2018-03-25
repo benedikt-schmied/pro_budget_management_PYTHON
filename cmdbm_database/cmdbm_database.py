@@ -27,6 +27,7 @@ from cmdbm_database_insert import *
 from cmdbm_database_modify import *
 from cmdbm_database_print import *
 from cmdbm_database_setup import *
+from cmdbm_database_export import *
 
 
 class c_menu_help():
@@ -53,6 +54,7 @@ class c_menu_top(mod_logging_mkI_PYTHON.c_logging):
         self.menu_top.append(c_menu_items('i', 'insert', 'insert an entry', self.menu_insert))
         self.menu_top.append(c_menu_items('d', 'delete', 'delete an entry', self.menu_delete))
         self.menu_top.append(c_menu_items('c', 'calc', 'do some calculation', self.menu_calc))
+        self.menu_top.append(c_menu_items('e', 'export', 'export', self.menu_export))
         self.menu_top.append(c_menu_items('m', 'manual', 'manual', self.menu_manual))
         self.menu_top.append(c_menu_items('h', 'help', 'help menu', self.menu_help))
     
@@ -106,6 +108,13 @@ class c_menu_top(mod_logging_mkI_PYTHON.c_logging):
         '''
         menu_calc = c_menu_calc()
         menu_calc.run()
+
+    def menu_export(self, _midx):
+        '''
+        @param _midx:
+        '''
+        menu_export = c_menu_export()
+        menu_export.run()
 
     def menu_manual(self, _midx):
         '''
