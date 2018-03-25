@@ -9,7 +9,6 @@ from bm_globals import *
 import mod_logging_mkI_PYTHON
 import sqlite3
 from collections import namedtuple
-from bm_export import *
 
 g_program_suffix = "bm_database"
 
@@ -305,11 +304,10 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
             print("An error occrred: ", e.args[0])
             return -1
         
-    def _export_all(self):
+    def _prepare_export_all(self):
         ''' takes advantage of the exporting class in order to export all
         items
         '''
-        import time
         headings = []
         
         for item in self.ttuples._fields:
@@ -325,11 +323,4 @@ class c_bm_tables(mod_logging_mkI_PYTHON.c_sublogging):
         for _ in range(0, len(self.ttuples._fields)):
             results.append(" ")
         
-        l_bm_export = c_bm_export(
-            _name = self.name, 
-            _date = time.strftime("%Y%m%d"), 
-            _headings = headings, 
-            _data = data, 
-            _results = results)
-        l_bm_export.write_to_file()
-        
+        return (self.name, headings, data, results)
