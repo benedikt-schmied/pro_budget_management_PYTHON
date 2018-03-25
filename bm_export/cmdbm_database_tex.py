@@ -17,7 +17,7 @@ import os # for sys calls
 import argparse
 from collections import namedtuple
 sys.path.append('./../mod_logging_mkI_PYTHON')
-sys.path.append('./../bm_globals')
+sys.path.append('./../_pro')
 import mod_logging_mkI_PYTHON
 from bm_globals import *
 import time
