@@ -20,13 +20,14 @@ sys.path.append('./../mod_logging_mkI_PYTHON')
 sys.path.append('./../_pro')
 import mod_logging_mkI_PYTHON
 from bm_globals import *
+from bm_export_tex import *
 import time
 
 test_t = namedtuple("test_t", ["account", "amount"])
 
 class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
 
-    def __init__(self, _name, _date, _headings, _data, _results):
+    def __init__(self, _name, _date):
         ''' constructor which fills up the internal variables
         '''
         
@@ -34,9 +35,11 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
         
         self.name       = _name
         self.date       = _date
-        self.headings   = _headings
-        self.data       = _data
-        self.results    = _results
+    
+    def push(self, _subject, _headings, _data, _results):
+        ''' pushes new data into 
+        '''
+        return
 
     def write_to_file(self):
         '''
@@ -46,21 +49,20 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
         '''
         filename = "{}_{}".format(self.name, self.date)
 
-        # we need to make sure, that the dimension of date and heading is equal
-        if (len(self.data[0]) != len(self.headings) != len(self.results)):
-            self.logger.warn("length is unequal, quitting")
-            return -1
-
         with open(filename + ".tex", "wt") as texfile:
 
             # first, create the tex - specific stuff
             texfile.write("\\documentclass{scrartcl}\n");
-            #texfile.write("\\usepackage[paperwidth=30cm,paperheight=48cm]\
-            #    {geometry}\n");
+            texfile.write("\\usepackage[paperwidth=40cm,paperheight=48cm]\
+                {geometry}\n");
             texfile.write("\\usepackage{booktabs}\n");
             
             texfile.write("\\begin{document}\n");
 
+            # loop over the subjects and write those data
+            
+            
+            
             cstr = ""
             for _ in range(0, len(self.headings)):
                 cstr = cstr + "l"
@@ -108,7 +110,7 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
             texfile.close()
         
         os.system("pdflatex " + filename + ".tex")
-#         os.system("okular " + filename + ".pdf")
+        os.system("okular " + filename + ".pdf")
 
 class c_app(mod_logging_mkI_PYTHON.c_logging):
     
