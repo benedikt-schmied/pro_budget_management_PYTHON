@@ -26,21 +26,23 @@ test_t = namedtuple("test_t", ["account", "amount"])
 
 class c_bm_export_tex(mod_logging_mkI_PYTHON.c_sublogging):
 
-    def __init__(self, _name, _date, _headings, _data, _results):
+    def __init__(self, _subject, _intro, _headings, _data, _results, _outro):
         ''' constructor which fills up the internal variables
         '''
         
         mod_logging_mkI_PYTHON.c_sublogging.__init__(self, g_program_name + ".tex")
         
+        self.subject    = _subject
+        self.intro      = _intro
         self.headings   = _headings
         self.data       = _data
         self.results    = _results
-
+        self.outro      = _outro
         self.section_item = ""
 
-    def _write(self, str):
+    def _write(self, _str):
 
-        self.section_item = self.section_item + str 
+        self.section_item = self.section_item + _str 
 
     def getitems(self):
         '''
@@ -49,7 +51,18 @@ class c_bm_export_tex(mod_logging_mkI_PYTHON.c_sublogging):
         @return: '-1' is something is wrong
         '''
         self._create_table()
-        return self.section_item
+        
+        subject = ""
+        for item in self.subject.split("_"):
+            subject = subject + item + " "
+        subject = subject[:-1]
+        
+        texstr = "\\section{" + subject + "}\n"
+        texstr = texstr + self.intro + "\\\\\n\\\\\n"
+        texstr = texstr + self.section_item
+        texstr = texstr + "\\\\\n\\\\\n"
+        texstr = texstr + self.outro + "\n"
+        return texstr
 
     def _create_table(self):
                 # we need to make sure, that the dimension of date and heading is equal
@@ -77,7 +90,6 @@ class c_bm_export_tex(mod_logging_mkI_PYTHON.c_sublogging):
             for column in row:
                 dstr = dstr + "{} &".format(column)
             dstr = dstr[:-2] + "\\\\\n"
-            self.logger.warn(dstr)
             self._write(dstr)
             dstr = ""
         
@@ -107,8 +119,8 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
     
     def run(self):
         l_bm_export_tex = c_bm_export_tex(
-            _name = "sql_to_tex", 
-            _date = time.strftime("%Y%m%d"), 
+            _subject = "sql_to_tex",
+            _intro  = "intro text", 
             _headings = ["column1", "column2", "column3"], 
             _data = [
                 ["11", "12", "13"],
@@ -117,7 +129,8 @@ class c_app(mod_logging_mkI_PYTHON.c_logging):
                 ["41", "42", "43"],
                 ["51", "52", "53"],
                 ], 
-            _results = ["42", "43", "444"])
+            _results = ["42", "43", "444"],
+            _outro = "outro text")
         ret = l_bm_export_tex.getitems()
         if ret != -1:
             self.logger.info(ret)
