@@ -16,6 +16,7 @@ import sys
 import bm_export
 sys.path.append('./../bm_database')
 sys.path.append('./../mod_logging_mkI_PYTHON')
+sys.path.append('./../bm_calc')
 import sqlite3
 import os
 import argparse
@@ -24,6 +25,7 @@ import mod_logging_mkI_PYTHON
 from cmdmenu import *
 from bm_export import *
 import time
+from bm_calc import *
 
 class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
     ''' print menu
@@ -74,7 +76,67 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
                     _results    = ret[3],
                     _outro      = "outro {}".format(ret[0].split("_"))
                     )
+        
+        l_bm_calc = c_bm_calc()
+        (subject, headings, data, result) = l_bm_calc.total_earnings() 
+        
+        l_bm_export.push(
+            _subject    = subject, 
+            _intro      = "Nachfolgend werden die Einkommen summiert",
+            _headings   = headings, 
+            _data       = data, 
+            _results    = result,
+            _outro      = "An dieser Stelle wurden die Einkommen summiert."
+            )
+
+        (subject, headings, data, result) = l_bm_calc.total_expenses() 
+        
+        l_bm_export.push(
+            _subject    = subject, 
+            _intro      = "Nachfolgend werden die Ausgaben summiert (monatlich)",
+            _headings   = headings, 
+            _data       = data, 
+            _results    = result,
+            _outro      = "An dieser Stelle wurden die Ausgaben summiert (monatlich)."
+            )
+    
+        (subject, headings, data, result) = l_bm_calc.saldo() 
+        
+        l_bm_export.push(
+            _subject    = subject, 
+            _intro      = "Nachfolgend werden die Ausgaben von den Einnahmen subtrahiert",
+            _headings   = headings, 
+            _data       = data, 
+            _results    = result,
+            _outro      = "An dieser Stelle wurden die die Ausgaben von den Einnahmen subtrahiert."
+            )
+
+        for idx in [1,2,3]:
+
+            (subject, headings, data, result) = l_bm_calc.expenses_of_person(idx) 
+            
+            l_bm_export.push(
+                _subject    = subject + " {}".format(idx), 
+                _intro      = "Nachfolgend werden die Ausgaben von den Einnahmen subtrahiert",
+                _headings   = headings, 
+                _data       = data, 
+                _results    = result,
+                _outro      = "An dieser Stelle wurden die die Ausgaben von den Einnahmen subtrahiert."
+                )
+                
+        (subject, headings, data, result) = l_bm_calc.transfer() 
+        
+        l_bm_export.push(
+            _subject    = subject, 
+            _intro      = "Nachfolgend werden die Ausgaben von den Einnahmen subtrahiert",
+            _headings   = headings, 
+            _data       = data, 
+            _results    = result,
+            _outro      = "An dieser Stelle wurden die die Ausgaben von den Einnahmen subtrahiert."
+            )
         l_bm_export.write_to_file()
+        
+        
         
         return
     
