@@ -158,7 +158,7 @@ class c_bm_calc(mod_logging_mkI_PYTHON.c_logging):
         (conn, cursor) = bm_database.connect()
         
         subject     = "Ausgaben je Person"
-        headings    = ["Bezeichner", "Frequenz in Wochen", "Betrag"]
+        headings    = ["Bezeichner", "Frequenz in Wochen", "Betrag je Monat"]
         
         data = []
         
@@ -182,31 +182,49 @@ class c_bm_calc(mod_logging_mkI_PYTHON.c_logging):
         # now, disconnect again
         bm_database.disconnect()
         return (subject, headings, data, result)
+
+    def total_expenses_of_person(self, _idx):
+        
+        # now, connect to the database
+        bm_database = c_bm_database()
+        (conn, cursor) = bm_database.connect()
+        
+        stmt = "SELECT name, amount, frequency\
+            FROM matter_of_expenses \
+            WHERE originator = {}".format(_idx)
+        
+        cursor.execute(stmt)
+
+        l_sum = 0
+        for item in cursor.fetchall():
+            
+            if int(item[2]) > 4: 
+                l_sum = l_sum + float(item[1]) / item[2] / 4
+            else:
+                l_sum = l_sum + float(item[1])
+        return l_sum
     
     def personal_expenses(self):
         ''' expenses tanja
         '''
         
-        expenses = self.total_expenses()
-        earnings = self.total_earnings()
-        
-        tanja_expenses = self.expenses_of_person(1)
-        benedikt_expenses = self.expenses_of_person(2)
+        tanja_expenses = self.total_expenses_of_person(1)
+        benedikt_expenses = self.total_expenses_of_person(2)
         
         diff = abs(tanja_expenses - benedikt_expenses)
         
         print("diff {}".format(diff))
         
-        spare = earnings - expenses
-        print("spare {}".format(spare))
-        
-        spare2 = 0.5 * (spare - diff) 
-        
-        print("tanja expenses + diff + topping = {} + {}  + {} =  {}".format(tanja_expenses, diff, spare2/2, tanja_expenses + diff + spare2/2))
-        print("benedikt expenses + diff + topping = {} + {}  + {} =  {}".format(benedikt_expenses, 0, spare2/2, benedikt_expenses + 0 + spare2/2))
-        
-        print("spare {}".format(spare2))
-        
+#         spare = earnings - expenses
+#         print("spare {}".format(spare))
+#         
+#         spare2 = 0.5 * (spare - diff) 
+#         
+#         print("tanja expenses + diff + topping = {} + {}  + {} =  {}".format(tanja_expenses, diff, spare2/2, tanja_expenses + diff + spare2/2))
+#         print("benedikt expenses + diff + topping = {} + {}  + {} =  {}".format(benedikt_expenses, 0, spare2/2, benedikt_expenses + 0 + spare2/2))
+#         
+#         print("spare {}".format(spare2))
+#         
         sys.stdout.flush()
         
     def transfer(self):

@@ -14,6 +14,7 @@ a table and which prints human readable information
 
 import sys
 import bm_export
+from readline import get_begidx
 sys.path.append('./../bm_database')
 sys.path.append('./../mod_logging_mkI_PYTHON')
 sys.path.append('./../bm_calc')
@@ -82,7 +83,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
         
         l_bm_export.push(
             _subject    = subject, 
-            _intro      = "Nachfolgend werden die Einkommen summiert",
+            _intro      = "Nachfolgend werden die Einkommen summiert.",
             _headings   = headings, 
             _data       = data, 
             _results    = result,
@@ -108,35 +109,53 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
             _headings   = headings, 
             _data       = data, 
             _results    = result,
-            _outro      = "An dieser Stelle wurden die die Ausgaben von den Einnahmen subtrahiert."
+            _outro      = "An dieser Stelle wurden die Ausgaben von den Einnahmen subtrahiert."
             )
 
         for idx in [1,2,3]:
 
+            # now, connect to the database
+            bm_database = c_bm_database()
+            (conn, cursor) = bm_database.connect()
+
+            # create a member class
+            bm_table_members = c_bm_table_members(conn, cursor)
+                
+            ret = bm_table_members.get_all_l()
+            
+            name = ""
+            for item in ret:
+                if item.id == idx:
+                    name = item.name
+                    break
+                
+            # disconnect again
+            bm_database.disconnect()
+
             (subject, headings, data, result) = l_bm_calc.expenses_of_person(idx) 
             
             l_bm_export.push(
-                _subject    = subject + " {}".format(idx), 
-                _intro      = "Nachfolgend werden die Ausgaben von den Einnahmen subtrahiert",
+                _subject    = subject + " {}".format(name), 
+                _intro      = "Nachfolgend werden die Ausgaben der Personen '{}' gelistet und summiert.".format(name),
                 _headings   = headings, 
                 _data       = data, 
                 _results    = result,
-                _outro      = "An dieser Stelle wurden die die Ausgaben von den Einnahmen subtrahiert."
+                _outro      = "An dieser Stelle wurden die Ausgaben der Personen '{}' gelistet und summiert.".format(name)
                 )
                 
         (subject, headings, data, result) = l_bm_calc.transfer() 
         
         l_bm_export.push(
             _subject    = subject, 
-            _intro      = "Nachfolgend werden die Ausgaben von den Einnahmen subtrahiert",
+            _intro      = "Nachfolgend werden die Transferbeträge ausgegeben.",
             _headings   = headings, 
             _data       = data, 
             _results    = result,
-            _outro      = "An dieser Stelle wurden die die Ausgaben von den Einnahmen subtrahiert."
+            _outro      = "An dieser Stelle wurden die Transferbeträge ausgegeben."
             )
         l_bm_export.write_to_file()
         
-        
+        l_bm_calc.personal_expenses()
         
         return
     
@@ -179,9 +198,6 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
 
         # create a member class
         bm_table_matter_of_expenses = c_bm_table_matter_of_expenses(conn, cursor)
-        
-        # show an introduction line
-        print("\t\t ~~~ members")
         
         ret = bm_table_matter_of_expenses._prepare_export_all()
         

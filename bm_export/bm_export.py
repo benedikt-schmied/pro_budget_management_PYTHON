@@ -62,7 +62,7 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
 
             # first, create the tex - specific stuff
             texfile.write("\\documentclass{scrartcl}\n");
-            texfile.write("\\usepackage[paperwidth=40cm,paperheight=48cm]\
+            texfile.write("\\usepackage[paperwidth=40cm,paperheight=43cm]\
                 {geometry}\n");
             texfile.write("\\usepackage{booktabs}\n");
             
