@@ -351,6 +351,7 @@ class c_bm_calc(mod_logging_mkI_PYTHON.c_logging):
         
         # now, disconnect again
         bm_database.disconnect()
+        print(data)
         return (subject, headings, data, result)
 
 if __name__ == "__main__":

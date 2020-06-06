@@ -58,7 +58,7 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
         '''
         filename = "{}_{}".format(self.name, self.date)
 
-        with open(filename + ".tex", "wt") as texfile:
+        with open(filename + ".tex", "wt", encoding="utf-8") as texfile:
 
             # first, create the tex - specific stuff
             texfile.write("\\documentclass{scrartcl}\n");

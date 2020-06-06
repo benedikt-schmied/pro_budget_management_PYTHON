@@ -112,7 +112,7 @@ class c_menu_export(mod_logging_mkI_PYTHON.c_logging):
             _outro      = "An dieser Stelle wurden die Ausgaben von den Einnahmen subtrahiert."
             )
 
-        for idx in [1,2,3]:
+        for idx in [1,2,3,5]:
 
             # now, connect to the database
             bm_database = c_bm_database()
