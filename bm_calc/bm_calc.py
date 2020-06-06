@@ -318,24 +318,24 @@ class c_bm_calc(mod_logging_mkI_PYTHON.c_logging):
         for tra in tralist:
             
             togive = tra.amount
-            cpyreclist = reclist
             cnt = 0
-            for rec in cpyreclist:
+            for rec in reclist:
                 
-                print(togive)
+                print("transmit accout {}, left: {}".format(tra, togive))
                 
-                if (togive - rec.amount) > 0:
-                    togive = togive - rec.amount
-                    
-                    # modify the entry and push it bak
-                    del(reclist[cnt])
-                    transfers.append(test_t2(tra.account, rec.account, rec.amount))
-                else:
-                    
-                    # modify the entry and push it bak
-                    reclist[cnt] = test_t(rec.account, togive)
-                    transfers.append(test_t2(tra.account, rec.account, togive))
-                    break
+                if rec.amount > 0:
+                    if (togive - rec.amount) > 0:
+                        togive = togive - rec.amount
+                        
+                        # modify the entry and push it bak
+                        reclist[cnt] = test_t(rec.account, 0)
+                        transfers.append(test_t2(tra.account, rec.account, rec.amount))
+                    else:
+                        
+                        # modify the entry and push it bak
+                        reclist[cnt] = test_t(rec.account, togive)
+                        transfers.append(test_t2(tra.account, rec.account, togive))
+                        break
                 cnt = cnt + 1
                 
         for tr in transfers:
