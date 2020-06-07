@@ -65,7 +65,8 @@ class c_bm_export(mod_logging_mkI_PYTHON.c_sublogging):
             texfile.write("\\usepackage[paperwidth=40cm,paperheight=43cm]\
                 {geometry}\n");
             texfile.write("\\usepackage{booktabs}\n");
-            
+            texfile.write("\\usepackage[german]{babel}\n");
+            texfile.write("\\usepackage[utf8]{inputenc}\n");
             texfile.write("\\begin{document}\n");
 
             # loop over the subjects and write those data

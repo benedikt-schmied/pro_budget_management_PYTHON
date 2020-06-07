@@ -58,6 +58,7 @@ class c_cmdbm_database_tex(mod_logging_mkI_PYTHON.c_sublogging):
             texfile.write("\\usepackage[paperwidth=30cm,paperheight=48cm]\
                 {geometry}\n");
             texfile.write("\\usepackage{booktabs}\n");
+            texfile.write("\\usepackage[german]{babel}\n");
             
             texfile.write("\\begin{document}\n");
 
