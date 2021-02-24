@@ -260,7 +260,7 @@ class c_menu_calc(mod_logging_mkI_PYTHON.c_logging):
             cnt = 0
             for rec in reclist:
                 
-                print("transmit account {}, receive account {},  left: {}".format(tra, rec, togive))
+                print("transmit account {}, receive account {},  to give: {}".format(tra, rec, togive))
                 
                 if (togive - rec.amount) > 0:
                     togive = togive - rec.amount
@@ -269,7 +269,7 @@ class c_menu_calc(mod_logging_mkI_PYTHON.c_logging):
                     transfers.append(test_t2(tra.account, rec.account, rec.amount))
                 else:
                     # modify the entry and push it bak
-                    reclist[cnt] = test_t(rec.account, togive)
+                    reclist[cnt] = test_t(rec.account, rec.amount - togive)
                     transfers.append(test_t2(tra.account, rec.account, togive))
                     break
                 cnt = cnt + 1

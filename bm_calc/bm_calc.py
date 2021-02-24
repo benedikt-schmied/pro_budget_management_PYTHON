@@ -333,7 +333,7 @@ class c_bm_calc(mod_logging_mkI_PYTHON.c_logging):
                     else:
                         
                         # modify the entry and push it bak
-                        reclist[cnt] = test_t(rec.account, togive)
+                        reclist[cnt] = test_t(rec.account, rec.amount - togive)
                         transfers.append(test_t2(tra.account, rec.account, togive))
                         break
                 cnt = cnt + 1
