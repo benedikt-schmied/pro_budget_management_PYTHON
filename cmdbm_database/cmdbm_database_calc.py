@@ -255,11 +255,12 @@ class c_menu_calc(mod_logging_mkI_PYTHON.c_logging):
         
         # loop over all transmit accounts and define the transfers
         for tra in tralist:
-            
+            spcaccount = None
             togive = tra.amount
             cnt = 0
             for rec in reclist:
-                
+                if cnt == 1:
+                    spcaccount = rec
                 print("transmit account {}, receive account {},  to give: {}".format(tra, rec, togive))
                 
                 if (togive - rec.amount) > 0:
@@ -271,8 +272,12 @@ class c_menu_calc(mod_logging_mkI_PYTHON.c_logging):
                     # modify the entry and push it bak
                     reclist[cnt] = test_t(rec.account, rec.amount - togive)
                     transfers.append(test_t2(tra.account, rec.account, togive))
+                    togive = 0
                     break
                 cnt = cnt + 1
+                
+            if togive > 0:
+                transfers.append(test_t2(tra.account, spcaccount.account, togive))
                 
         for tr in transfers:
             print(tr)
@@ -282,6 +287,8 @@ class c_menu_calc(mod_logging_mkI_PYTHON.c_logging):
         Now, I would suggest to start with all the account, that has got the 
         highest dept
         '''
+
+        
 
         sys.stdout.flush()
         

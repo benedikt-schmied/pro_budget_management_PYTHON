@@ -316,12 +316,13 @@ class c_bm_calc(mod_logging_mkI_PYTHON.c_logging):
         
         # loop over all transmit accounts and define the transfers
         for tra in tralist:
-            
+            spcaccount = None
             togive = tra.amount
             cnt = 0
             for rec in reclist:
-                
-                print("transmit accout {}, left: {}".format(tra, togive))
+                if cnt == 1:
+                    spcaccount = rec
+                print("transmit account {}, receive account {},  to give: {}".format(tra, rec, togive))
                 
                 if rec.amount > 0:
                     if (togive - rec.amount) > 0:
@@ -335,8 +336,12 @@ class c_bm_calc(mod_logging_mkI_PYTHON.c_logging):
                         # modify the entry and push it bak
                         reclist[cnt] = test_t(rec.account, rec.amount - togive)
                         transfers.append(test_t2(tra.account, rec.account, togive))
+                        togive = 0
                         break
                 cnt = cnt + 1
+                
+            if togive > 0:
+                transfers.append(test_t2(tra.account, spcaccount.account, togive))
                 
         for tr in transfers:
             data.append([tr.from_account, tr.to_account, "{:.2f}".format(tr.amount)])
